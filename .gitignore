@@ -1,0 +1,33 @@
+# --- Java ---
+*.class
+*.jar
+*.war
+
+# --- Eclipse / IDEs ---
+.classpath
+.project
+.settings/
+bin/
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Build outputs ---
+build/
+target/
+
+# --- Local artefacts ---
+*.log
+*.tmp
+
+# --- Sauvegardes du jeu (Sprint 2+) ---
+saves/
