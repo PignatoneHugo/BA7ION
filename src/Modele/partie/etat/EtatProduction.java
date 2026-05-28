@@ -7,10 +7,12 @@ import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
 /**
- * Phase 1 du tour : chaque batiment de chaque royaume produit selon ses
- * habitants associes. Au Sprint 1, on n'a que la Ferme (cf. Royaume).
+ * Phase de production : chaque batiment de chaque royaume genere ses
+ * ressources via {@link Batiment#produire(Royaume)}. La notification de
+ * mise a jour du tresor est emise une seule fois par royaume, apres que
+ * tous ses batiments ont produit, pour eviter une cascade de rafraichissements.
  *
- * En sortie : EtatConsommation.
+ * Transition : enchaine sur {@link EtatConsommation}.
  */
 public class EtatProduction implements EtatTour {
 

@@ -1,28 +1,30 @@
 package Modele.notification;
 
 /**
- * Payload typee transmis comme argument de Observable#notifyObservers(Object).
- *
- * Permet aux vues de filtrer rapidement les notifications recues :
- *
- *     public void update(Observable o, Object arg) {
- *         if (arg instanceof Notification n {@literal &&} n.type() == TypeNotification.TRESOR_CHANGE) {
- *             rafraichirAffichageRessources();
- *         }
- *     }
- *
- * Le champ {@code donnee} est optionnel : il sert quand la vue a besoin d'un
- * detail supplementaire (par exemple le numero du tour pour PHASE_CHANGEE).
+ * Message immuable transmis aux Observers du modele. Une notification est
+ * toujours composee d'un {@link TypeNotification} (obligatoire, sert au
+ * filtrage) et d'une donnee optionnelle (numero de tour, ressource modifiee,
+ * etc.) que les vues peuvent consulter si elles en ont besoin.
  */
 public class Notification {
 
     private final TypeNotification type;
     private final Object donnee;
 
+    /**
+     * Notification sans donnee associee.
+     *
+     * @param type categorie de l'evenement, non null
+     */
     public Notification(TypeNotification type) {
         this(type, null);
     }
 
+    /**
+     * @param type categorie de l'evenement, non null
+     * @param donnee charge utile optionnelle (peut etre null)
+     * @throws IllegalArgumentException si {@code type} est null
+     */
     public Notification(TypeNotification type, Object donnee) {
         if (type == null) {
             throw new IllegalArgumentException("Le type d'une Notification ne peut pas etre null.");

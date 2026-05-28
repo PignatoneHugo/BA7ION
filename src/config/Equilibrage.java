@@ -6,16 +6,13 @@ import java.util.Map;
 import Modele.economie.Ressource;
 
 /**
- * Centralise toutes les constantes numeriques d'equilibrage du jeu.
+ * Constantes numeriques d'equilibrage du jeu. Cette classe centralise toutes
+ * les valeurs accessibles aux equilibristes (production, consommation, bonus
+ * de niveau, valeurs initiales) afin qu'aucun nombre magique ne traine dans
+ * le code metier.
  *
- * Convention (cf. plan d'architecture section 10) :
- *   - Aucun nombre magique dans le code metier ; tout passe par cette classe.
- *   - Regroupe par section avec commentaire d'en-tete.
- *   - Les valeurs sont volontairement basses au Sprint 1 pour faciliter les
- *     tests manuels (un tour = un changement visible).
- *
- * Cette classe ne contient que des donnees statiques en lecture seule ; elle
- * n'est jamais instanciee.
+ * Classe utilitaire : tous ses membres sont statiques, son constructeur est
+ * prive et elle ne peut pas etre instanciee.
  */
 public final class Equilibrage {
 
@@ -27,7 +24,10 @@ public final class Equilibrage {
     // POPULATION INITIALE
     // ----------------------------------------------------------------------
 
+    /** Nombre d'habitants au tour 1, tous places en inactif. */
     public static final int POPULATION_INITIALE = 10;
+
+    /** Capacite de logement disponible des le tour 1. */
     public static final int CAPACITE_LOGEMENT_INITIALE = 20;
 
     // ----------------------------------------------------------------------
@@ -51,10 +51,16 @@ public final class Equilibrage {
         CAPACITES_INITIALES.put(Ressource.SAVOIR, 999);
     }
 
+    /**
+     * @return quantite de la ressource au demarrage d'une partie
+     */
     public static int stockInitial(Ressource r) {
         return STOCKS_INITIAUX.get(r);
     }
 
+    /**
+     * @return plafond de stockage de la ressource avant toute amelioration
+     */
     public static int capaciteInitiale(Ressource r) {
         return CAPACITES_INITIALES.get(r);
     }
@@ -63,36 +69,39 @@ public final class Equilibrage {
     // PRODUCTION (par habitant et par tour)
     // ----------------------------------------------------------------------
 
-    /** Production de nourriture par Fermier et par tour, sans modificateur. */
+    /** Nourriture produite par chaque fermier au cours d'un tour. */
     public static final int PRODUCTION_NOURRITURE_PAR_FERMIER = 2;
 
-    /** Production de pierre par Mineur et par tour. */
+    /** Pierre produite par chaque mineur au cours d'un tour. */
     public static final int PRODUCTION_PIERRE_PAR_MINEUR = 1;
 
-    /** Production d'or par Mineur et par tour (faible, complement aux taxes). */
+    /** Or produit par chaque mineur au cours d'un tour. */
     public static final int PRODUCTION_OR_PAR_MINEUR = 1;
 
-    /** Production de bois par Bucheron et par tour. */
+    /** Bois produit par chaque bucheron au cours d'un tour. */
     public static final int PRODUCTION_BOIS_PAR_BUCHERON = 2;
 
     // ----------------------------------------------------------------------
     // CONSOMMATION
     // ----------------------------------------------------------------------
 
-    /** Nourriture consommee par habitant civil et par tour. */
+    /** Nourriture consommee par chaque habitant civil au cours d'un tour. */
     public static final int CONSOMMATION_NOURRITURE_PAR_HABITANT = 1;
 
     // ----------------------------------------------------------------------
-    // BONUS PAR NIVEAU DE BATIMENT (multiplicatif, applique a la production)
+    // BONUS PAR NIVEAU DE BATIMENT
     // ----------------------------------------------------------------------
 
-    /** Coefficient applique a la production agricole par niveau de Ferme au-dessus de 1. */
+    /**
+     * Bonus de production agricole par niveau de ferme au-dela du niveau 1.
+     * Applique multiplicativement sur la production de base.
+     */
     public static final double BONUS_FERME_PAR_NIVEAU = 0.10;
 
     // ----------------------------------------------------------------------
-    // SPRINT 1 : EVENEMENT CODE EN DUR
+    // EVENEMENTS PROGRAMMES
     // ----------------------------------------------------------------------
 
-    /** Au tour 2, un evenement teste est declenche (cf. plan d'architecture section 8). */
+    /** Tour auquel l'evenement de demonstration se declenche. */
     public static final int TOUR_EVENEMENT_TEST = 2;
 }

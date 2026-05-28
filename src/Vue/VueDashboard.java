@@ -10,11 +10,12 @@ import Vue.i18n.Traducteur;
 import Vue.onglets.OngletEconomie;
 
 /**
- * Panneau central du jeu : JTabbedPane qui contient tous les onglets metier.
+ * Panneau central de la fenetre de jeu, organise en {@link JTabbedPane}.
+ * Chaque onglet correspond a un domaine fonctionnel du royaume (economie,
+ * population, infrastructures, ...).
  *
- * Au Sprint 1, on n'a qu'un seul onglet (Economie). Les 7 autres viendront
- * Sprint 2+ (Population dediee, Infrastructures, Recherche, Militaire,
- * Espionnage, Diplomatie, Journal).
+ * Cette classe n'effectue que le cablage des onglets ; chaque onglet est
+ * responsable de son propre rafraichissement via Observer.
  */
 public class VueDashboard extends JPanel {
 
@@ -22,6 +23,10 @@ public class VueDashboard extends JPanel {
 
     private final JTabbedPane onglets;
 
+    /**
+     * @param partie modele racine, dont le royaume joueur sera observe par
+     *               les onglets
+     */
     public VueDashboard(Partie partie) {
         setLayout(new BorderLayout());
         this.onglets = new JTabbedPane();

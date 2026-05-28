@@ -1,9 +1,8 @@
 package Modele.infrastructure;
 
 /**
- * Les 9 batiments du royaume, tous presents au niveau 1 des le tour 1.
- * Aucune construction ni demolition n'est possible : seules les ameliorations
- * et les reparations existent (cf. Epic 3 du cahier des charges).
+ * Catalogue des batiments constructibles dans un royaume. Chaque type est
+ * associe a une cle d'internationalisation pour son libelle localise.
  */
 public enum TypeBatiment {
 
@@ -23,6 +22,9 @@ public enum TypeBatiment {
         this.cleI18n = cleI18n;
     }
 
+    /**
+     * @return cle de traduction du nom du batiment (ex. {@code "batiment.ferme"})
+     */
     public String cleI18n() {
         return this.cleI18n;
     }

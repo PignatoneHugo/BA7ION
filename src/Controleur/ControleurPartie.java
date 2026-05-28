@@ -7,54 +7,58 @@ import Vue.FenetreJeu;
 import Vue.VueHUD;
 
 /**
- * Chef d'orchestre de la couche Controleur. Possede la reference vers la
- * Partie et expose les actions de haut niveau (terminer le tour, sauvegarder,
- * charger). Au Sprint 1, on n'a que terminer le tour.
+ * Chef d'orchestre cote controleur. Detient la reference vers la {@link Partie}
+ * et expose les actions de haut niveau accessibles depuis l'interface, en
+ * commencant par la fin de tour.
  *
- * Ce controleur s'attache au bouton "Fin de tour" du VueHUD via un
- * ActionListener (cf. plan d'architecture section 10 : "Tout listener Swing
- * est attache par un controleur").
+ * A l'instanciation, le controleur s'abonne aux composants Swing de la
+ * {@link FenetreJeu} qui exposent les declencheurs utilisateur (bouton de fin
+ * de tour notamment). Cette responsabilite de cablage suit la convention du
+ * projet : aucun listener n'est branche dans le constructeur d'une vue.
  *
- * Implementation de la fin de tour : on appelle {@code partie.passerEtape()}
- * en boucle jusqu'a retourner en EtatPlanification. Au Sprint 1 il n'y a pas
- * de dialogue d'evenement bloquant ; ce sera ajoute Sprint 2+ (cf. risque 3
- * du plan d'architecture).
+ * La fin de tour consiste a faire avancer la machine a etats du tour jusqu'a
+ * son retour en phase de planification. Aucun dialogue bloquant n'est emis
+ * pour le moment.
  */
 public class ControleurPartie {
 
     private final Partie partie;
     private final FenetreJeu fenetre;
 
+    /**
+     * @param partie modele racine pilote par ce controleur
+     * @param fenetre fenetre principale dont les composants seront cables
+     */
     public ControleurPartie(Partie partie, FenetreJeu fenetre) {
         this.partie = partie;
         this.fenetre = fenetre;
-        cablerEvenements();
+        miseEnPlaceEvenements();
     }
 
-    private void cablerEvenements() {
+    /**
+     * Cable les ActionListener sur les composants Swing de la fenetre.
+     */
+    private void miseEnPlaceEvenements() {
         VueHUD hud = this.fenetre.hud();
         hud.boutonFinTour().addActionListener(e -> terminerTour());
     }
 
     /**
-     * Lance la phase de resolution : on enchaine les phases jusqu'a retour
-     * en EtatPlanification.
+     * Declenche la resolution du tour courant : enchaine les phases de la
+     * machine a etats jusqu'au retour en phase de planification, puis notifie
+     * le demarrage du tour suivant.
      *
-     * On execute sur l'EDT Swing (le clic vient deja de l'EDT). Au Sprint 1
-     * la resolution est synchrone et rapide ; quand on ajoutera le
-     * DialogueEvenement (Sprint 2+), il faudra rendre la main a l'EDT entre
-     * EtatEvenement et la suite (cf. risque 3 du plan d'architecture).
+     * Pour eviter qu'une erreur de definition des transitions ne provoque
+     * une boucle infinie, un garde-fou interrompt l'execution au-dela d'un
+     * nombre de phases largement superieur au cycle nominal.
      */
     public void terminerTour() {
         SwingUtilities.invokeLater(() -> {
-            // Boucle de resolution : on quitte des qu'on est de nouveau en attente joueur.
             int garde = 0;
             do {
                 this.partie.passerEtape();
                 garde++;
                 if (garde > 50) {
-                    // Garde-fou contre les boucles infinies (transition d'etat
-                    // mal definie). 50 phases largement au-dessus des 9 prevues.
                     throw new IllegalStateException(
                             "Boucle de resolution > 50 phases : transition incorrecte ?");
                 }

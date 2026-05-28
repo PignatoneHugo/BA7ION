@@ -1,15 +1,11 @@
 package Modele.population;
 
 /**
- * Roles que peut occuper un habitant.
+ * Affectation possible d'un habitant. Le role definit ce qu'un habitant
+ * produit ou represente pour le royaume.
  *
- * Le role INACTIF est le role par defaut : un habitant inactif ne produit rien
- * mais peut etre reaffecte gratuitement. Les autres roles produisent une
- * ressource ou un service.
- *
- * Les soldats ne sont pas representes ici : ils sont geres separement dans
- * {@link Modele.militaire.Armee} car leur "role" porte aussi un type d'unite
- * (Infanterie/Archers/Lanciers/Cavalerie).
+ * {@link #INACTIF} est l'affectation par defaut : un habitant inactif ne
+ * produit rien mais reste disponible pour etre reaffecte a tout moment.
  */
 public enum Role {
 
@@ -26,6 +22,9 @@ public enum Role {
         this.cleI18n = cleI18n;
     }
 
+    /**
+     * @return cle de traduction du nom du role (ex. {@code "role.fermier"})
+     */
     public String cleI18n() {
         return this.cleI18n;
     }

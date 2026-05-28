@@ -1,11 +1,10 @@
 package Modele.economie;
 
 /**
- * Les 5 ressources du jeu. L'or, la nourriture, le bois et la pierre sont les
- * ressources de base. Le savoir est genere uniquement par les Erudits et sert
- * a activer les decrets (cf. Epic 4).
+ * Catalogue des ressources economiques produites et consommees par un royaume.
  *
- * Chaque ressource possede une cle i18n pour son nom localise.
+ * Chaque ressource est associee a une cle d'internationalisation qui permet
+ * d'obtenir son libelle localise via le Traducteur.
  */
 public enum Ressource {
 
@@ -21,6 +20,9 @@ public enum Ressource {
         this.cleI18n = cleI18n;
     }
 
+    /**
+     * @return cle de traduction du nom de la ressource (ex. {@code "ressource.or"})
+     */
     public String cleI18n() {
         return this.cleI18n;
     }

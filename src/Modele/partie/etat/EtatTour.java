@@ -3,34 +3,34 @@ package Modele.partie.etat;
 import Modele.partie.Partie;
 
 /**
- * Pattern State pour le cycle de tour (9 phases ordonnees).
+ * Phase du cycle de tour. Implementation du pattern State : le {@link Modele.partie.Tour}
+ * delegue le traitement de la phase courante a l'instance d'EtatTour qu'il
+ * detient, puis transite vers l'etat suivant retourne par {@link #suivant()}.
  *
- * Chaque sous-classe represente une phase. Le Tour delegue {@code passerEtape()}
- * a son etat courant qui :
- *   1. execute son traitement metier ({@link #executer(Partie)}),
- *   2. retourne l'etat suivant ({@link #suivant()}) pour la transition.
- *
- * Note importante (cf. risque 3 du plan d'architecture) :
- * {@link #executer(Partie)} peut etre asynchrone. Si une phase bloque sur une
- * interaction utilisateur (cas de EtatEvenement), elle stocke l'attente dans
- * la Partie, et le ControleurPartie reprend la chaine quand le joueur a repondu.
+ * Une phase peut etre purement synchrone (production, consommation) ou
+ * suspendue en attente d'une interaction utilisateur. Dans ce dernier cas,
+ * la phase enregistre son attente dans la {@link Partie} et rend la main au
+ * controleur, qui relance la chaine apres la reponse du joueur.
  */
 public interface EtatTour {
 
     /**
-     * Execute la phase. Modifie le modele et notifie les observers
-     * (au moins une fois, avec une Notification de type PHASE_CHANGEE).
+     * Execute le traitement metier de la phase. L'implementation doit
+     * notifier au moins une fois les Observers avec une notification de type
+     * {@code PHASE_CHANGEE}, ainsi que toutes les notifications metier
+     * propres aux modifications effectuees.
+     *
+     * @param partie partie sur laquelle la phase s'applique
      */
     void executer(Partie partie);
 
     /**
-     * Retourne l'etat suivant dans le cycle (jamais null).
-     * Apres {@code EtatFinTour}, on revient a {@code EtatPlanification}.
+     * @return phase qui doit etre executee apres celle-ci, jamais null
      */
     EtatTour suivant();
 
     /**
-     * Cle i18n pour l'affichage du nom de la phase dans le HUD/journal.
+     * @return cle de traduction du nom de la phase (ex. {@code "phase.production"})
      */
     String nomCle();
 }

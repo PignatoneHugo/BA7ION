@@ -6,12 +6,11 @@ import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
 /**
- * Phase 2 du tour : chaque royaume consomme la nourriture necessaire a sa
- * population civile. En cas de penurie, des habitants meurent (famine
- * simplifiee, sera affinee Sprint 2+).
+ * Phase de consommation : chaque royaume retire de son tresor la nourriture
+ * necessaire a ses habitants. En cas de penurie, la {@link Royaume} gere
+ * elle-meme la baisse d'effectifs.
  *
- * En sortie : EtatFinTour (au Sprint 1 on saute les phases combat/IA/evenement
- * et on enchaine directement la fin du tour ; ces phases viendront Sprint 2+).
+ * Transition : enchaine sur {@link EtatFinTour}.
  */
 public class EtatConsommation implements EtatTour {
 

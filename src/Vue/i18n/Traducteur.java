@@ -5,18 +5,22 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Singleton de traduction des chaines de l'interface (FR par defaut, EN
- * commutable via {@link #definirLocale(Locale)}).
+ * Point d'entree unique pour l'internationalisation de l'interface. Charge un
+ * {@link ResourceBundle} a partir des fichiers de proprietes situes dans le
+ * package {@code Vue/i18n/strings_xx.properties} et expose la methode
+ * {@link #t(String)} qui traduit une cle en chaine localisee.
  *
- * Usage :
+ * <p>Toutes les chaines affichees a l'utilisateur doivent passer par cette
+ * classe, jamais etre ecrites en dur dans le code des vues.</p>
+ *
+ * <p>Exemple :</p>
+ * <pre>
  *     String titre = Traducteur.t("app.titre");
+ * </pre>
  *
- * Toutes les chaines affichees doivent passer par cette classe (cf. plan
- * d'architecture section 10). Les fichiers de proprietes se trouvent dans
- * {@code Vue/i18n/strings_xx.properties}.
- *
- * Si une cle n'est pas traduite, la cle elle-meme est retournee : cela rend
- * les oublis de traduction visibles a l'execution.
+ * Si une cle n'est pas presente dans le bundle, la cle elle-meme est
+ * retournee : les oublis de traduction sont ainsi immediatement visibles a
+ * l'execution sans provoquer d'exception.
  */
 public final class Traducteur {
 
@@ -24,14 +28,17 @@ public final class Traducteur {
     private static ResourceBundle bundle = ResourceBundle.getBundle(BASE, Locale.FRENCH);
 
     private Traducteur() {
-        // Classe utilitaire.
+        // Classe utilitaire, ne pas instancier.
     }
 
     /**
-     * Change la langue de l'interface. Effet immediat : les prochains appels
-     * a {@link #t(String)} retournent les chaines dans la nouvelle langue.
-     * Les composants Swing deja affiches doivent etre rafraichis manuellement
-     * (a faire dans Sprint 2+ avec un Observer sur le Traducteur).
+     * Change la langue courante de l'interface. Les appels suivants a
+     * {@link #t(String)} retournent les traductions dans la nouvelle langue ;
+     * les composants Swing deja affiches doivent etre rafraichis par
+     * l'appelant.
+     *
+     * @param locale nouvelle langue cible, non null
+     * @throws IllegalArgumentException si {@code locale} est null
      */
     public static void definirLocale(Locale locale) {
         if (locale == null) {
@@ -40,12 +47,19 @@ public final class Traducteur {
         bundle = ResourceBundle.getBundle(BASE, locale);
     }
 
+    /**
+     * @return langue actuellement utilisee par le bundle
+     */
     public static Locale localeCourante() {
         return bundle.getLocale();
     }
 
     /**
-     * Retourne la traduction de la cle, ou la cle elle-meme si absente.
+     * Traduit une cle dans la langue courante.
+     *
+     * @param cle cle i18n a resoudre (ex. {@code "ressource.or"})
+     * @return la traduction associee, ou la cle elle-meme si aucune
+     *         traduction n'est definie ; chaine vide si {@code cle} est null
      */
     public static String t(String cle) {
         if (cle == null) {

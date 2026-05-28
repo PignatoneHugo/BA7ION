@@ -3,22 +3,23 @@ package Modele.infrastructure;
 import Modele.royaume.Royaume;
 
 /**
- * Classe abstraite parente des 9 batiments.
+ * Squelette commun a tous les batiments d'un royaume.
  *
- * Utilise le pattern Template Method pour le calcul de production :
- *   - {@link #produire(Royaume)} (final) decrit le squelette,
- *   - les sous-classes implementent {@link #appliquerProduction(Royaume)} pour
- *     definir la ressource produite et la formule de calcul.
- *
- * Au Sprint 1 on ne gere ni les niveaux d'amelioration ni les degats ; ils
- * seront ajoutes dans un Sprint suivant.
+ * Cette classe applique le pattern Template Method : la methode publique
+ * {@link #produire(Royaume)} est finale et fixe les invariants communs
+ * (controles d'arguments, hooks futurs), tandis que la logique de production
+ * propre a chaque batiment est implementee par les sous-classes dans
+ * {@link #appliquerProduction(Royaume)}.
  */
 public abstract class Batiment {
 
-    /** Niveau actuel du batiment (1 a 5, max selon US-INFRA-11). */
+    /** Niveau du batiment, croissant. Le niveau initial est 1. */
     protected int niveau;
 
-    /** True si le batiment est endommage (production reduite, cf. US-INFRA-23). */
+    /**
+     * Indique si le batiment est actuellement endommage. Un batiment
+     * endommage produit a effet reduit jusqu'a sa reparation.
+     */
     protected boolean endommage;
 
     protected Batiment() {
@@ -26,6 +27,9 @@ public abstract class Batiment {
         this.endommage = false;
     }
 
+    /**
+     * @return type concret du batiment, utilise pour le filtrage et l'i18n
+     */
     public abstract TypeBatiment type();
 
     public int niveau() {
@@ -41,18 +45,20 @@ public abstract class Batiment {
     }
 
     /**
-     * Augmente le niveau de 1. A appeler en fin de chantier d'amelioration.
+     * Incremente le niveau du batiment d'une unite, typiquement appele en
+     * fin de chantier d'amelioration.
      */
     public void monterNiveau() {
         this.niveau++;
     }
 
     /**
-     * Template Method : applique la production du batiment au tresor du royaume.
-     * A appeler durant la phase EtatProduction du cycle de tour.
+     * Applique la production du tour pour ce batiment. Methode finale : les
+     * sous-classes redefinissent uniquement la formule de production via
+     * {@link #appliquerProduction(Royaume)}.
      *
-     * Les sous-classes implementent {@link #appliquerProduction(Royaume)} pour
-     * la formule specifique. L'attribut {@code endommage} reduit l'effet (US-INFRA-23).
+     * @param royaume royaume beneficiaire de la production, non null
+     * @throws IllegalArgumentException si {@code royaume} est null
      */
     public final void produire(Royaume royaume) {
         if (royaume == null) {
@@ -62,9 +68,11 @@ public abstract class Batiment {
     }
 
     /**
-     * A implementer par chaque sous-classe : ajoute au tresor du royaume la
-     * production calculee a partir du nombre d'habitants concernes et des
-     * modificateurs (niveau, decrets, saison, endommagement).
+     * Calcule et applique la production de ce batiment sur le tresor du
+     * royaume. L'implementation doit prendre en compte le {@link #niveau} et
+     * l'etat {@link #endommage}.
+     *
+     * @param royaume royaume beneficiaire, garanti non null
      */
     protected abstract void appliquerProduction(Royaume royaume);
 }

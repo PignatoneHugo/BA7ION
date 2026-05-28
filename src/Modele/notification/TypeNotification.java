@@ -1,34 +1,31 @@
 package Modele.notification;
 
 /**
- * Categorise les notifications emises par les Observable du modele
- * (Partie, Royaume) vers les vues.
+ * Categories d'evenements qu'un Observable du modele peut emettre vers ses
+ * Observers. Permet aux vues de filtrer rapidement les notifications a traiter
+ * sans avoir a inspecter le contenu de la donnee transportee.
  *
- * Le filtrage dans Vue#update(Observable, Object) se fait via :
- *     if (arg instanceof Notification n {@literal &&} n.type() == TypeNotification.X) { ... }
- *
- * Convention : un seul enum centralise tous les types de notifications
- * pour faciliter le suivi des messages traverses dans l'application.
+ * @see Notification
  */
 public enum TypeNotification {
 
-    // --- Cycle de tour ---
+    // Cycle de tour
     TOUR_DEMARRE,
     PHASE_CHANGEE,
     TOUR_TERMINE,
 
-    // --- Royaume ---
+    // Etat d'un royaume
     TRESOR_CHANGE,
     POPULATION_CHANGEE,
     MORAL_CHANGE,
     BATIMENTS_CHANGES,
     FILE_ACTIONS_CHANGEE,
 
-    // --- Evenements ---
+    // Evenements aleatoires
     EVENEMENT_EN_ATTENTE,
     EVENEMENT_RESOLU,
 
-    // --- Fin de partie ---
+    // Conditions de fin
     PARTIE_GAGNEE,
     PARTIE_PERDUE
 }

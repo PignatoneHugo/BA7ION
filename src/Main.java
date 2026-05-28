@@ -7,30 +7,36 @@ import Modele.population.Role;
 import Vue.FenetreJeu;
 
 /**
- * Point d'entree du jeu BAS7ION (Sprint 1).
+ * Point d'entree de l'application BAS7ION. Cable les trois couches du MVC
+ * dans l'ordre :
+ * <ol>
+ *   <li>construction du modele via {@link PartieBuilder} ;</li>
+ *   <li>creation de la {@link FenetreJeu} (vue) sur l'Event Dispatch Thread ;</li>
+ *   <li>instanciation du {@link ControleurPartie}, qui s'abonne aux
+ *       composants Swing exposes par la vue.</li>
+ * </ol>
  *
- * Cable Modele + Vue + Controleur selon le pattern MVC du cours (cf. TP Chat).
- * Apres le Sprint 1, l'application passera d'abord par un MenuPrincipal qui
- * appellera ce cablage uniquement apres "Nouvelle partie".
+ * Toute la creation de l'interface graphique est confinee a l'EDT, comme
+ * l'exige Swing.
  */
 public class Main {
 
     public static void main(String[] args) {
-        // --- Construction du modele ---
+        // Choix de la langue de l'interface.
+        // Par defaut, le jeu demarre en francais (cf. Traducteur).
+        // Pour tester l'interface en anglais, decommenter la ligne suivante :
+        // Vue.i18n.Traducteur.definirLocale(java.util.Locale.ENGLISH);
+
         Partie partie = new PartieBuilder()
                 .nomJoueur("Royaume du Joueur")
                 .nombreBots(0)
                 .build();
 
-        // Pour valider visuellement la production au Sprint 1, on affecte
-        // 6 inactifs en fermiers des le tour 1.
-        //   Production : 6 fermiers x 2 = 12 nourriture / tour
-        //   Consommation : 10 habitants x 1 = 10 nourriture / tour
-        //   Bilan net : +2 / tour --> la nourriture monte visiblement.
-        // Cette affectation sera plus tard a la charge du joueur via l'UI.
+        // Affectation initiale qui rend la production de nourriture visible
+        // des le premier tour : 6 fermiers * 2 = 12 produits, 10 habitants
+        // consomment 10, soit un solde net de +2 par tour.
         partie.joueur().reaffecter(Role.INACTIF, Role.FERMIER, 6);
 
-        // --- Construction de la vue + controleur, sur l'EDT Swing ---
         SwingUtilities.invokeLater(() -> {
             FenetreJeu fenetre = new FenetreJeu(partie);
             new ControleurPartie(partie, fenetre);

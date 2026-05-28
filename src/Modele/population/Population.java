@@ -6,24 +6,31 @@ import java.util.Map;
 import config.Equilibrage;
 
 /**
- * Population d'un royaume. Au Sprint 1 on stocke uniquement les effectifs
- * agreges par role (pas d'objet Habitant individuel) : suffisant pour les
- * calculs de production et la jauge de moral.
+ * Population d'un royaume, modelisee comme une repartition d'habitants par
+ * {@link Role}. Tous les habitants sont comptabilises (y compris les
+ * {@link Role#INACTIF}) et le total ne peut pas depasser la capacite de
+ * logement courante.
  *
- * Pas d'Observable ici : c'est Royaume qui notifie POPULATION_CHANGEE.
- *
- * Les Soldats sont compteurs separement dans {@link Modele.militaire.Armee}
- * (ils consomment de la nourriture mais ne sont pas dans cette repartition).
+ * Cette classe ne notifie pas elle-meme les Observers : c'est le Royaume qui
+ * la contient qui emet une notification {@code POPULATION_CHANGEE}.
  */
 public class Population {
 
     private final Map<Role, Integer> effectifs = new EnumMap<>(Role.class);
     private int capaciteLogement;
 
+    /**
+     * Construit une population initialisee avec les valeurs par defaut de
+     * la table d'equilibrage.
+     */
     public Population() {
         this(Equilibrage.POPULATION_INITIALE, Equilibrage.CAPACITE_LOGEMENT_INITIALE);
     }
 
+    /**
+     * @param totalInitial nombre d'habitants au tour 1, tous places en {@link Role#INACTIF}
+     * @param capaciteLogement plafond impose au total des effectifs
+     */
     public Population(int totalInitial, int capaciteLogement) {
         for (Role r : Role.values()) {
             this.effectifs.put(r, 0);
@@ -32,7 +39,9 @@ public class Population {
         this.capaciteLogement = capaciteLogement;
     }
 
-    /** Total des habitants civils, soldats exclus. */
+    /**
+     * @return somme des effectifs sur tous les roles
+     */
     public int total() {
         int t = 0;
         for (int n : this.effectifs.values()) {
@@ -49,6 +58,10 @@ public class Population {
         return this.capaciteLogement;
     }
 
+    /**
+     * @param nouvelle nouvelle capacite, doit etre positive ou nulle
+     * @throws IllegalArgumentException si {@code nouvelle} est negative
+     */
     public void definirCapaciteLogement(int nouvelle) {
         if (nouvelle < 0) {
             throw new IllegalArgumentException("La capacite de logement doit etre positive.");
@@ -57,8 +70,14 @@ public class Population {
     }
 
     /**
-     * Reaffecte un habitant d'un role source vers un role cible.
-     * @return true si la reaffectation a eu lieu, false sinon
+     * Deplace un certain nombre d'habitants d'un role vers un autre.
+     * L'operation est atomique : elle echoue sans rien modifier si le role
+     * source ne contient pas assez d'habitants.
+     *
+     * @param source role d'origine
+     * @param cible role d'arrivee
+     * @param montant nombre d'habitants a deplacer (doit etre strictement positif)
+     * @return {@code true} si la reaffectation a ete appliquee
      */
     public boolean reaffecter(Role source, Role cible, int montant) {
         if (montant <= 0) {
@@ -73,9 +92,11 @@ public class Population {
     }
 
     /**
-     * Cree de nouveaux inactifs (croissance demographique).
-     * Si la capacite est atteinte, le surplus est perdu et la methode retourne
-     * combien d'habitants ont effectivement ete ajoutes.
+     * Tente d'ajouter de nouveaux inactifs (croissance demographique). Le
+     * surplus au-dela de la capacite de logement est rejete.
+     *
+     * @param montant nombre d'habitants demande
+     * @return nombre d'habitants effectivement ajoutes
      */
     public int ajouterInactifs(int montant) {
         if (montant <= 0) {
@@ -88,9 +109,14 @@ public class Population {
     }
 
     /**
-     * Retire des habitants (famine, epidemie, revolte...) repartis dans tous
-     * les roles proportionnellement.
-     * @return le nombre d'habitants effectivement retires
+     * Retire des habitants suite a une famine, une epidemie ou tout autre
+     * evenement letal. Les inactifs sont prioritaires ; si cela ne suffit
+     * pas, les autres roles sont decrementes dans l'ordre de declaration de
+     * l'enum (deterministe).
+     *
+     * @param montant nombre d'habitants a retirer
+     * @return nombre d'habitants effectivement retires (peut etre inferieur
+     *         a {@code montant} si la population totale n'est pas suffisante)
      */
     public int retirerHabitants(int montant) {
         if (montant <= 0) {
@@ -101,14 +127,13 @@ public class Population {
             return 0;
         }
         int aRetirer = Math.min(montant, total);
-        // Strategie simple : on retire prioritairement les Inactifs.
         int restant = aRetirer;
+
         int inactifs = this.effectifs.get(Role.INACTIF);
         int retraitInactifs = Math.min(restant, inactifs);
         this.effectifs.merge(Role.INACTIF, -retraitInactifs, Integer::sum);
         restant -= retraitInactifs;
 
-        // Puis les autres roles dans l'ordre alphabetique pour determinisme.
         if (restant > 0) {
             for (Role r : Role.values()) {
                 if (r == Role.INACTIF) {

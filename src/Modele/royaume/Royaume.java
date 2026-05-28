@@ -18,14 +18,14 @@ import Modele.population.Role;
 import config.Equilibrage;
 
 /**
- * Agregat principal du modele cote royaume. Une instance par participant
- * (joueur + bots). Cette classe est le seul Observable cote "royaume" :
- * ses sous-composants (Tresor, Population) ne notifient pas eux-memes.
+ * Royaume controle par un joueur ou un bot. C'est l'agregat central du modele
+ * metier : il regroupe le tresor, la population, les batiments et la file
+ * d'actions planifiees, et il est le seul {@link Observable} de cette grappe.
  *
- * Convention (cf. plan d'architecture section 10) :
- *   - Toute methode publique modificatrice se termine par {@code setChanged()}
- *     + {@code notifyObservers(new Notification(...))}.
- *   - L'argument de notifyObservers est TOUJOURS une Notification.
+ * Convention de notification : chaque methode publique modificatrice se
+ * termine par {@code setChanged()} + {@code notifyObservers(new Notification(...))}
+ * pour permettre aux vues de se rafraichir. Les sous-composants n'emettent
+ * jamais eux-memes : c'est le royaume qui agrege et notifie.
  */
 public class Royaume extends Observable {
 
@@ -35,6 +35,9 @@ public class Royaume extends Observable {
     private final List<Batiment> batiments;
     private final FileActions fileActions;
 
+    /**
+     * @param nom nom affiche du royaume
+     */
     public Royaume(String nom) {
         this.nom = nom;
         this.tresor = new Tresor();
@@ -42,13 +45,8 @@ public class Royaume extends Observable {
         this.batiments = new ArrayList<>();
         this.fileActions = new FileActions();
 
-        // Tous les batiments sont presents au niveau 1 des le tour 1
-        // (cf. Epic 3 note preliminaire). Au Sprint 1 on n'instancie que
-        // la Ferme ; les 8 autres viendront avec leurs sous-classes.
         this.batiments.add(new Ferme());
     }
-
-    // ----- Accesseurs lecture seule -----
 
     public String nom() {
         return this.nom;
@@ -66,6 +64,11 @@ public class Royaume extends Observable {
         return this.batiments;
     }
 
+    /**
+     * Recherche le batiment du type demande dans ce royaume.
+     *
+     * @return le batiment trouve, ou {@code null} si aucun n'existe
+     */
     public Batiment batiment(TypeBatiment type) {
         for (Batiment b : this.batiments) {
             if (b.type() == type) {
@@ -79,11 +82,12 @@ public class Royaume extends Observable {
         return this.fileActions;
     }
 
-    // ----- Operations metier qui notifient -----
-
     /**
-     * Reaffecte des habitants d'un role vers un autre.
-     * Notifie POPULATION_CHANGEE si l'operation a reussi.
+     * Deplace des habitants d'un role vers un autre. Notifie
+     * {@code POPULATION_CHANGEE} si l'operation est appliquee.
+     *
+     * @return {@code true} si la reaffectation a eu lieu
+     * @see Population#reaffecter(Role, Role, int)
      */
     public boolean reaffecter(Role source, Role cible, int montant) {
         boolean ok = this.population.reaffecter(source, cible, montant);
@@ -95,9 +99,12 @@ public class Royaume extends Observable {
     }
 
     /**
-     * Applique la consommation de nourriture des habitants civils.
-     * Si le stock est insuffisant, retire des habitants (famine simplifiee).
-     * Notifie TRESOR_CHANGE puis eventuellement POPULATION_CHANGEE.
+     * Applique la consommation de nourriture des habitants pour un tour. Si
+     * le stock est insuffisant, declenche une famine qui retire des habitants
+     * proportionnellement au deficit.
+     *
+     * Notifie systematiquement {@code TRESOR_CHANGE}, puis
+     * {@code POPULATION_CHANGEE} si une famine a eu lieu.
      */
     public void appliquerConsommationCivile() {
         int total = this.population.total();
@@ -108,8 +115,6 @@ public class Royaume extends Observable {
 
         int deficit = besoin - retire;
         if (deficit > 0) {
-            // Famine simplifiee : 1 habitant meurt par tranche de 5 unites
-            // de nourriture manquante (a reequilibrer Sprint 2+).
             int morts = Math.max(1, deficit / 5);
             int retireReellement = this.population.retirerHabitants(morts);
             if (retireReellement > 0) {
@@ -120,8 +125,9 @@ public class Royaume extends Observable {
     }
 
     /**
-     * Notifie un changement non specifie sur la file d'actions.
-     * A appeler par les controleurs apres ajout/retrait/vidage.
+     * A appeler par les controleurs apres une modification de la file
+     * d'actions (ajout, retrait, vidage) pour declencher le rafraichissement
+     * des vues qui l'affichent.
      */
     public void notifierFileActionsChangee() {
         setChanged();
@@ -129,7 +135,8 @@ public class Royaume extends Observable {
     }
 
     /**
-     * Notification utilitaire apres production (utilisee par EtatProduction).
+     * A appeler une fois la production de tous les batiments appliquee, pour
+     * que les vues qui affichent le tresor se rafraichissent.
      */
     public void notifierProduction() {
         setChanged();

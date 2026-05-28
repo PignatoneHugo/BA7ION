@@ -5,13 +5,10 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 
 /**
- * Derniere phase du tour : on incremente le compteur de tour, on declenche
- * eventuellement l'autosauvegarde (Sprint 2+), et on retourne en planification.
+ * Phase finale : incremente le compteur de tour, declenche l'autosauvegarde
+ * et notifie la fin du cycle.
  *
- * Au Sprint 1, on declenche aussi un evenement test code en dur au tour 2
- * (cf. plan d'architecture section 8) pour valider le cablage du dialogue
- * d'evenement. Cet evenement test sera remplace par le vrai systeme
- * d'evenements aleatoires en Sprint 2+.
+ * Transition : revient sur {@link EtatPlanification} pour le tour suivant.
  */
 public class EtatFinTour implements EtatTour {
 

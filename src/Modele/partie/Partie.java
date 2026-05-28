@@ -10,17 +10,17 @@ import Modele.notification.TypeNotification;
 import Modele.royaume.Royaume;
 
 /**
- * Racine du modele. Une seule instance vivante a la fois (sauf transition de
- * chargement). Contient le royaume joueur, la liste des bots, le tour courant.
+ * Racine du modele de jeu. Une instance represente une partie en cours :
+ * elle agrege le royaume du joueur, ses adversaires et le compteur de tour.
  *
- * Cette classe est Observable : elle relaie les notifications de cycle de tour
- * (PHASE_CHANGEE, TOUR_TERMINE) et les conditions de fin (PARTIE_GAGNEE,
- * PARTIE_PERDUE). Les changements locaux d'un royaume (TRESOR_CHANGE, etc.)
- * sont emis par le Royaume concerne lui-meme.
+ * La Partie est Observable et relaie les notifications globales du cycle
+ * (PHASE_CHANGEE, TOUR_TERMINE) ainsi que les conditions de fin
+ * (PARTIE_GAGNEE, PARTIE_PERDUE). Les notifications locales (changement de
+ * tresor, de population, etc.) sont emises directement par le {@link Royaume}
+ * concerne.
  *
- * Pour faire avancer le tour, on appelle {@link #passerEtape()} en boucle
- * jusqu'a ce que {@link #enAttenteJoueur()} retourne true (retour en
- * EtatPlanification).
+ * Avancement d'un tour : appeler {@link #passerEtape()} en boucle jusqu'a
+ * ce que {@link #enAttenteJoueur()} renvoie {@code true}.
  */
 public class Partie extends Observable {
 
@@ -28,10 +28,18 @@ public class Partie extends Observable {
     private final List<Royaume> bots;
     private final Tour tour;
 
+    /**
+     * Partie en solo sans adversaire.
+     */
     public Partie(Royaume joueur) {
         this(joueur, new ArrayList<>());
     }
 
+    /**
+     * @param joueur royaume controle par l'utilisateur, non null
+     * @param bots adversaires geres par une IA (peut etre vide)
+     * @throws IllegalArgumentException si {@code joueur} est null
+     */
     public Partie(Royaume joueur, List<Royaume> bots) {
         if (joueur == null) {
             throw new IllegalArgumentException("Le royaume joueur ne peut pas etre null.");
@@ -49,7 +57,9 @@ public class Partie extends Observable {
         return Collections.unmodifiableList(this.bots);
     }
 
-    /** Liste {joueur} U bots, dans l'ordre. */
+    /**
+     * @return liste ordonnee contenant le joueur suivi des bots
+     */
     public List<Royaume> tousLesRoyaumes() {
         List<Royaume> tous = new ArrayList<>(this.bots.size() + 1);
         tous.add(this.joueur);
@@ -74,26 +84,28 @@ public class Partie extends Observable {
     }
 
     /**
-     * Avance d'une phase. Appele par le ControleurPartie en boucle apres
-     * "Fin de tour" jusqu'a retour en EtatPlanification.
+     * Avance d'une phase dans le cycle de tour.
      */
     public void passerEtape() {
         this.tour.executerPhaseCourante(this);
     }
 
     /**
-     * Notification utilitaire pour signaler le demarrage d'un nouveau tour
-     * (utile pour le HUD).
+     * Notifie le demarrage d'un nouveau tour. A appeler par le controleur
+     * une fois la phase de resolution terminee, pour que le HUD se rafraichisse.
      */
     public void notifierTourDemarre() {
         notifier(new Notification(TypeNotification.TOUR_DEMARRE, this.numeroTour()));
     }
 
     /**
-     * Helper public expose aux EtatTour : encapsule l'appel a {@code setChanged()}
-     * (protected dans Observable) + {@code notifyObservers(arg)}. C'est le
-     * seul point d'entree pour qu'une classe d'un autre package puisse emettre
-     * une notification depuis cet Observable.
+     * Point d'entree unique permettant aux classes des sous-packages
+     * (notamment les {@link Modele.partie.etat.EtatTour}) d'emettre une
+     * notification depuis cet Observable. Encapsule l'appel a {@code setChanged()}
+     * + {@code notifyObservers(arg)}, qui ne peuvent pas etre invoques
+     * directement car {@code setChanged()} est protected.
+     *
+     * @param n notification a transmettre aux observers, non null
      */
     public void notifier(Notification n) {
         setChanged();

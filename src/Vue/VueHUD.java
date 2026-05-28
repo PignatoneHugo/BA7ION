@@ -15,24 +15,26 @@ import javax.swing.SwingConstants;
 
 import Modele.economie.Ressource;
 import Modele.notification.Notification;
-import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 import Vue.i18n.Traducteur;
 
 /**
- * Bandeau permanent en haut de l'ecran de jeu. Affiche :
- *   - le nom du royaume joueur,
- *   - les 5 ressources avec leur quantite,
- *   - la population et le numero de tour,
- *   - le bouton "Fin de tour".
+ * Bandeau d'informations permanent affiche en haut de la fenetre de jeu.
+ * Synthese a un coup d'oeil de l'etat du royaume joueur : nom, ressources,
+ * population, numero du tour, plus le bouton de fin de tour.
  *
- * Cette vue est purement passive : elle ne modifie jamais le modele. Le
- * bouton "Fin de tour" expose un getter {@link #boutonFinTour()} pour que le
- * ControleurPartie y attache son ActionListener.
+ * Cette vue est strictement passive : elle n'appelle jamais de setter du
+ * modele. Le bouton "Fin de tour" est expose via {@link #boutonFinTour()}
+ * pour permettre au controleur d'y attacher son {@code ActionListener}.
  *
- * Observe a la fois la Partie (pour TOUR_TERMINE, PHASE_CHANGEE) et le
- * Royaume du joueur (pour TRESOR_CHANGE, POPULATION_CHANGEE).
+ * Cette vue est Observer de deux Observables :
+ * <ul>
+ *   <li>la {@link Partie} pour les notifications globales
+ *       (TOUR_TERMINE, TOUR_DEMARRE, PHASE_CHANGEE) ;</li>
+ *   <li>le {@link Royaume} du joueur pour les notifications locales
+ *       (TRESOR_CHANGE, POPULATION_CHANGEE).</li>
+ * </ul>
  */
 public class VueHUD extends JPanel implements Observer {
 
@@ -47,6 +49,9 @@ public class VueHUD extends JPanel implements Observer {
     private final JLabel[] labelsRessources;
     private final JButton boutonFinTour;
 
+    /**
+     * @param partie modele racine observe par la vue
+     */
     public VueHUD(Partie partie) {
         this.partie = partie;
         this.royaumeJoueur = partie.joueur();
@@ -56,7 +61,7 @@ public class VueHUD extends JPanel implements Observer {
                 BorderFactory.createMatteBorder(0, 0, 2, 0, java.awt.Color.DARK_GRAY),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
-        // --- Partie gauche : nom + ressources ---
+        // Bloc de gauche : nom du royaume + ressources.
         JPanel gauche = new JPanel(new FlowLayout(FlowLayout.LEFT, 16, 0));
 
         this.labelNom = new JLabel(this.royaumeJoueur.nom());
@@ -73,7 +78,7 @@ public class VueHUD extends JPanel implements Observer {
 
         add(gauche, BorderLayout.WEST);
 
-        // --- Partie centrale : tour + population ---
+        // Bloc central : tour + population.
         JPanel centre = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         this.labelTour = new JLabel();
         this.labelPopulation = new JLabel();
@@ -81,21 +86,22 @@ public class VueHUD extends JPanel implements Observer {
         centre.add(this.labelPopulation);
         add(centre, BorderLayout.CENTER);
 
-        // --- Partie droite : bouton fin de tour ---
+        // Bloc de droite : bouton de fin de tour.
         JPanel droite = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         this.boutonFinTour = new JButton(Traducteur.t("app.fin_tour"));
         this.boutonFinTour.setPreferredSize(new Dimension(140, 32));
         droite.add(this.boutonFinTour);
         add(droite, BorderLayout.EAST);
 
-        // Affichage initial
         rafraichir();
 
-        // Cablage Observer
         this.partie.addObserver(this);
         this.royaumeJoueur.addObserver(this);
     }
 
+    /**
+     * @return bouton de fin de tour, expose pour le cablage par le controleur
+     */
     public JButton boutonFinTour() {
         return this.boutonFinTour;
     }
@@ -115,12 +121,13 @@ public class VueHUD extends JPanel implements Observer {
                 rafraichir();
                 break;
             default:
-                // Notifications non gerees par le HUD (ignorees silencieusement).
                 break;
         }
     }
 
-    /** Recalcule tous les labels depuis l'etat courant du modele. */
+    /**
+     * Recalcule l'affichage de tous les labels depuis l'etat courant du modele.
+     */
     private void rafraichir() {
         Ressource[] ressources = Ressource.values();
         for (int i = 0; i < ressources.length; i++) {

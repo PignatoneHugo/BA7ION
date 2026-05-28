@@ -4,19 +4,21 @@ import Modele.partie.etat.EtatPlanification;
 import Modele.partie.etat.EtatTour;
 
 /**
- * Compteur de tour + machine a etats des 9 phases (pattern State).
+ * Compteur de tour et machine a etats des phases de resolution.
  *
- * Le Tour delegue {@code executerPhaseCourante(Partie)} a son {@link #etat}
- * courant, puis transite vers l'etat suivant via {@link EtatTour#suivant()}.
- *
- * Pas d'Observable ici : c'est la Partie qui notifie PHASE_CHANGEE et
- * TOUR_TERMINE via ses etats.
+ * Le Tour delegue l'execution de la phase courante a son {@link EtatTour}
+ * puis transite vers l'etat suivant retourne par {@link EtatTour#suivant()}.
+ * Cette classe n'est pas Observable : les notifications associees au cycle
+ * de tour sont emises par les etats eux-memes via la {@link Partie}.
  */
 public class Tour {
 
     private int numero;
     private EtatTour etat;
 
+    /**
+     * Initialise un nouveau cycle de jeu au tour 1, en phase de planification.
+     */
     public Tour() {
         this.numero = 1;
         this.etat = new EtatPlanification();
@@ -34,6 +36,11 @@ public class Tour {
         this.numero++;
     }
 
+    /**
+     * Execute la phase courante puis transite vers la phase suivante.
+     *
+     * @param partie partie sur laquelle s'applique la phase
+     */
     public void executerPhaseCourante(Partie partie) {
         EtatTour courant = this.etat;
         courant.executer(partie);
@@ -41,8 +48,8 @@ public class Tour {
     }
 
     /**
-     * True si on est en attente de l'action du joueur (phase Planification),
-     * false si on est en train de derouler la resolution.
+     * @return {@code true} si le tour attend une action du joueur (phase de
+     *         planification), {@code false} pendant la resolution
      */
     public boolean enAttenteJoueur() {
         return this.etat instanceof EtatPlanification;
