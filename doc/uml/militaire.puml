@@ -1,0 +1,54 @@
+@startuml militaire
+
+enum TypeUnite {
+  INFANTERIE_LEGERE
+  ARCHER
+  LANCIER
+  CAVALERIE_LOURDE
+}
+
+enum PostureCombat {
+  ATTAQUE
+  DEFENSE
+  CONTOURNEMENT
+}
+
+class Unite {
+  - type : TypeUnite
+  - effectif : int
+  + puissanceAttaque() : double
+  + puissanceDefense() : double
+}
+
+class Armee {
+  - unites : List<Unite>
+  - posture : PostureCombat
+  + ajouterUnite(u : Unite)
+  + puissanceTotale() : double
+}
+
+class Bataille {
+  - attaquant : Armee
+  - defenseur : Armee
+  - bonusRemparts : int
+  + resoudre() : RapportCombat
+}
+
+class ResolveurCombat {
+  + resoudre(att : Armee, def : Armee,\n  posture : PostureCombat,\n  bonusRemparts : int) : RapportCombat
+}
+
+class RapportCombat {
+  - vainqueur : Armee
+  - pertesAttaquant : int
+  - pertesDefenseur : int
+}
+
+Armee "1" *-- "*" Unite
+Unite --> TypeUnite
+Armee --> PostureCombat
+Bataille "1" --> "2" Armee
+Bataille ..> ResolveurCombat
+ResolveurCombat ..> RapportCombat
+
+@enduml

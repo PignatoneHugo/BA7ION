@@ -239,19 +239,49 @@ grep -r "import javax.swing" src/Modele/   # 0 résultat attendu
 
 ---
 
-## 8. Backlog Sprint 2 envisagé
+## 8. Objectifs Sprint 2
 
-Priorisation à valider avec le Product Owner :
+**Période prévue** : `[À ajuster — ex. 29/05/2026 → 04/06/2026]`
 
-1. **Affecter des habitants depuis l'UI** (US-POP-05, US-POP-06, US-POP-07) — Antoine + Léna
-2. **Compléter les 8 bâtiments restants** (US-INFRA-14 à US-INFRA-22) — Mathéo
-3. **Système d'amélioration de bâtiments** (US-INFRA-10, US-INFRA-12) — Mathéo + Hugo (pour les chantiers en N tours = nouvelle Action différée)
-4. **`ResolveurCombat` testé en JUnit** (US-COMBAT-06 à US-COMBAT-09) — Benjamin
-5. **Premier événement aléatoire branché** (US-EVENT-01, US-EVENT-04, US-EVENT-06) — Fabien + Antoine
-6. **Menu principal + écran nouvelle partie** (US-UX-01, US-UX-02) — Antoine
-7. **Configuration de difficulté** (US-IA-15 à US-IA-18) — Fabien
+### 8.1 Sprint Goal
 
-**Estimation grossière** : ~20 US, à affiner en Sprint Planning.
+> *Rendre le jeu **interactif** : le joueur peut désormais reaffecter sa population, construire et améliorer ses bâtiments, et subir des événements aléatoires. En parallèle, les briques militaire et IA sont livrées en isolation (testées JUnit) pour préparer leur branchement au Sprint 3.*
+
+**Critère d'acceptation principal** : le joueur peut jouer 5 tours d'affilée en pilotant lui-même son économie via l'UI, un événement aléatoire popper, et `ResolveurCombat` passer 3 tests JUnit déterministes.
+
+### 8.2 User stories prioritaires
+
+| Priorité | US | Description | Assigné |
+|---|---|---|---|
+| P0 | US-POP-05 / 06 / 07 | Boutons +/− pour réaffecter les rôles dans l'UI | Antoine T. + Léna C. |
+| P0 | US-INFRA-14 à 22 | Implémenter les 8 bâtiments restants (Mine, Scierie, Habitations, Caserne, Remparts, Marché, Bibliothèque, Tour de Guet) | Mathéo D. |
+| P0 | US-INFRA-10 / 12 | Mécanique d'amélioration (chantier en N tours = `ActionAmeliorer` différée) | Mathéo D. + Hugo P. |
+| P0 | US-COMBAT-06 à 09 | `ResolveurCombat` + `Armee` + `Unite` + 3 tests JUnit déterministes (seed fixe) | Benjamin S. |
+| P1 | US-EVENT-01 / 04 / 06 | Premier événement aléatoire branché (`DialogueEvenement` modal) | Fabien S. + Antoine T. |
+| P1 | US-UX-01 / 02 | Menu principal + écran "Nouvelle partie" | Antoine T. |
+| P1 | US-ECO-08 / 09 | Système de taxes et impact sur le moral | Léna C. |
+| P2 | US-IA-15 à 18 | Configuration de difficulté (Facile / Normal / Difficile) | Fabien S. |
+| P2 | US-TOUR-07 | Compléter les 5 phases manquantes (`EtatActionsDifferees`, `EtatCombatsSubis`, `EtatCombatsOffensifs`, `EtatTourIA`, `EtatEvenement`) | Hugo P. |
+
+**Estimation grossière** : ~22 US, à affiner en Sprint Planning.
+
+### 8.3 Definition of Done du Sprint 2
+
+- [ ] Tous les bâtiments sont instanciables et produisent (ou hébergent / défendent) selon leur formule.
+- [ ] Le joueur peut, via l'UI, déplacer un habitant d'un rôle à un autre et voir l'effet au tour suivant.
+- [ ] Au moins un événement aléatoire se déclenche entre les tours 3 et 5 et applique son effet après choix du joueur.
+- [ ] `ResolveurCombat` passe 3 tests JUnit (victoire écrasante, défaite serrée, match équilibré) avec graine fixe.
+- [ ] Aucun import croisé Vue ↔ Modèle (vérifié par `grep`).
+- [ ] Couverture de tests : ≥ 30 % sur le package `Modele/combat/` et `Modele/economie/`.
+- [ ] Documentation : `doc/sprint2-review.md` rédigé, schémas UML mis à jour dans `doc/uml/`.
+
+### 8.4 Risques identifiés
+
+| Risque | Impact | Mitigation |
+|---|---|---|
+| Couplage UI ↔ logique de chantier (timing des Actions différées) | Régression possible du HUD | Hugo et Mathéo se synchronisent en début de sprint sur le contrat `ActionAmeliorer` |
+| Modal `DialogueEvenement` bloquant l'EDT | Freeze de l'application | Suivre la solution du plan d'archi (risque 3) : pause non synchrone, reprise par le contrôleur |
+| Tests JUnit non déterministes sur les combats | Faux positifs en CI | Tout l'aléatoire passe par `util.Aleatoire` seedable, seed = 42 dans les tests |
 
 ---
 
