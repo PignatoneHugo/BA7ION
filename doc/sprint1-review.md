@@ -4,7 +4,7 @@
 **Cours** : CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, 2025–2026
 **Équipe** : 6 (Léna Charrière, Mathéo Depuydt, Hugo Pignatone, Benjamin Sarrat, Fabien Serres, Antoine Tuffery)
 **Sprint** : 1 / N
-**Période** : `[À ajuster — ex. 12/05/2026 → 26/05/2026]`
+**Période** : `[22/05/2026 → 29/05/2026]` (sprint d'une semaine, vendredi → vendredi)
 **Date du Sprint Review** : `[À ajuster]`
 
 ---
@@ -241,7 +241,7 @@ grep -r "import javax.swing" src/Modele/   # 0 résultat attendu
 
 ## 8. Objectifs Sprint 2
 
-**Période prévue** : `[À ajuster — ex. 29/05/2026 → 04/06/2026]`
+**Période prévue** : `[29/05/2026 → 05/06/2026]` (vendredi → vendredi)
 
 ### 8.1 Sprint Goal
 
