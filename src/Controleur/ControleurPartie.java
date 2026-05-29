@@ -7,50 +7,30 @@ import Vue.FenetreJeu;
 import Vue.VueHUD;
 
 /**
- * Chef d'orchestre cote controleur. Detient la reference vers la {@link Partie}
- * et expose les actions de haut niveau accessibles depuis l'interface, en
- * commencant par la fin de tour.
+ * Controleur principal. Ecoute les actions du joueur (clic sur "Fin de tour")
+ * et fait avancer le modele en consequence.
  *
- * A l'instanciation, le controleur s'abonne aux composants Swing de la
- * {@link FenetreJeu} qui exposent les declencheurs utilisateur (bouton de fin
- * de tour notamment). Cette responsabilite de cablage suit la convention du
- * projet : aucun listener n'est branche dans le constructeur d'une vue.
- *
- * La fin de tour consiste a faire avancer la machine a etats du tour jusqu'a
- * son retour en phase de planification. Aucun dialogue bloquant n'est emis
- * pour le moment.
+ * Le controleur attache l'ActionListener du bouton (pas la vue elle-meme).
  */
 public class ControleurPartie {
 
     private final Partie partie;
     private final FenetreJeu fenetre;
 
-    /**
-     * @param partie modele racine pilote par ce controleur
-     * @param fenetre fenetre principale dont les composants seront cables
-     */
     public ControleurPartie(Partie partie, FenetreJeu fenetre) {
         this.partie = partie;
         this.fenetre = fenetre;
         miseEnPlaceEvenements();
     }
 
-    /**
-     * Cable les ActionListener sur les composants Swing de la fenetre.
-     */
     private void miseEnPlaceEvenements() {
         VueHUD hud = this.fenetre.hud();
         hud.boutonFinTour().addActionListener(e -> terminerTour());
     }
 
     /**
-     * Declenche la resolution du tour courant : enchaine les phases de la
-     * machine a etats jusqu'au retour en phase de planification, puis notifie
-     * le demarrage du tour suivant.
-     *
-     * Pour eviter qu'une erreur de definition des transitions ne provoque
-     * une boucle infinie, un garde-fou interrompt l'execution au-dela d'un
-     * nombre de phases largement superieur au cycle nominal.
+     * Enchaine les phases jusqu'a revenir en planification.
+     * Garde-fou a 50 phases pour eviter une boucle infinie en cas de bug.
      */
     public void terminerTour() {
         SwingUtilities.invokeLater(() -> {

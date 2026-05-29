@@ -6,11 +6,8 @@ import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
 /**
- * Phase de consommation : chaque royaume retire de son tresor la nourriture
- * necessaire a ses habitants. En cas de penurie, la {@link Royaume} gere
- * elle-meme la baisse d'effectifs.
- *
- * Transition : enchaine sur {@link EtatFinTour}.
+ * Phase de consommation : chaque royaume retire la nourriture de ses habitants.
+ * S'il n'y a pas assez, on declenche une famine.
  */
 public class EtatConsommation implements EtatTour {
 

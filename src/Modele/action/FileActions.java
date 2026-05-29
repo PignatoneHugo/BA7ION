@@ -7,21 +7,13 @@ import java.util.List;
 import Modele.royaume.Royaume;
 
 /**
- * File FIFO des {@link Action} planifiees par un royaume durant la phase de
- * planification. Videe et appliquee lors de la phase de resolution.
- *
- * Cette classe ne notifie pas elle-meme les Observers : la mise a jour des
- * vues est de la responsabilite du Royaume qui detient la file, via
- * {@link Royaume#notifierFileActionsChangee()}.
+ * File FIFO des actions planifiees par un royaume.
+ * Videe et appliquee pendant la phase de resolution.
  */
 public class FileActions {
 
     private final List<Action> actions = new ArrayList<>();
 
-    /**
-     * @param action action a empiler en fin de file, non null
-     * @throws IllegalArgumentException si {@code action} est null
-     */
     public void ajouter(Action action) {
         if (action == null) {
             throw new IllegalArgumentException("Une Action ne peut pas etre null.");
@@ -29,11 +21,6 @@ public class FileActions {
         this.actions.add(action);
     }
 
-    /**
-     * Retire la premiere occurrence d'une action egale a celle passee.
-     *
-     * @return {@code true} si une action a effectivement ete retiree
-     */
     public boolean retirer(Action action) {
         return this.actions.remove(action);
     }
@@ -50,20 +37,14 @@ public class FileActions {
         return this.actions.isEmpty();
     }
 
-    /**
-     * @return vue non modifiable du contenu de la file, dans l'ordre FIFO
-     */
+    /** Vue non modifiable pour l'affichage. */
     public List<Action> contenu() {
         return Collections.unmodifiableList(this.actions);
     }
 
     /**
-     * Execute dans l'ordre toutes les actions executables puis vide la file.
-     * Les actions dont {@link Action#estExecutable(Royaume)} retourne
-     * {@code false} sont ignorees sans interrompre le traitement.
-     *
-     * @param royaume royaume sur lequel les actions s'appliquent
-     * @return nombre d'actions effectivement executees
+     * Execute toutes les actions executables dans l'ordre puis vide la file.
+     * Les actions non executables sont ignorees.
      */
     public int executerToutes(Royaume royaume) {
         int compte = 0;

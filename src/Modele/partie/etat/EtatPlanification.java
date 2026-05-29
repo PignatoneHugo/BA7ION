@@ -5,11 +5,8 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 
 /**
- * Phase d'attente du joueur : aucune resolution n'a lieu. Le joueur affecte
- * sa population, planifie ses actions et ajuste sa politique jusqu'a ce
- * qu'il declenche la fin du tour.
- *
- * Transition : enchaine sur {@link EtatProduction}.
+ * Phase d'attente : le joueur planifie ses actions.
+ * Aucun traitement, on attend juste qu'il clique "Fin de tour".
  */
 public class EtatPlanification implements EtatTour {
 

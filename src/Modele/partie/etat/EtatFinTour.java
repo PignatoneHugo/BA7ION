@@ -5,10 +5,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 
 /**
- * Phase finale : incremente le compteur de tour, declenche l'autosauvegarde
- * et notifie la fin du cycle.
- *
- * Transition : revient sur {@link EtatPlanification} pour le tour suivant.
+ * Derniere phase du tour : on incremente le compteur et on revient en planification.
  */
 public class EtatFinTour implements EtatTour {
 

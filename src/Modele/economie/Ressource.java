@@ -1,10 +1,7 @@
 package Modele.economie;
 
 /**
- * Catalogue des ressources economiques produites et consommees par un royaume.
- *
- * Chaque ressource est associee a une cle d'internationalisation qui permet
- * d'obtenir son libelle localise via le Traducteur.
+ * Les 5 ressources du jeu. Chacune a une cle i18n pour son nom traduit.
  */
 public enum Ressource {
 
@@ -20,9 +17,6 @@ public enum Ressource {
         this.cleI18n = cleI18n;
     }
 
-    /**
-     * @return cle de traduction du nom de la ressource (ex. {@code "ressource.or"})
-     */
     public String cleI18n() {
         return this.cleI18n;
     }

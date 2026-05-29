@@ -10,12 +10,8 @@ import Vue.i18n.Traducteur;
 import Vue.onglets.OngletEconomie;
 
 /**
- * Panneau central de la fenetre de jeu, organise en {@link JTabbedPane}.
- * Chaque onglet correspond a un domaine fonctionnel du royaume (economie,
- * population, infrastructures, ...).
- *
- * Cette classe n'effectue que le cablage des onglets ; chaque onglet est
- * responsable de son propre rafraichissement via Observer.
+ * Panneau central de la fenetre. JTabbedPane qui contiendra
+ * tous les onglets du jeu (au Sprint 1 : juste Economie).
  */
 public class VueDashboard extends JPanel {
 
@@ -23,10 +19,6 @@ public class VueDashboard extends JPanel {
 
     private final JTabbedPane onglets;
 
-    /**
-     * @param partie modele racine, dont le royaume joueur sera observe par
-     *               les onglets
-     */
     public VueDashboard(Partie partie) {
         setLayout(new BorderLayout());
         this.onglets = new JTabbedPane();

@@ -1,8 +1,7 @@
 package Modele.infrastructure;
 
 /**
- * Catalogue des batiments constructibles dans un royaume. Chaque type est
- * associe a une cle d'internationalisation pour son libelle localise.
+ * Les 9 batiments du jeu. Chacun a une cle i18n pour son nom traduit.
  */
 public enum TypeBatiment {
 
@@ -22,9 +21,6 @@ public enum TypeBatiment {
         this.cleI18n = cleI18n;
     }
 
-    /**
-     * @return cle de traduction du nom du batiment (ex. {@code "batiment.ferme"})
-     */
     public String cleI18n() {
         return this.cleI18n;
     }

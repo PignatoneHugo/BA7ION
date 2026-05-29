@@ -18,10 +18,8 @@ import Modele.royaume.Royaume;
 import Vue.i18n.Traducteur;
 
 /**
- * Onglet affichant la repartition des habitants du royaume joueur par
- * {@link Role}. Vue purement passive observe du {@link Royaume} : tout
- * changement (POPULATION_CHANGEE, TRESOR_CHANGE) declenche un rafraichissement
- * complet des libelles.
+ * Onglet Economie : affiche le nombre d'habitants par role.
+ * Pas encore de boutons +/- (a faire au Sprint 2).
  */
 public class OngletEconomie extends JPanel implements Observer {
 
@@ -30,9 +28,6 @@ public class OngletEconomie extends JPanel implements Observer {
     private final Royaume royaume;
     private final JLabel[] labelsRoles;
 
-    /**
-     * @param royaume royaume du joueur observe par l'onglet
-     */
     public OngletEconomie(Royaume royaume) {
         this.royaume = royaume;
         setLayout(new BorderLayout(8, 8));
@@ -72,10 +67,6 @@ public class OngletEconomie extends JPanel implements Observer {
         rafraichir();
     }
 
-    /**
-     * Recalcule les compteurs d'effectif affiches a partir de l'etat courant
-     * de la population.
-     */
     private void rafraichir() {
         Role[] roles = Role.values();
         for (int i = 0; i < roles.length; i++) {

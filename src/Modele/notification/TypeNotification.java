@@ -1,11 +1,8 @@
 package Modele.notification;
 
 /**
- * Categories d'evenements qu'un Observable du modele peut emettre vers ses
- * Observers. Permet aux vues de filtrer rapidement les notifications a traiter
- * sans avoir a inspecter le contenu de la donnee transportee.
- *
- * @see Notification
+ * Liste des differents types d'evenements que le modele peut envoyer aux vues.
+ * Les vues utilisent ce type pour savoir si elles doivent se rafraichir ou non.
  */
 public enum TypeNotification {
 
@@ -21,11 +18,11 @@ public enum TypeNotification {
     BATIMENTS_CHANGES,
     FILE_ACTIONS_CHANGEE,
 
-    // Evenements aleatoires
+    // Evenements
     EVENEMENT_EN_ATTENTE,
     EVENEMENT_RESOLU,
 
-    // Conditions de fin
+    // Fin de partie
     PARTIE_GAGNEE,
     PARTIE_PERDUE
 }

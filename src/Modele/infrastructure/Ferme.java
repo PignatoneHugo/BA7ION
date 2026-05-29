@@ -7,15 +7,8 @@ import Modele.royaume.Royaume;
 import config.Equilibrage;
 
 /**
- * Ferme : produit de la nourriture en fonction du nombre de {@link Role#FERMIER}
- * affectes. La production de base est ponderee par un bonus lineaire dependant
- * du niveau du batiment, et reduite de moitie si la ferme est endommagee.
- *
- * Formule appliquee :
- * <pre>
- *     production = fermiers * PROD_PAR_FERMIER * (1 + BONUS_NIVEAU * (niveau - 1))
- *     si endommage : production *= 0.5
- * </pre>
+ * Ferme : produit de la nourriture proportionnellement au nombre de fermiers.
+ * Bonus +10% par niveau au-dessus de 1, divise par 2 si endommagee.
  */
 public class Ferme extends Batiment {
 
