@@ -17,7 +17,9 @@ public class EtatProduction implements EtatTour {
             for (Batiment b : r.batiments()) {
                 b.produire(r);
             }
+            r.appliquerTaxes();
             r.notifierProduction();
+            r.notifierBatimentsChanges();
         }
         partie.notifier(new Notification(TypeNotification.PHASE_CHANGEE, this.nomCle()));
     }
