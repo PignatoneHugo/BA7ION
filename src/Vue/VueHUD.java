@@ -36,6 +36,7 @@ public class VueHUD extends JPanel implements Observer {
     private final JLabel labelNom;
     private final JLabel labelTour;
     private final JLabel labelPopulation;
+    private final JLabel labelMoral;
     private final JLabel[] labelsRessources;
     private final JButton boutonFinTour;
 
@@ -65,12 +66,14 @@ public class VueHUD extends JPanel implements Observer {
 
         add(gauche, BorderLayout.WEST);
 
-        // Centre : tour + population
+        // Centre : tour + population + moral
         JPanel centre = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         this.labelTour = new JLabel();
         this.labelPopulation = new JLabel();
+        this.labelMoral = new JLabel();
         centre.add(this.labelTour);
         centre.add(this.labelPopulation);
+        centre.add(this.labelMoral);
         add(centre, BorderLayout.CENTER);
 
         // Droite : bouton fin de tour
@@ -99,6 +102,7 @@ public class VueHUD extends JPanel implements Observer {
         switch (n.type()) {
             case TRESOR_CHANGE:
             case POPULATION_CHANGEE:
+            case MORAL_CHANGE:
             case TOUR_TERMINE:
             case TOUR_DEMARRE:
             case PHASE_CHANGEE:
@@ -122,5 +126,7 @@ public class VueHUD extends JPanel implements Observer {
         int total = this.royaumeJoueur.population().total();
         int cap = this.royaumeJoueur.population().capaciteLogement();
         this.labelPopulation.setText(Traducteur.t("population.total") + ": " + total + "/" + cap);
+        int moral = this.royaumeJoueur.moral().valeur();
+        this.labelMoral.setText(Traducteur.t("moral.titre") + ": " + moral + "/100");
     }
 }
