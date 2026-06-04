@@ -21,7 +21,7 @@ public class EtatConsommation implements EtatTour {
 
     @Override
     public EtatTour suivant() {
-        return new EtatFinTour();
+        return new EtatActionsDifferees();
     }
 
     @Override
