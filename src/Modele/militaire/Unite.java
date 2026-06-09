@@ -36,4 +36,12 @@ public class Unite {
         this.effectif = Math.max(0, this.effectif - pertes);
         return avant - this.effectif;
     }
+
+    /** Ajoute des soldats du meme type a cette unite. */
+    public void renforcer(int nombre) {
+        if (nombre < 0) {
+            throw new IllegalArgumentException("Le renfort doit etre positif ou nul.");
+        }
+        this.effectif += nombre;
+    }
 }
