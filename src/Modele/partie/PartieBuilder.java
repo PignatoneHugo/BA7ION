@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Modele.economie.Ressource;
+import Modele.ia.FabriqueIA;
 import Modele.royaume.Royaume;
 
 import config.Difficulte;
@@ -17,7 +18,7 @@ import config.Difficulte;
 public class PartieBuilder {
 
     private String nomJoueur = "Royaume du Joueur";
-    private int nombreBots = 0;
+    private int nombreBots = 1;
     private long graineAleatoire = System.nanoTime();
     private Difficulte difficulte = Difficulte.NORMAL;
 
@@ -29,8 +30,8 @@ public class PartieBuilder {
     }
 
     public PartieBuilder nombreBots(int n) {
-        if (n < 0 || n > 4) {
-            throw new IllegalArgumentException("Le nombre de bots doit etre entre 0 et 4.");
+        if (n < 1 || n > 4) {
+            throw new IllegalArgumentException("Le nombre de bots doit etre entre 1 et 4.");
         }
         this.nombreBots = n;
         return this;
@@ -62,7 +63,9 @@ public class PartieBuilder {
 
         List<Royaume> bots = new ArrayList<>();
         for (int i = 0; i < this.nombreBots; i++) {
-            bots.add(new Royaume("Bot " + (i + 1)));
+            Royaume bot = new Royaume("Bot " + (i + 1));
+            bot.definirStrategieIA(FabriqueIA.creerEquilibree());
+            bots.add(bot);
         }
         Partie partie = new Partie(joueur, bots);
         partie.definirGraineAleatoire(this.graineAleatoire);

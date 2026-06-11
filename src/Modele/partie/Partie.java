@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Random;
 
+import Modele.combat.BatailleResolue;
 import Modele.evenement.Choix;
 import Modele.evenement.Evenement;
 import Modele.notification.Notification;
@@ -21,6 +22,7 @@ public class Partie extends Observable {
     private final Royaume joueur;
     private final List<Royaume> bots;
     private final Tour tour;
+    private final List<BatailleResolue> batraillesDuTour;
     private Evenement evenementEnAttente;
     private Random aleatoire = new Random();
 
@@ -35,6 +37,24 @@ public class Partie extends Observable {
         this.joueur = joueur;
         this.bots = new ArrayList<>(bots);
         this.tour = new Tour();
+        this.batraillesDuTour = new ArrayList<>();
+    }
+
+    /** Batailles resolues durant le tour courant (lectures pour le recap). */
+    public List<BatailleResolue> batraillesDuTour() {
+        return Collections.unmodifiableList(this.batraillesDuTour);
+    }
+
+    /** Ajoute un rapport de combat a la liste du tour courant. */
+    public void enregistrerBataille(BatailleResolue resolue) {
+        if (resolue != null) {
+            this.batraillesDuTour.add(resolue);
+        }
+    }
+
+    /** Vide la liste des batailles -- appele au debut du tour suivant. */
+    public void viderBatraillesDuTour() {
+        this.batraillesDuTour.clear();
     }
 
     public Royaume joueur() {
@@ -123,7 +143,7 @@ public class Partie extends Observable {
         if (this.evenementEnAttente == null || choix == null) {
             return;
         }
-        choix.effet().appliquer(this.joueur);
+        choix.effet().appliquer(this.joueur, this.aleatoire);
         this.joueur.notifierTresorChange();
         this.joueur.notifierPopulationChangee();
         this.joueur.notifierMoralChange();
