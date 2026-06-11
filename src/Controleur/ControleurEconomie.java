@@ -1,19 +1,21 @@
 package Controleur;
 
+import Modele.action.ActionRecruterVillageois;
 import Modele.economie.NiveauTaxes;
+import Modele.economie.Ressource;
 import Modele.partie.Partie;
 import Modele.population.Role;
 import Vue.FenetreJeu;
 import Vue.i18n.Traducteur;
 import Vue.onglets.OngletEconomie;
 
+import config.Equilibrage;
+
 /**
  * Controleur de l'onglet Economie. Attache les listeners sur :
  * - les boutons +/- des roles (deplace 1 habitant)
  * - les toggles de niveau de taxes
- *
- * Affiche un message dans la status bar apres chaque action pour confirmer
- * au joueur que sa demande a bien ete prise en compte.
+ * - le bouton Recruter villageois (100 nourriture pour 1 inactif)
  */
 public class ControleurEconomie extends ControleurOnglet {
 
@@ -40,6 +42,7 @@ public class ControleurEconomie extends ControleurOnglet {
             final NiveauTaxes niveau = n;
             this.onglet.toggleTaxes(niveau).addActionListener(e -> changerTaxes(niveau));
         }
+        this.onglet.boutonRecruterVillageois().addActionListener(e -> recruterVillageois());
     }
 
     private void ajouter(Role role) {
@@ -65,5 +68,20 @@ public class ControleurEconomie extends ControleurOnglet {
         this.fenetre.statusBar().setMessage(
                 Traducteur.t("status.taxes_changees") + " : "
                         + Traducteur.t(niveau.cleI18n()));
+    }
+
+    private void recruterVillageois() {
+        ActionRecruterVillageois action = new ActionRecruterVillageois();
+        if (!action.estExecutable(this.royaumeJoueur)) {
+            return;
+        }
+        // Execution immediate (pas via la file) car c'est une action instantanee
+        // qui ne necessite pas la phase EtatActionsDifferees.
+        this.royaumeJoueur.tresor().retirer(Ressource.NOURRITURE,
+                Equilibrage.COUT_NOURRITURE_PAR_VILLAGEOIS);
+        this.royaumeJoueur.population().ajouterInactifs(1);
+        this.royaumeJoueur.notifierTresorChange();
+        this.royaumeJoueur.notifierPopulationChangee();
+        this.fenetre.statusBar().setMessage(Traducteur.t("status.villageois_recrute"));
     }
 }

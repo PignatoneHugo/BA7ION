@@ -1,21 +1,37 @@
 package Modele.partie.etat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import Modele.combat.Bataille;
+import Modele.combat.EffetsCombat;
 import Modele.notification.Notification;
 import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
+import Modele.royaume.Royaume;
 
 /**
- * Phase de resolution des combats subis (attaques venant des bots).
- *
- * Au Sprint 2 : placeholder, aucune attaque n'est planifiee. La logique
- * complete sera branchee au Sprint 3 quand l'IA des bots saura attaquer
- * et que le ResolveurCombat sera utilise depuis le cycle de tour.
+ * Phase de resolution des combats subis : les bots attaquent le joueur.
+ * Pour chaque bot, on parcourt ses batailles offensives dont la cible est
+ * le joueur et on les resout via EffetsCombat (qui applique les pertes
+ * militaires, les pertes civiles si defaite defensive et le butin si
+ * victoire offensive).
  */
 public class EtatCombatsSubis implements EtatTour {
 
     @Override
     public void executer(Partie partie) {
-        // Rien a faire au Sprint 2 : pas de combats a resoudre.
+        Royaume joueur = partie.joueur();
+        for (Royaume bot : partie.bots()) {
+            // Copie defensive : la liste sera modifiee.
+            List<Bataille> aResoudre = new ArrayList<>(bot.bataillesOffensives());
+            for (Bataille b : aResoudre) {
+                if (b.defenseur() == joueur) {
+                    EffetsCombat.appliquer(b, partie);
+                    bot.bataillesOffensives().remove(b);
+                }
+            }
+        }
         partie.notifier(new Notification(TypeNotification.PHASE_CHANGEE, this.nomCle()));
     }
 

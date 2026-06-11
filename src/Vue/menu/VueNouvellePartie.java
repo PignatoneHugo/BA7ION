@@ -1,36 +1,41 @@
 package Vue.menu;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import Vue.i18n.Traducteur;
+import Vue.theme.BoutonMedieval;
+import Vue.theme.Palette;
+import Vue.theme.Polices;
 
 import config.Difficulte;
 
 /**
- * Ecran de configuration d'une nouvelle partie. Permet au joueur de saisir
- * le nom de son royaume, le nombre d'adversaires (bots) et la difficulte,
- * puis de lancer la partie.
- *
- * Vue passive : les champs et boutons sont exposes via getters pour que le
- * ControleurMenu les lise et y attache ses listeners.
+ * Ecran de configuration d'une nouvelle partie, style medieval cohrent avec
+ * le menu principal : fond degrade, panneau central type parchemin sombre
+ * avec bordure doree, champs personnalises.
  */
 public class VueNouvellePartie extends JPanel {
 
@@ -39,76 +44,157 @@ public class VueNouvellePartie extends JPanel {
     private final JTextField champNom;
     private final JSpinner spinnerBots;
     private final JComboBox<Difficulte> comboDifficulte;
-    private final JButton boutonDemarrer;
-    private final JButton boutonRetour;
+    private final BoutonMedieval boutonDemarrer;
+    private final BoutonMedieval boutonRetour;
 
     public VueNouvellePartie() {
-        setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(40, 40, 40, 40));
+        setOpaque(true);
+        setBackground(Palette.FOND_BAS);
+        setLayout(new BorderLayout());
+
+        // Panneau central qui contient le formulaire
+        JPanel panneau = new JPanel(new GridBagLayout());
+        panneau.setOpaque(true);
+        panneau.setBackground(Palette.FOND_PANNEAU);
+        panneau.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Palette.OR, 2),
+                BorderFactory.createEmptyBorder(36, 56, 36, 56)));
 
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(8, 8, 8, 8);
-        c.anchor = GridBagConstraints.LINE_START;
 
+        // Titre
         JLabel titre = new JLabel(Traducteur.t("nouvelle_partie.titre"), SwingConstants.CENTER);
-        titre.setFont(titre.getFont().deriveFont(Font.BOLD, 28f));
+        titre.setFont(Polices.TITRE.deriveFont(36f));
+        titre.setForeground(Palette.OR);
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(8, 8, 32, 8);
-        add(titre, c);
+        c.insets = new Insets(0, 0, 8, 0);
+        panneau.add(titre, c);
+
+        // Separateur dore
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        sep.setForeground(Palette.OR);
+        sep.setBackground(Palette.OR);
+        sep.setPreferredSize(new Dimension(320, 2));
+        c.gridy = 1;
+        c.insets = new Insets(0, 80, 28, 80);
+        panneau.add(sep, c);
 
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(8, 8, 8, 8);
+        c.insets = new Insets(12, 8, 12, 8);
 
         // Nom du royaume
         c.gridx = 0;
-        c.gridy = 1;
-        add(new JLabel(Traducteur.t("nouvelle_partie.nom_joueur") + " :"), c);
+        c.gridy = 2;
+        c.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp(Traducteur.t("nouvelle_partie.nom_joueur") + " :"), c);
 
         this.champNom = new JTextField("Royaume du Joueur", 20);
-        this.champNom.setPreferredSize(new Dimension(220, 28));
+        this.champNom.setEditable(true);
+        this.champNom.setEnabled(true);
+        this.champNom.setFocusable(true);
+        stylerChamp(this.champNom);
+        this.champNom.setPreferredSize(new Dimension(280, 36));
         c.gridx = 1;
-        add(this.champNom, c);
+        c.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.champNom, c);
 
         // Nombre de bots
         c.gridx = 0;
-        c.gridy = 2;
-        add(new JLabel(Traducteur.t("nouvelle_partie.nb_bots") + " :"), c);
+        c.gridy = 3;
+        c.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp(Traducteur.t("nouvelle_partie.nb_bots") + " :"), c);
 
-        this.spinnerBots = new JSpinner(new SpinnerNumberModel(0, 0, 4, 1));
-        this.spinnerBots.setPreferredSize(new Dimension(60, 28));
+        this.spinnerBots = new JSpinner(new SpinnerNumberModel(1, 1, 4, 1));
+        this.spinnerBots.setPreferredSize(new Dimension(80, 36));
+        this.spinnerBots.setFont(Polices.VALEUR);
         c.gridx = 1;
-        add(this.spinnerBots, c);
+        c.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.spinnerBots, c);
 
         // Difficulte
         c.gridx = 0;
-        c.gridy = 3;
-        add(new JLabel(Traducteur.t("difficulte.titre") + " :"), c);
+        c.gridy = 4;
+        c.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp(Traducteur.t("difficulte.titre") + " :"), c);
 
         this.comboDifficulte = new JComboBox<>(Difficulte.values());
         this.comboDifficulte.setSelectedItem(Difficulte.NORMAL);
-        this.comboDifficulte.setPreferredSize(new Dimension(160, 28));
+        this.comboDifficulte.setPreferredSize(new Dimension(200, 36));
         this.comboDifficulte.setRenderer(new RendererDifficulte());
+        this.comboDifficulte.setFont(Polices.LABEL);
         c.gridx = 1;
-        add(this.comboDifficulte, c);
+        c.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.comboDifficulte, c);
 
-        // Boutons
-        JPanel actions = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-        this.boutonRetour = new JButton(Traducteur.t("nouvelle_partie.retour"));
-        this.boutonDemarrer = new JButton(Traducteur.t("nouvelle_partie.demarrer"));
-        this.boutonDemarrer.setFont(this.boutonDemarrer.getFont().deriveFont(Font.BOLD));
+        // Boutons en bas
+        JPanel actions = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
+        actions.setOpaque(false);
+        this.boutonRetour = new BoutonMedieval(
+                Traducteur.t("nouvelle_partie.retour"), BoutonMedieval.Style.SECONDAIRE);
+        this.boutonRetour.setPreferredSize(new Dimension(160, 44));
+        this.boutonDemarrer = new BoutonMedieval(
+                Traducteur.t("nouvelle_partie.demarrer"), BoutonMedieval.Style.PRIMAIRE);
+        this.boutonDemarrer.setPreferredSize(new Dimension(220, 50));
         actions.add(this.boutonRetour);
         actions.add(this.boutonDemarrer);
 
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 5;
         c.gridwidth = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(32, 8, 8, 8);
-        add(actions, c);
+        c.anchor = GridBagConstraints.CENTER;
+        c.insets = new Insets(28, 0, 0, 0);
+        panneau.add(actions, c);
+
+        // Wrapper pour centrer le panneau verticalement et horizontalement
+        JPanel wrapper = new JPanel(new GridBagLayout());
+        wrapper.setOpaque(false);
+        wrapper.add(panneau);
+        add(wrapper, BorderLayout.CENTER);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int w = getWidth();
+        int h = getHeight();
+
+        // Fond degrade vertical
+        GradientPaint grad = new GradientPaint(0, 0, Palette.FOND_HAUT, 0, h, Palette.FOND_BAS);
+        g2.setPaint(grad);
+        g2.fillRect(0, 0, w, h);
+
+        // Cadre ornemental general
+        g2.setColor(Palette.OR_FONCE);
+        g2.setStroke(new java.awt.BasicStroke(2));
+        g2.drawRect(8, 8, w - 16, h - 16);
+
+        g2.dispose();
+    }
+
+    private JLabel labelChamp(String texte) {
+        JLabel l = new JLabel(texte);
+        l.setFont(Polices.LABEL.deriveFont(15f));
+        l.setForeground(Palette.TEXTE_PRIMAIRE);
+        return l;
+    }
+
+    private void stylerChamp(JTextField champ) {
+        champ.setBackground(Palette.CHAMP_FOND);
+        champ.setForeground(Palette.CHAMP_TEXTE);
+        champ.setCaretColor(Palette.OR);
+        champ.setFont(Polices.LABEL.deriveFont(14f));
+        champ.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Palette.OR, 1),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
     }
 
     public String nomJoueur() {
@@ -123,11 +209,11 @@ public class VueNouvellePartie extends JPanel {
         return (Difficulte) this.comboDifficulte.getSelectedItem();
     }
 
-    public JButton boutonDemarrer() {
+    public BoutonMedieval boutonDemarrer() {
         return this.boutonDemarrer;
     }
 
-    public JButton boutonRetour() {
+    public BoutonMedieval boutonRetour() {
         return this.boutonRetour;
     }
 
@@ -143,6 +229,8 @@ public class VueNouvellePartie extends JPanel {
             if (value instanceof Difficulte) {
                 setText(Traducteur.t(((Difficulte) value).cleI18n()));
             }
+            setBackground(isSelected ? Palette.BOUTON_FOND_SURVOL : Palette.CHAMP_FOND);
+            setForeground(Palette.TEXTE_PRIMAIRE);
             return this;
         }
     }

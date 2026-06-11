@@ -1,5 +1,7 @@
 package Modele.evenement;
 
+import java.util.Random;
+
 import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
 
@@ -8,7 +10,8 @@ import Modele.royaume.Royaume;
  * et le moral d'un seul coup. Les valeurs negatives signifient une perte.
  *
  * Couvre la majorite des evenements simples sans avoir a creer une classe
- * dediee par effet.
+ * dediee par effet. Les habitants perdus sont tires au hasard parmi tous
+ * les roles (cf. Population.retirerHabitants).
  */
 public class EffetSimple implements EffetEvenement {
 
@@ -23,17 +26,25 @@ public class EffetSimple implements EffetEvenement {
     }
 
     @Override
-    public void appliquer(Royaume royaume) {
+    public void appliquer(Royaume royaume, Random aleatoire) {
         if (this.deltaOr > 0) {
             royaume.tresor().ajouter(Ressource.OR, this.deltaOr);
         } else if (this.deltaOr < 0) {
             royaume.tresor().retirer(Ressource.OR, -this.deltaOr);
         }
         if (this.habitantsPerdus > 0) {
-            royaume.population().retirerHabitants(this.habitantsPerdus);
+            royaume.population().retirerHabitants(this.habitantsPerdus, aleatoire);
         }
         if (this.deltaMoral != 0) {
             royaume.moral().ajuster(this.deltaMoral);
         }
+    }
+
+    @Override
+    public boolean peutEtreApplique(Royaume royaume) {
+        if (this.deltaOr < 0) {
+            return royaume.tresor().contient(Ressource.OR, -this.deltaOr);
+        }
+        return true;
     }
 }

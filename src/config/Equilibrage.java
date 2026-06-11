@@ -140,4 +140,63 @@ public final class Equilibrage {
 
     /** Probabilite qu'un evenement aleatoire se declenche a chaque tour (apres le tour 1). */
     public static final double PROBABILITE_EVENEMENT_PAR_TOUR = 0.30;
+
+    // RECRUTEMENT DE VILLAGEOIS
+
+    /** Cout en nourriture pour recruter un nouvel habitant (inactif). */
+    public static final int COUT_NOURRITURE_PAR_VILLAGEOIS = 100;
+
+    // RECRUTEMENT MILITAIRE
+
+    /** Cout en or pour recruter un soldat d'infanterie legere. */
+    public static final int COUT_OR_PAR_SOLDAT = 30;
+
+    /** Chaque soldat recrute prend un habitant (inactif de preference). */
+    public static final int HABITANTS_PAR_SOLDAT = 1;
+
+    // IA DES BOTS
+
+    /** Seuil d'or au-dessus duquel l'IA equilibree decide de recruter. */
+    public static final int SEUIL_OR_RECRUTEMENT_IA = 200;
+
+    /** Frequence des tentatives d'attaque de l'IA (en tours, deprecie : voir PROBA_ATTAQUE_IA_BASE). */
+    public static final int TOURS_ENTRE_ATTAQUES_IA = 5;
+
+    /** Effectif minimum d'armee pour qu'une IA tente une attaque. */
+    public static final int EFFECTIF_MIN_POUR_ATTAQUE_IA = 5;
+
+    /** Numero du tour a partir duquel les bots peuvent commencer a attaquer. */
+    public static final int TOUR_MIN_PREMIERE_ATTAQUE_IA = 10;
+
+    /**
+     * Probabilite de base qu'un bot decide d'attaquer le joueur a chaque
+     * tour (si l'effectif est suffisant). Une marge croissante est ajoutee
+     * par l'IA selon la taille de son armee.
+     */
+    public static final double PROBA_ATTAQUE_IA_BASE = 0.25;
+
+    // CONSEQUENCES D'UNE BATAILLE
+
+    /** Quand un defenseur perd, % de sa population civile tuee aleatoirement. */
+    public static final int PERTES_CIVILES_DEFAITE_PCT = 40;
+
+    /** Quand un attaquant gagne, % de chaque ressource du defenseur volee. */
+    public static final int BUTIN_VICTOIRE_PCT = 40;
+
+    /** Perte de moral subie par un defenseur perdant (en points de moral). */
+    public static final int IMPACT_MORAL_DEFAITE_DEFENSIVE = 12;
+
+    // CONDITIONS DE FIN DE PARTIE
+
+    /** Population minimale en dessous de laquelle le royaume est considere comme effondre. */
+    public static final int POPULATION_MIN_DEFAITE = 0;
+
+    /** Moral minimum en dessous duquel le royaume est considere comme effondre. */
+    public static final int MORAL_MIN_DEFAITE = 5;
+
+    /** Or accumule au-dessus duquel le royaume gagne par prosperite. */
+    public static final int OR_VICTOIRE_PROSPERITE = 5000;
+
+    /** Tour maximum apres lequel on declare match nul si aucun vainqueur. */
+    public static final int TOUR_MAX = 50;
 }

@@ -14,7 +14,7 @@ public class EtatConsommation implements EtatTour {
     @Override
     public void executer(Partie partie) {
         for (Royaume r : partie.tousLesRoyaumes()) {
-            r.appliquerConsommationCivile();
+            r.appliquerConsommationCivile(partie.aleatoire());
         }
         partie.notifier(new Notification(TypeNotification.PHASE_CHANGEE, this.nomCle()));
     }

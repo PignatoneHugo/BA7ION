@@ -3,11 +3,14 @@ package Modele.royaume;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
+import java.util.Random;
 
 import Modele.action.FileActions;
+import Modele.combat.Bataille;
 import Modele.economie.NiveauTaxes;
 import Modele.economie.Ressource;
 import Modele.economie.Tresor;
+import Modele.ia.StrategieIA;
 import Modele.infrastructure.Batiment;
 import Modele.infrastructure.Bibliotheque;
 import Modele.infrastructure.Caserne;
@@ -19,6 +22,7 @@ import Modele.infrastructure.Remparts;
 import Modele.infrastructure.Scierie;
 import Modele.infrastructure.TourDeGuet;
 import Modele.infrastructure.TypeBatiment;
+import Modele.militaire.Armee;
 import Modele.notification.Notification;
 import Modele.notification.TypeNotification;
 import Modele.population.Moral;
@@ -42,7 +46,10 @@ public class Royaume extends Observable {
     private final Moral moral;
     private final List<Batiment> batiments;
     private final FileActions fileActions;
+    private final Armee armee;
+    private final List<Bataille> bataillesOffensives;
     private NiveauTaxes niveauTaxes;
+    private StrategieIA strategieIA;
 
     public Royaume(String nom) {
         this.nom = nom;
@@ -51,7 +58,10 @@ public class Royaume extends Observable {
         this.moral = new Moral();
         this.batiments = new ArrayList<>();
         this.fileActions = new FileActions();
+        this.armee = new Armee();
+        this.bataillesOffensives = new ArrayList<>();
         this.niveauTaxes = NiveauTaxes.NORMAL;
+        this.strategieIA = null;
 
         // Tous les batiments sont presents au niveau 1 des le tour 1.
         this.batiments.add(new Ferme());
@@ -113,6 +123,57 @@ public class Royaume extends Observable {
         return this.fileActions;
     }
 
+    public Armee armee() {
+        return this.armee;
+    }
+
+    public StrategieIA strategieIA() {
+        return this.strategieIA;
+    }
+
+    /** Assigne une strategie d'IA a ce royaume (typiquement pour un bot). */
+    public void definirStrategieIA(StrategieIA strategie) {
+        this.strategieIA = strategie;
+    }
+
+    /** True si le royaume est controle par une IA (bot). */
+    public boolean estBot() {
+        return this.strategieIA != null;
+    }
+
+    /** A appeler apres modification de l'armee (recrutement, pertes en combat). */
+    public void notifierArmeeChangee() {
+        setChanged();
+        notifyObservers(new Notification(TypeNotification.BATIMENTS_CHANGES));
+    }
+
+    /** Liste des batailles que ce royaume a planifiees contre d'autres. */
+    public List<Bataille> bataillesOffensives() {
+        return this.bataillesOffensives;
+    }
+
+    /** Ajoute une bataille a la liste des attaques planifiees. */
+    public void ajouterBatailleOffensive(Bataille bataille) {
+        if (bataille != null) {
+            this.bataillesOffensives.add(bataille);
+        }
+    }
+
+    /** True si une attaque contre {@code cible} est deja planifiee ce tour. */
+    public boolean aAttaquePlanifieeContre(Royaume cible) {
+        for (Bataille b : this.bataillesOffensives) {
+            if (b.defenseur() == cible) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** Vide la liste des batailles offensives (appele apres resolution). */
+    public void viderBataillesOffensives() {
+        this.bataillesOffensives.clear();
+    }
+
     /** Deplace des habitants d'un role vers un autre. Notifie si OK. */
     public boolean reaffecter(Role source, Role cible, int montant) {
         boolean ok = this.population.reaffecter(source, cible, montant);
@@ -125,9 +186,10 @@ public class Royaume extends Observable {
 
     /**
      * Retire la nourriture necessaire aux habitants. En cas de penurie,
-     * declenche une famine (1 mort par 5 unites manquantes).
+     * declenche une famine (1 mort par 5 unites manquantes). Les victimes
+     * sont tirees au hasard parmi la population (n'importe quel role).
      */
-    public void appliquerConsommationCivile() {
+    public void appliquerConsommationCivile(Random aleatoire) {
         int total = this.population.total();
         int besoin = total * Equilibrage.CONSOMMATION_NOURRITURE_PAR_HABITANT;
         int retire = this.tresor.retirer(Ressource.NOURRITURE, besoin);
@@ -137,7 +199,7 @@ public class Royaume extends Observable {
         int deficit = besoin - retire;
         if (deficit > 0) {
             int morts = Math.max(1, deficit / 5);
-            int retireReellement = this.population.retirerHabitants(morts);
+            int retireReellement = this.population.retirerHabitants(morts, aleatoire);
             if (retireReellement > 0) {
                 setChanged();
                 notifyObservers(new Notification(TypeNotification.POPULATION_CHANGEE));

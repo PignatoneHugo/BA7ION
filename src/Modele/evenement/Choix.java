@@ -1,5 +1,7 @@
 package Modele.evenement;
 
+import Modele.royaume.Royaume;
+
 /**
  * Choix propose au joueur lors d'un evenement. Chaque choix associe un
  * libelle (via cle i18n) a un effet sur le royaume.
@@ -23,5 +25,10 @@ public class Choix {
 
     public EffetEvenement effet() {
         return this.effet;
+    }
+
+    /** True si le royaume a les ressources requises pour ce choix. */
+    public boolean peutEtreChoisi(Royaume royaume) {
+        return this.effet.peutEtreApplique(royaume);
     }
 }

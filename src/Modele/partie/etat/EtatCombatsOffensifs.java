@@ -1,20 +1,31 @@
 package Modele.partie.etat;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import Modele.combat.Bataille;
+import Modele.combat.EffetsCombat;
 import Modele.notification.Notification;
 import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
+import Modele.royaume.Royaume;
 
 /**
- * Phase de resolution des combats offensifs (attaques lancees par le joueur).
- *
- * Au Sprint 2 : placeholder, le joueur n'a pas encore d'interface pour
- * declarer une attaque. La logique complete sera branchee au Sprint 3.
+ * Phase de resolution des combats offensifs : le joueur attaque un bot.
+ * On parcourt les batailles offensives du joueur et on les resout via
+ * EffetsCombat (qui applique pertes militaires, pertes civiles cote
+ * defenseur perdant, et butin cote attaquant vainqueur).
  */
 public class EtatCombatsOffensifs implements EtatTour {
 
     @Override
     public void executer(Partie partie) {
-        // Rien a faire au Sprint 2 : pas d'attaque planifiee.
+        Royaume joueur = partie.joueur();
+        List<Bataille> aResoudre = new ArrayList<>(joueur.bataillesOffensives());
+        for (Bataille b : aResoudre) {
+            EffetsCombat.appliquer(b, partie);
+        }
+        joueur.viderBataillesOffensives();
         partie.notifier(new Notification(TypeNotification.PHASE_CHANGEE, this.nomCle()));
     }
 

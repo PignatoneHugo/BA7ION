@@ -7,17 +7,15 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import Modele.partie.ConditionsFin;
 import Modele.partie.Partie;
 import Vue.i18n.Traducteur;
 import Vue.menu.VueMenuPrincipal;
 import Vue.menu.VueNouvellePartie;
 
 /**
- * Fenetre principale du jeu. Utilise un CardLayout pour swapper entre les
- * differents ecrans : menu principal, ecran nouvelle partie, ecran de jeu.
- *
- * Les ecrans dependant de la Partie (HUD, Dashboard) sont crees uniquement
- * apres que le joueur a clique "Demarrer".
+ * Fenetre principale du jeu. Utilise un CardLayout pour swapper entre :
+ * menu principal, nouvelle partie, ecran de jeu, ecran de fin de partie.
  */
 public class FenetreJeu extends JFrame {
 
@@ -26,6 +24,7 @@ public class FenetreJeu extends JFrame {
     private static final String CARTE_MENU = "menu";
     private static final String CARTE_NOUVELLE_PARTIE = "nouvelle_partie";
     private static final String CARTE_JEU = "jeu";
+    private static final String CARTE_FIN_PARTIE = "fin_partie";
 
     private final JPanel conteneur;
     private final CardLayout cards;
@@ -36,6 +35,7 @@ public class FenetreJeu extends JFrame {
     private VueHUD hud;
     private VueDashboard dashboard;
     private VueStatusBar statusBar;
+    private VueFinPartie vueFinPartie;
 
     public FenetreJeu() {
         super(Traducteur.t("app.titre"));
@@ -50,7 +50,7 @@ public class FenetreJeu extends JFrame {
         this.conteneur.add(this.vueNouvellePartie, CARTE_NOUVELLE_PARTIE);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(1280, 720));
+        setPreferredSize(new Dimension(1280, 800));
         pack();
         setLocationRelativeTo(null);
     }
@@ -63,11 +63,6 @@ public class FenetreJeu extends JFrame {
         this.cards.show(this.conteneur, CARTE_NOUVELLE_PARTIE);
     }
 
-    /**
-     * Construit l'ecran de jeu pour la partie donnee et l'affiche.
-     * Les composants HUD et Dashboard sont crees ici, observent la Partie
-     * et restent en place pour toute la duree de la partie.
-     */
     public void afficherJeu(Partie partie) {
         this.hud = new VueHUD(partie);
         this.dashboard = new VueDashboard(partie);
@@ -80,6 +75,13 @@ public class FenetreJeu extends JFrame {
 
         this.conteneur.add(ecran, CARTE_JEU);
         this.cards.show(this.conteneur, CARTE_JEU);
+    }
+
+    /** Affiche l'ecran de fin de partie (victoire ou defaite). */
+    public void afficherFinPartie(Partie partie, ConditionsFin.Etat etat) {
+        this.vueFinPartie = new VueFinPartie(partie, etat);
+        this.conteneur.add(this.vueFinPartie, CARTE_FIN_PARTIE);
+        this.cards.show(this.conteneur, CARTE_FIN_PARTIE);
     }
 
     public VueMenuPrincipal vueMenu() {
@@ -100,5 +102,9 @@ public class FenetreJeu extends JFrame {
 
     public VueStatusBar statusBar() {
         return this.statusBar;
+    }
+
+    public VueFinPartie vueFinPartie() {
+        return this.vueFinPartie;
     }
 }

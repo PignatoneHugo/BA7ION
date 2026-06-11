@@ -2,6 +2,7 @@ package Modele.population;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Random;
 
 import config.Equilibrage;
 
@@ -81,11 +82,18 @@ public class Population {
     }
 
     /**
-     * Retire des habitants (famine, etc.). On retire d'abord les inactifs,
-     * puis les autres roles dans l'ordre de l'enum.
+     * Retire des habitants (famine, evenements, etc.) en tirant chaque
+     * victime au hasard parmi la population totale. Chaque habitant a la
+     * meme probabilite d'etre choisi, quelle que soit son role : un fermier
+     * a autant de chances qu'un inactif.
+     *
+     * @param montant nombre d'habitants a retirer
+     * @param aleatoire generateur aleatoire (typiquement celui de la Partie,
+     *                  seedable pour reproductibilite)
+     * @return le nombre d'habitants effectivement retires
      */
-    public int retirerHabitants(int montant) {
-        if (montant <= 0) {
+    public int retirerHabitants(int montant, Random aleatoire) {
+        if (montant <= 0 || aleatoire == null) {
             return 0;
         }
         int total = this.total();
@@ -93,27 +101,48 @@ public class Population {
             return 0;
         }
         int aRetirer = Math.min(montant, total);
-        int restant = aRetirer;
-
-        int inactifs = this.effectifs.get(Role.INACTIF);
-        int retraitInactifs = Math.min(restant, inactifs);
-        this.effectifs.merge(Role.INACTIF, -retraitInactifs, Integer::sum);
-        restant -= retraitInactifs;
-
-        if (restant > 0) {
-            for (Role r : Role.values()) {
-                if (r == Role.INACTIF) {
-                    continue;
-                }
-                if (restant == 0) {
-                    break;
-                }
-                int n = this.effectifs.get(r);
-                int retrait = Math.min(restant, n);
-                this.effectifs.merge(r, -retrait, Integer::sum);
-                restant -= retrait;
+        for (int i = 0; i < aRetirer; i++) {
+            Role victime = tirerRoleAleatoire(aleatoire);
+            if (victime != null) {
+                this.effectifs.merge(victime, -1, Integer::sum);
             }
         }
-        return aRetirer - restant;
+        return aRetirer;
+    }
+
+    /**
+     * Retire un nombre d'inactifs (utilise pour le recrutement : les soldats
+     * sont preleves dans les inactifs, pas au hasard).
+     *
+     * @return le nombre d'inactifs effectivement retires
+     */
+    public int retirerInactifs(int montant) {
+        if (montant <= 0) {
+            return 0;
+        }
+        int dispo = this.effectifs.get(Role.INACTIF);
+        int retire = Math.min(montant, dispo);
+        this.effectifs.merge(Role.INACTIF, -retire, Integer::sum);
+        return retire;
+    }
+
+    /**
+     * Tire un role au hasard, avec une probabilite proportionnelle a son
+     * effectif dans la population. Retourne null si la population est vide.
+     */
+    private Role tirerRoleAleatoire(Random aleatoire) {
+        int total = this.total();
+        if (total == 0) {
+            return null;
+        }
+        int tirage = aleatoire.nextInt(total);
+        int cumul = 0;
+        for (Role r : Role.values()) {
+            cumul += this.effectifs.get(r);
+            if (tirage < cumul) {
+                return r;
+            }
+        }
+        return null;
     }
 }
