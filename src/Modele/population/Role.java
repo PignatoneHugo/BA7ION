@@ -10,7 +10,8 @@ public enum Role {
     MINEUR("role.mineur"),
     BUCHERON("role.bucheron"),
     ERUDIT("role.erudit"),
-    ESPION("role.espion");
+    /** Recrue assignee a l'armee, en attente d'etre equipee en unite combattante. */
+    SOLDAT("role.soldat");
 
     private final String cleI18n;
 
