@@ -1,0 +1,167 @@
+package Modele.ia;
+
+import java.util.Random;
+
+import Modele.action.ActionAmeliorer;
+import Modele.action.ActionAttaquer;
+import Modele.action.ActionMobiliser;
+import Modele.economie.Ressource;
+import Modele.infrastructure.Batiment;
+import Modele.infrastructure.TypeBatiment;
+import Modele.militaire.TypeUnite;
+import Modele.partie.Partie;
+import Modele.population.Population;
+import Modele.population.Role;
+import Modele.royaume.Royaume;
+
+import config.Equilibrage;
+
+/**
+ * IA "equilibree" : repartit sa population entre production et recherche,
+ * recrute des soldats si possible, ameliore ses batiments par cycles et
+ * attaque le joueur quand son armee semble suffisante.
+ *
+ * Strategie deterministe : pas d'alea dans les decisions, ce qui rend les
+ * playtests reproductibles. Les seules sources d'alea sont les ressources
+ * disponibles et l'etat du jeu.
+ */
+public class StrategieEquilibree implements StrategieIA {
+
+    @Override
+    public void jouerTour(Royaume bot, Partie partie) {
+        // ATTENTION : recruter AVANT d'equilibrer. Sinon equilibrerPopulation
+        // assigne tous les inactifs aux metiers et recruterSoldats trouve
+        // 0 inactif disponible -> bot sans armee a vie.
+        recruterSoldats(bot, partie.aleatoire());
+        equilibrerPopulation(bot);
+        ameliorerBatiment(bot, partie.aleatoire());
+        decisionAttaque(bot, partie);
+
+        // Le bot execute immediatement sa file d'actions (pas de phase
+        // separee pour les bots, contrairement au joueur).
+        bot.fileActions().executerToutes(bot);
+        bot.notifierFileActionsChangee();
+    }
+
+    /**
+     * Repartition cible : moitie fermiers, 1/5 mineurs, 1/5 bucherons,
+     * 1/10 erudits. Les surplus restent en inactifs.
+     */
+    private void equilibrerPopulation(Royaume bot) {
+        Population pop = bot.population();
+        int total = pop.total();
+        int inactifs = pop.effectif(Role.INACTIF);
+
+        int fermiersCibles = Math.max(1, total / 2);
+        int mineursCibles = total / 5;
+        int bucheronsCibles = total / 5;
+        int eruditsCibles = total / 10;
+
+        affecter(bot, Role.FERMIER, fermiersCibles - pop.effectif(Role.FERMIER), inactifs);
+        inactifs = pop.effectif(Role.INACTIF);
+        affecter(bot, Role.MINEUR, mineursCibles - pop.effectif(Role.MINEUR), inactifs);
+        inactifs = pop.effectif(Role.INACTIF);
+        affecter(bot, Role.BUCHERON, bucheronsCibles - pop.effectif(Role.BUCHERON), inactifs);
+        inactifs = pop.effectif(Role.INACTIF);
+        affecter(bot, Role.ERUDIT, eruditsCibles - pop.effectif(Role.ERUDIT), inactifs);
+    }
+
+    private void affecter(Royaume bot, Role cible, int besoin, int inactifsDispo) {
+        if (besoin <= 0 || inactifsDispo <= 0) {
+            return;
+        }
+        bot.reaffecter(Role.INACTIF, cible, Math.min(besoin, inactifsDispo));
+    }
+
+    /**
+     * Recrute des soldats si le bot a au moins SEUIL_OR_RECRUTEMENT or et
+     * peu de soldats relativement a sa population civile. ActionMobiliser
+     * exige des recrues (Role.SOLDAT) -- on les assigne d'abord depuis
+     * les inactifs.
+     */
+    private void recruterSoldats(Royaume bot, Random aleatoire) {
+        int or = bot.tresor().quantite(Ressource.OR);
+        int effectifArmee = bot.armee().effectifTotal();
+        int popCivile = bot.population().total();
+
+        if (or < Equilibrage.SEUIL_OR_RECRUTEMENT_IA
+                || effectifArmee >= popCivile / 2) {
+            return;
+        }
+        // Nombre variable de recrues : entre 3 et 8 par tour.
+        int voulus = 3 + aleatoire.nextInt(6);
+        int inactifs = bot.population().effectif(Role.INACTIF);
+        int aRecruter = Math.min(voulus, inactifs);
+        // Limite aussi par l'or disponible (un soldat coute COUT_OR_PAR_SOLDAT)
+        int abordables = or / Equilibrage.COUT_OR_PAR_SOLDAT;
+        aRecruter = Math.min(aRecruter, abordables);
+        if (aRecruter <= 0) {
+            return;
+        }
+        // Assigne les inactifs en SOLDAT (immediat) puis planifie la mobilisation.
+        bot.reaffecter(Role.INACTIF, Role.SOLDAT, aRecruter);
+        bot.fileActions().ajouter(
+                new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, aRecruter));
+    }
+
+    /** Ameliore un batiment aleatoire ameliorable parmi ceux du royaume. */
+    private void ameliorerBatiment(Royaume bot, Random aleatoire) {
+        TypeBatiment[] types = TypeBatiment.values();
+        for (int essai = 0; essai < 3; essai++) {
+            TypeBatiment t = types[aleatoire.nextInt(types.length)];
+            Batiment b = bot.batiment(t);
+            if (b == null || !b.peutEtreAmeliore()) {
+                continue;
+            }
+            ActionAmeliorer action = new ActionAmeliorer(t);
+            if (action.estExecutable(bot)) {
+                // Verifier que le bot peut payer le cout (vue simplifiee)
+                if (peutPayer(bot, t, b.niveau() + 1)) {
+                    bot.fileActions().ajouter(action);
+                    payer(bot, t, b.niveau() + 1);
+                    return;
+                }
+            }
+        }
+    }
+
+    private boolean peutPayer(Royaume bot, TypeBatiment type, int niveauCible) {
+        for (var e : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
+            if (!bot.tresor().contient(e.getKey(), e.getValue())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void payer(Royaume bot, TypeBatiment type, int niveauCible) {
+        for (var e : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
+            bot.tresor().retirer(e.getKey(), e.getValue());
+        }
+    }
+
+    /**
+     * Decide d'attaquer le joueur selon une probabilite aleatoire chaque
+     * tour. La proba croit avec l'effectif (un bot avec une grosse armee
+     * est plus enclin a la depenser). Resultat : attaques irregulieres
+     * dans le temps et avec des effectifs variables.
+     */
+    private void decisionAttaque(Royaume bot, Partie partie) {
+        // Pas d'attaque avant le tour TOUR_MIN_PREMIERE_ATTAQUE_IA :
+        // on laisse le joueur s'installer en debut de partie.
+        if (partie.numeroTour() < Equilibrage.TOUR_MIN_PREMIERE_ATTAQUE_IA) {
+            return;
+        }
+        int effectif = bot.armee().effectifTotal();
+        if (effectif < Equilibrage.EFFECTIF_MIN_POUR_ATTAQUE_IA) {
+            return;
+        }
+        // Proba de base + bonus selon la taille de l'armee, plafonne.
+        double chance = Equilibrage.PROBA_ATTAQUE_IA_BASE
+                + Math.min(0.40, effectif / 100.0);
+        if (partie.aleatoire().nextDouble() > chance) {
+            return;
+        }
+        bot.fileActions().ajouter(new ActionAttaquer(partie.joueur()));
+    }
+}
