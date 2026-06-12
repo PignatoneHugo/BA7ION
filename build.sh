@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script de build simple pour BAS7ION (sans Maven/Gradle).
-# Compile les sources Java dans bin/ et copie les ressources .properties.
+# Compile les sources Java dans bin/ et copie les ressources (images).
 #
 # Robuste aux chemins contenant des espaces : on se place dans le dossier
 # projet et on utilise des chemins relatifs (src/ et bin/), donc aucun
@@ -29,8 +29,7 @@ build() {
     find src -name "*.java" -print0 | xargs -0 javac -d bin -encoding UTF-8
     echo "[build] compilation OK."
 
-    # 2. Copie des ressources non-Java (.properties, images).
-    (cd src && find . -name "*.properties" -exec cp --parents {} ../bin/ \;)
+    # 2. Copie des ressources non-Java (images).
     (cd src && find . \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) \
             -exec cp --parents {} ../bin/ \; 2>/dev/null) || true
     echo "[build] ressources copiees."

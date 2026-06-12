@@ -25,7 +25,6 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -64,7 +63,7 @@ public class VueNouvellePartie extends JPanel {
         c.insets = new Insets(8, 8, 8, 8);
 
         // Titre
-        JLabel titre = new JLabel(Traducteur.t("nouvelle_partie.titre"), SwingConstants.CENTER);
+        JLabel titre = new JLabel("Nouvelle partie", SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(36f));
         titre.setForeground(Palette.OR);
         c.gridx = 0;
@@ -91,7 +90,7 @@ public class VueNouvellePartie extends JPanel {
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp(Traducteur.t("nouvelle_partie.nom_joueur") + " :"), c);
+        panneau.add(labelChamp("Nom du royaume" + " :"), c);
 
         this.champNom = new JTextField("Royaume du Joueur", 20);
         this.champNom.setEditable(true);
@@ -107,7 +106,7 @@ public class VueNouvellePartie extends JPanel {
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp(Traducteur.t("nouvelle_partie.nb_bots") + " :"), c);
+        panneau.add(labelChamp("Nombre d'adversaires" + " :"), c);
 
         this.spinnerBots = new JSpinner(new SpinnerNumberModel(1, 1, 4, 1));
         this.spinnerBots.setPreferredSize(new Dimension(80, 36));
@@ -120,7 +119,7 @@ public class VueNouvellePartie extends JPanel {
         c.gridx = 0;
         c.gridy = 4;
         c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp(Traducteur.t("difficulte.titre") + " :"), c);
+        panneau.add(labelChamp("Difficulte" + " :"), c);
 
         this.comboDifficulte = new JComboBox<>(Difficulte.values());
         this.comboDifficulte.setSelectedItem(Difficulte.NORMAL);
@@ -135,10 +134,10 @@ public class VueNouvellePartie extends JPanel {
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
         actions.setOpaque(false);
         this.boutonRetour = new BoutonMedieval(
-                Traducteur.t("nouvelle_partie.retour"), BoutonMedieval.Style.SECONDAIRE);
+                "Retour", BoutonMedieval.Style.SECONDAIRE);
         this.boutonRetour.setPreferredSize(new Dimension(160, 44));
         this.boutonDemarrer = new BoutonMedieval(
-                Traducteur.t("nouvelle_partie.demarrer"), BoutonMedieval.Style.PRIMAIRE);
+                "Demarrer", BoutonMedieval.Style.PRIMAIRE);
         this.boutonDemarrer.setPreferredSize(new Dimension(220, 50));
         actions.add(this.boutonRetour);
         actions.add(this.boutonDemarrer);
@@ -227,7 +226,7 @@ public class VueNouvellePartie extends JPanel {
                                                       boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if (value instanceof Difficulte) {
-                setText(Traducteur.t(((Difficulte) value).cleI18n()));
+                setText(((Difficulte) value).libelle());
             }
             setBackground(isSelected ? Palette.BOUTON_FOND_SURVOL : Palette.CHAMP_FOND);
             setForeground(Palette.TEXTE_PRIMAIRE);

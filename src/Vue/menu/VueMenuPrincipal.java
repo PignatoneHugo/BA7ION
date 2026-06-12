@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -70,7 +69,7 @@ public class VueMenuPrincipal extends JPanel {
         // ESPACE EN HAUT pour la lune et le titre
         c.gridy = 0;
         c.insets = new Insets(60, 0, 8, 0);
-        JLabel titre = new JLabel(Traducteur.t("menu.titre"), SwingConstants.CENTER);
+        JLabel titre = new JLabel("BAS7ION", SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(80f));
         titre.setForeground(Palette.OR);
         add(titre, c);
@@ -78,7 +77,7 @@ public class VueMenuPrincipal extends JPanel {
         // Sous-titre
         c.gridy = 1;
         c.insets = new Insets(0, 0, 350, 0);
-        JLabel sousTitre = new JLabel(Traducteur.t("menu.sous_titre"), SwingConstants.CENTER);
+        JLabel sousTitre = new JLabel("Simulation de royaume medieval", SwingConstants.CENTER);
         sousTitre.setFont(Polices.SOUS_TITRE.deriveFont(18f));
         sousTitre.setForeground(Palette.TEXTE_PRIMAIRE);
         add(sousTitre, c);
@@ -86,17 +85,17 @@ public class VueMenuPrincipal extends JPanel {
         c.insets = new Insets(10, 0, 10, 0);
 
         // BOUTONS
-        this.boutonNouvellePartie = BoutonMedieval.primaire(Traducteur.t("menu.nouvelle_partie"));
+        this.boutonNouvellePartie = BoutonMedieval.primaire("Nouvelle partie");
         this.boutonNouvellePartie.setPreferredSize(new Dimension(320, 54));
         c.gridy = 2;
         add(this.boutonNouvellePartie, c);
 
-        this.boutonOptions = BoutonMedieval.primaire(Traducteur.t("menu.options"));
+        this.boutonOptions = BoutonMedieval.primaire("Options");
         this.boutonOptions.setPreferredSize(new Dimension(320, 54));
         c.gridy = 3;
         add(this.boutonOptions, c);
 
-        this.boutonQuitter = BoutonMedieval.primaire(Traducteur.t("menu.quitter"));
+        this.boutonQuitter = BoutonMedieval.primaire("Quitter");
         this.boutonQuitter.setPreferredSize(new Dimension(320, 54));
         c.gridy = 4;
         add(this.boutonQuitter, c);
@@ -104,7 +103,7 @@ public class VueMenuPrincipal extends JPanel {
         // Footer credits
         c.gridy = 5;
         c.insets = new Insets(40, 0, 0, 0);
-        JLabel credits = new JLabel(Traducteur.t("menu.credits"), SwingConstants.CENTER);
+        JLabel credits = new JLabel("ENSEEIHT 1A - Equipe BAS7ION - 2025-2026", SwingConstants.CENTER);
         credits.setFont(Polices.CREDITS);
         credits.setForeground(Palette.TEXTE_TERTIAIRE);
         add(credits, c);

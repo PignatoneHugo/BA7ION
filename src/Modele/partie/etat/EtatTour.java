@@ -14,6 +14,6 @@ public interface EtatTour {
     /** Retourne la phase suivante (jamais null). */
     EtatTour suivant();
 
-    /** Cle i18n du nom de la phase. */
+    /** Identifiant de la phase. */
     String nomCle();
 }

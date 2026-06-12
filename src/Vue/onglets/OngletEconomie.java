@@ -25,7 +25,6 @@ import Modele.economie.NiveauTaxes;
 import Modele.notification.Notification;
 import Modele.population.Role;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -66,7 +65,7 @@ public class OngletEconomie extends JPanel implements Observer {
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
         // Titre section (meme style que Infrastructures et Militaire)
-        add(creerTitreSection(Traducteur.t("onglet.economie")), BorderLayout.NORTH);
+        add(creerTitreSection("Economie"), BorderLayout.NORTH);
 
         // Contenu central : bloc roles + bloc taxes
         JPanel centre = new JPanel();
@@ -110,7 +109,7 @@ public class OngletEconomie extends JPanel implements Observer {
                 BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                 BorderFactory.createEmptyBorder(14, 18, 14, 18)));
 
-        JLabel sousTitre = creerSousTitre(Traducteur.t("eco.repartition"));
+        JLabel sousTitre = creerSousTitre("Repartition des habitants");
         sousTitre.setAlignmentX(LEFT_ALIGNMENT);
         bloc.add(sousTitre);
         bloc.add(Box.createVerticalStrut(10));
@@ -135,12 +134,12 @@ public class OngletEconomie extends JPanel implements Observer {
         JPanel gauche = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         gauche.setOpaque(false);
         gauche.add(creerPastilleRole(r));
-        JLabel nom = new JLabel(Traducteur.t(r.cleI18n()));
+        JLabel nom = new JLabel(r.libelle());
         nom.setFont(Polices.LABEL.deriveFont(15f));
         nom.setForeground(couleurDe(r));
         gauche.add(nom);
         if (r == Role.INACTIF) {
-            JLabel cout = new JLabel(Traducteur.t("eco.recrutement.cout"));
+            JLabel cout = new JLabel("(-100 nourriture pour recruter)");
             cout.setFont(Polices.LABEL.deriveFont(java.awt.Font.ITALIC, 12f));
             cout.setForeground(Palette.NOURRITURE_RESSOURCE);
             gauche.add(cout);
@@ -195,7 +194,7 @@ public class OngletEconomie extends JPanel implements Observer {
                 BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                 BorderFactory.createEmptyBorder(14, 18, 14, 18)));
 
-        JLabel sousTitre = creerSousTitre(Traducteur.t("taxes.titre"));
+        JLabel sousTitre = creerSousTitre("Taxes");
         sousTitre.setAlignmentX(LEFT_ALIGNMENT);
         bloc.add(sousTitre);
         bloc.add(Box.createVerticalStrut(10));
@@ -206,7 +205,7 @@ public class OngletEconomie extends JPanel implements Observer {
 
         ButtonGroup grp = new ButtonGroup();
         for (NiveauTaxes n : NiveauTaxes.values()) {
-            ToggleMedieval t = new ToggleMedieval(Traducteur.t(n.cleI18n()));
+            ToggleMedieval t = new ToggleMedieval(n.libelle());
             t.setPreferredSize(new Dimension(140, 36));
             grp.add(t);
             this.togglesTaxes.put(n, t);

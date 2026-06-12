@@ -11,8 +11,6 @@ import Vue.VueHUD;
 import Vue.dialogue.DialogueEvenement;
 import Vue.dialogue.DialogueFinTour;
 import Vue.dialogue.DialogueRapportCombat;
-import Vue.i18n.Traducteur;
-
 /**
  * Controleur principal. Ecoute les actions du joueur (clic sur "Fin de tour")
  * et fait avancer le modele en consequence.
@@ -75,15 +73,14 @@ public class ControleurPartie {
 
             // === Phase 3 : evenement (s'il y en a un en attente) ===
             if (this.partie.enAttenteEvenement()) {
-                String titre = Traducteur.t(
-                        this.partie.evenementEnAttente().cleTitre());
+                String titre = this.partie.evenementEnAttente().titre();
                 Choix choix = DialogueEvenement.afficher(this.fenetre,
                         this.partie.evenementEnAttente(),
                         this.partie.joueur());
                 this.partie.resoudreEvenement(choix);
                 this.fenetre.statusBar().setMessage(
-                        Traducteur.t("status.evenement_resolu") + " : " + titre
-                                + " - " + Traducteur.t(choix.cleI18n()));
+                        "Evenement resolu" + " : " + titre
+                                + " - " + choix.libelle());
             }
 
             // === Phase 4 : achever les phases restantes UNIQUEMENT si on
@@ -93,7 +90,7 @@ public class ControleurPartie {
 
             this.partie.notifierTourDemarre();
             this.fenetre.statusBar().setMessage(
-                    Traducteur.t("status.tour_demarre") + " " + this.partie.numeroTour());
+                    "Nouveau tour :" + " " + this.partie.numeroTour());
 
             // === Phase 5 : verifier fin de partie ===
             ConditionsFin.Etat etat = ConditionsFin.evaluer(this.partie);

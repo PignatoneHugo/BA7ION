@@ -11,13 +11,13 @@ import java.util.List;
  */
 public abstract class Evenement {
 
-    private final String cleTitre;
-    private final String cleDescription;
+    private final String titre;
+    private final String description;
     private final List<Choix> choix;
 
-    protected Evenement(String cleTitre, String cleDescription) {
-        this.cleTitre = cleTitre;
-        this.cleDescription = cleDescription;
+    protected Evenement(String titre, String description) {
+        this.titre = titre;
+        this.description = description;
         this.choix = new ArrayList<>();
     }
 
@@ -28,12 +28,12 @@ public abstract class Evenement {
         }
     }
 
-    public String cleTitre() {
-        return this.cleTitre;
+    public String titre() {
+        return this.titre;
     }
 
-    public String cleDescription() {
-        return this.cleDescription;
+    public String description() {
+        return this.description;
     }
 
     public List<Choix> choix() {

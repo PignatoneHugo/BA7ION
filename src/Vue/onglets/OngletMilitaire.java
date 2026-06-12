@@ -24,7 +24,6 @@ import Modele.notification.Notification;
 import Modele.partie.Partie;
 import Modele.population.Role;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -65,7 +64,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
 
-        JLabel titre = new JLabel(Traducteur.t("onglet.militaire").toUpperCase(),
+        JLabel titre = new JLabel("Militaire".toUpperCase(),
                 SwingConstants.LEFT);
         titre.setFont(Polices.SECTION.deriveFont(16f));
         titre.setForeground(Palette.OR);
@@ -127,7 +126,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                 BorderFactory.createEmptyBorder(8, 14, 8, 14)));
 
         // Titre du bloc
-        JLabel sousTitre = new JLabel(Traducteur.t("militaire.combat").toUpperCase());
+        JLabel sousTitre = new JLabel("Combat".toUpperCase());
         sousTitre.setFont(Polices.SECTION.deriveFont(13f));
         sousTitre.setForeground(Palette.OR);
         bloc.add(sousTitre, BorderLayout.NORTH);
@@ -141,7 +140,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         groupePosture.setOpaque(false);
         ButtonGroup grp = new ButtonGroup();
         for (PostureCombat p : PostureCombat.values()) {
-            ToggleMedieval t = new ToggleMedieval(Traducteur.t(p.cleI18n()));
+            ToggleMedieval t = new ToggleMedieval(p.libelle());
             t.setPreferredSize(new java.awt.Dimension(120, 32));
             grp.add(t);
             this.togglesPosture.put(p, t);
@@ -152,7 +151,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         // Droite : bouton Attaquer (seulement si bots presents)
         if (!this.partie.bots().isEmpty()) {
             this.boutonAttaquer = new BoutonMedieval(
-                    Traducteur.t("militaire.attaquer").toUpperCase(),
+                    "Attaquer".toUpperCase(),
                     BoutonMedieval.Style.DANGER);
             this.boutonAttaquer.setPreferredSize(new java.awt.Dimension(180, 38));
             ligne.add(this.boutonAttaquer, BorderLayout.EAST);
@@ -182,10 +181,10 @@ public class OngletMilitaire extends JPanel implements Observer {
         // En-tete : effectif total + recrues disponibles
         int recrues = this.royaume.population().effectif(Role.SOLDAT);
         this.labelEffectifTotal.setText(
-                Traducteur.t("militaire.effectif_total") + " : "
+                "Effectif total" + " : "
                         + this.royaume.armee().effectifTotal()
                         + "    |    "
-                        + Traducteur.t("militaire.recrues") + " : " + recrues);
+                        + "Recrues dispo." + " : " + recrues);
 
         // Chaque carte
         for (TypeUnite t : TypeUnite.values()) {
@@ -215,11 +214,11 @@ public class OngletMilitaire extends JPanel implements Observer {
             if (this.labelAttaquesPlanifiees != null) {
                 if (planifiees == 0) {
                     this.labelAttaquesPlanifiees.setText(
-                            Traducteur.t("militaire.aucune_attaque"));
+                            "Aucune attaque planifiee ce tour");
                 } else {
                     this.labelAttaquesPlanifiees.setText(
                             planifiees + " "
-                                    + Traducteur.t("militaire.attaques_planifiees"));
+                                    + "attaque(s) planifiee(s) ce tour");
                 }
             }
         }
@@ -268,7 +267,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                     BorderFactory.createEmptyBorder(8, 10, 8, 10)));
 
             // === Nom du type ===
-            JLabel nom = new JLabel(Traducteur.t(type.cleI18n()).toUpperCase(),
+            JLabel nom = new JLabel(type.libelle().toUpperCase(),
                     SwingConstants.CENTER);
             nom.setFont(Polices.SECTION.deriveFont(13f));
             nom.setForeground(Palette.OR);
@@ -284,17 +283,17 @@ public class OngletMilitaire extends JPanel implements Observer {
             this.valeurEffectif = new JLabel("", SwingConstants.CENTER);
             this.valeurEffectif.setFont(Polices.VALEUR.deriveFont(15f));
             this.valeurEffectif.setForeground(Palette.TEXTE_PRIMAIRE);
-            corps.add(creerColonne("militaire.effectif", this.valeurEffectif));
+            corps.add(creerColonne("Effectif", this.valeurEffectif));
 
             this.valeurStats = new JLabel("", SwingConstants.CENTER);
             this.valeurStats.setFont(Polices.LABEL.deriveFont(11f));
             this.valeurStats.setForeground(Palette.TEXTE_PRIMAIRE);
-            corps.add(creerColonne("militaire.stats", this.valeurStats));
+            corps.add(creerColonne("Att / Def", this.valeurStats));
 
             this.valeurCout = new JLabel("", SwingConstants.CENTER);
             this.valeurCout.setFont(Polices.LABEL.deriveFont(11f));
             this.valeurCout.setForeground(Palette.OR_RESSOURCE);
-            corps.add(creerColonne("militaire.cout_unitaire", this.valeurCout));
+            corps.add(creerColonne("Cout / unite", this.valeurCout));
 
             add(corps, BorderLayout.CENTER);
 
@@ -304,17 +303,17 @@ public class OngletMilitaire extends JPanel implements Observer {
             pied.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
 
             this.boutonDemobiliser = new BoutonMedieval(
-                    Traducteur.t("militaire.demobiliser"),
+                    "-",
                     BoutonMedieval.Style.DANGER);
             this.boutonRecruter = new BoutonMedieval(
-                    Traducteur.t("militaire.recruter"),
+                    "+",
                     BoutonMedieval.Style.PRIMAIRE);
             pied.add(this.boutonDemobiliser);
             pied.add(this.boutonRecruter);
             add(pied, BorderLayout.SOUTH);
         }
 
-        private JPanel creerColonne(String cleI18n, JLabel valeur) {
+        private JPanel creerColonne(String libelle, JLabel valeur) {
             JPanel col = new JPanel(new GridLayout(2, 1));
             col.setOpaque(true);
             col.setBackground(new Color(8, 6, 4));
@@ -322,7 +321,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                     BorderFactory.createLineBorder(Palette.BORDURE_FONCEE, 1),
                     BorderFactory.createEmptyBorder(2, 4, 2, 4)));
 
-            JLabel titre = new JLabel(Traducteur.t(cleI18n).toUpperCase(),
+            JLabel titre = new JLabel(libelle.toUpperCase(),
                     SwingConstants.CENTER);
             titre.setFont(Polices.PETIT_LABEL);
             titre.setForeground(Palette.TEXTE_TERTIAIRE);
@@ -354,7 +353,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                 this.valeurCout.setForeground(Palette.OR_RESSOURCE);
             } else {
                 this.valeurCout.setText(
-                        Traducteur.t("militaire.caserne_requise")
+                        "Caserne niv."
                                 + " " + this.type.niveauCaserneRequis());
                 this.valeurCout.setForeground(Palette.TEXTE_TERTIAIRE);
             }

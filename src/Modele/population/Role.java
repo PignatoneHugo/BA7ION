@@ -5,21 +5,21 @@ package Modele.population;
  */
 public enum Role {
 
-    INACTIF("role.inactif"),
-    FERMIER("role.fermier"),
-    MINEUR("role.mineur"),
-    BUCHERON("role.bucheron"),
-    ERUDIT("role.erudit"),
+    INACTIF("Inactif"),
+    FERMIER("Fermier"),
+    MINEUR("Mineur"),
+    BUCHERON("Bucheron"),
+    ERUDIT("Erudit"),
     /** Recrue assignee a l'armee, en attente d'etre equipee en unite combattante. */
-    SOLDAT("role.soldat");
+    SOLDAT("Soldat (recrue)");
 
-    private final String cleI18n;
+    private final String libelle;
 
-    Role(String cleI18n) {
-        this.cleI18n = cleI18n;
+    Role(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String cleI18n() {
-        return this.cleI18n;
+    public String libelle() {
+        return this.libelle;
     }
 }

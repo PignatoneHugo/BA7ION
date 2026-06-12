@@ -26,7 +26,6 @@ import Modele.infrastructure.Marche;
 import Modele.infrastructure.TypeBatiment;
 import Modele.notification.Notification;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -63,7 +62,7 @@ public class OngletMarche extends JPanel implements Observer {
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
 
-        JLabel titre = new JLabel(Traducteur.t("onglet.marche").toUpperCase(),
+        JLabel titre = new JLabel("Marche".toUpperCase(),
                 SwingConstants.LEFT);
         titre.setFont(Polices.SECTION.deriveFont(16f));
         titre.setForeground(Palette.OR);
@@ -85,14 +84,14 @@ public class OngletMarche extends JPanel implements Observer {
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
 
         // Sous-bloc DONNER
-        centre.add(creerSousBloc(Traducteur.t("marche.donner"), this.togglesSource));
+        centre.add(creerSousBloc("Donner", this.togglesSource));
 
         // Montant
         centre.add(Box.createVerticalStrut(10));
         JPanel ligneMontant = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         ligneMontant.setOpaque(false);
         ligneMontant.setAlignmentX(LEFT_ALIGNMENT);
-        JLabel labelMontant = new JLabel(Traducteur.t("marche.montant") + " :");
+        JLabel labelMontant = new JLabel("Montant a donner" + " :");
         labelMontant.setFont(Polices.LABEL.deriveFont(13f));
         labelMontant.setForeground(Palette.TEXTE_PRIMAIRE);
         this.spinnerMontant = new JSpinner(new SpinnerNumberModel(10, 1, 9999, 10));
@@ -106,7 +105,7 @@ public class OngletMarche extends JPanel implements Observer {
         centre.add(Box.createVerticalStrut(10));
 
         // Sous-bloc RECEVOIR
-        centre.add(creerSousBloc(Traducteur.t("marche.recevoir"), this.togglesCible));
+        centre.add(creerSousBloc("Recevoir", this.togglesCible));
 
         // Résultat + bouton (chacun dans un panel pleine largeur qui
         // centre son contenu, pour eviter que la largeur change du label
@@ -124,7 +123,7 @@ public class OngletMarche extends JPanel implements Observer {
 
         centre.add(Box.createVerticalStrut(8));
         this.boutonEchanger = new BoutonMedieval(
-                Traducteur.t("marche.echanger").toUpperCase(),
+                "Echanger".toUpperCase(),
                 BoutonMedieval.Style.PRIMAIRE);
         this.boutonEchanger.setPreferredSize(new Dimension(220, 40));
         JPanel wrapperBouton = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -180,7 +179,7 @@ public class OngletMarche extends JPanel implements Observer {
 
         ButtonGroup grp = new ButtonGroup();
         for (Ressource r : Ressource.values()) {
-            ToggleMedieval t = new ToggleMedieval(Traducteur.t(r.cleI18n()));
+            ToggleMedieval t = new ToggleMedieval(r.libelle());
             t.setPreferredSize(new Dimension(110, 32));
             grp.add(t);
             map.put(r, t);
@@ -202,10 +201,10 @@ public class OngletMarche extends JPanel implements Observer {
         Marche marche = (Marche) this.royaume.batiment(TypeBatiment.MARCHE);
         if (marche != null) {
             this.labelTitre.setText(
-                    Traducteur.t("marche.niveau") + " " + marche.niveau()
-                            + "  •  " + Traducteur.t("marche.taux") + " : "
+                    "Niveau" + " " + marche.niveau()
+                            + "  •  " + "Taux" + " : "
                             + String.format("%.1f", marche.tauxEchange()) + " "
-                            + Traducteur.t("marche.pour_un"));
+                            + "pour 1");
         }
         rafraichirResultat();
     }
@@ -223,13 +222,13 @@ public class OngletMarche extends JPanel implements Observer {
             return;
         }
         if (src == cible) {
-            this.labelResultat.setText(Traducteur.t("marche.choisir_differentes"));
+            this.labelResultat.setText("Choisir 2 ressources differentes");
             this.labelResultat.setForeground(Palette.TEXTE_TERTIAIRE);
             this.boutonEchanger.setEnabled(false);
             return;
         }
         int recu = marche.quantiteRecue(montant);
-        this.labelResultat.setText("→ " + recu + " " + Traducteur.t(cible.cleI18n()));
+        this.labelResultat.setText("→ " + recu + " " + cible.libelle());
         this.labelResultat.setForeground(couleurRessource(cible));
 
         boolean assez = this.royaume.tresor().contient(src, montant);

@@ -13,16 +13,17 @@ import Modele.royaume.Royaume;
 public class AttaqueBrigands extends Evenement {
 
     public AttaqueBrigands() {
-        super("evenement.brigands.titre", "evenement.brigands.description");
+        super("Attaque de brigands !",
+                "Des pillards rodent autour du royaume. Comment reagir ?");
 
         ajouterChoix(new Choix(
-                "evenement.brigands.choix.combattre",
+                "Les combattre (0 a 3 morts aleatoires, +2 moral)",
                 new EffetCombattre()));
         ajouterChoix(new Choix(
-                "evenement.brigands.choix.payer",
+                "Payer une rancon (-150 or)",
                 new EffetSimple(-150, 0, 0)));
         ajouterChoix(new Choix(
-                "evenement.brigands.choix.subir",
+                "Laisser faire (-50 or, -30 nourriture, -5 moral)",
                 new EffetSubir()));
     }
 

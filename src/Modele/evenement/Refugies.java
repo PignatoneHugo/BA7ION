@@ -13,13 +13,15 @@ import Modele.royaume.Royaume;
 public class Refugies extends Evenement {
 
     public Refugies() {
-        super("evenement.refugies.titre", "evenement.refugies.description");
+        super("Refugies",
+                "Un groupe d'habitants fuit la guerre voisine et demande"
+                + " l'asile dans votre royaume.");
 
         ajouterChoix(new Choix(
-                "evenement.refugies.choix.accueillir",
+                "Les accueillir (+3 habitants, -30 nourriture, +3 moral)",
                 new EffetAccueillir()));
         ajouterChoix(new Choix(
-                "evenement.refugies.choix.refuser",
+                "Les refuser (-8 moral)",
                 new EffetSimple(0, 0, -8)));
     }
 

@@ -6,7 +6,6 @@ import Modele.economie.Ressource;
 import Modele.partie.Partie;
 import Modele.population.Role;
 import Vue.FenetreJeu;
-import Vue.i18n.Traducteur;
 import Vue.onglets.OngletEconomie;
 
 import config.Equilibrage;
@@ -49,8 +48,8 @@ public class ControleurEconomie extends ControleurOnglet {
         boolean ok = this.royaumeJoueur.reaffecter(Role.INACTIF, role, 1);
         if (ok) {
             this.fenetre.statusBar().setMessage(
-                    Traducteur.t("status.role_ajoute") + " : "
-                            + Traducteur.t(role.cleI18n()));
+                    "+1 habitant affecte" + " : "
+                            + role.libelle());
         }
     }
 
@@ -58,16 +57,16 @@ public class ControleurEconomie extends ControleurOnglet {
         boolean ok = this.royaumeJoueur.reaffecter(role, Role.INACTIF, 1);
         if (ok) {
             this.fenetre.statusBar().setMessage(
-                    Traducteur.t("status.role_retire") + " : "
-                            + Traducteur.t(role.cleI18n()));
+                    "-1 habitant retire" + " : "
+                            + role.libelle());
         }
     }
 
     private void changerTaxes(NiveauTaxes niveau) {
         this.royaumeJoueur.definirNiveauTaxes(niveau);
         this.fenetre.statusBar().setMessage(
-                Traducteur.t("status.taxes_changees") + " : "
-                        + Traducteur.t(niveau.cleI18n()));
+                "Taxes ajustees" + " : "
+                        + niveau.libelle());
     }
 
     private void recruterVillageois() {
@@ -82,6 +81,6 @@ public class ControleurEconomie extends ControleurOnglet {
         this.royaumeJoueur.population().ajouterInactifs(1);
         this.royaumeJoueur.notifierTresorChange();
         this.royaumeJoueur.notifierPopulationChangee();
-        this.fenetre.statusBar().setMessage(Traducteur.t("status.villageois_recrute"));
+        this.fenetre.statusBar().setMessage("Nouveau villageois accueilli au royaume");
     }
 }

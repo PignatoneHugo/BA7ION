@@ -20,7 +20,6 @@ import javax.swing.SwingConstants;
 
 import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -47,7 +46,7 @@ public class DialogueChoixCible extends JDialog {
                               Royaume joueur,
                               List<Royaume> bots,
                               CibleChoisie callback) {
-        super(parent, Traducteur.t("militaire.choisir_cible"), true);
+        super(parent, "Choisir une cible", true);
         setUndecorated(true);
         setLayout(new BorderLayout());
 
@@ -74,12 +73,12 @@ public class DialogueChoixCible extends JDialog {
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
         JLabel surTitre = new JLabel(
-                Traducteur.t("militaire.cibles").toUpperCase(),
+                "Adversaires".toUpperCase(),
                 SwingConstants.CENTER);
         surTitre.setFont(Polices.PETIT_LABEL.deriveFont(11f));
         surTitre.setForeground(new Color(106, 72, 32));
         tete.add(surTitre, BorderLayout.NORTH);
-        JLabel titre = new JLabel(Traducteur.t("militaire.choisir_cible"),
+        JLabel titre = new JLabel("Choisir une cible",
                 SwingConstants.CENTER);
         titre.setFont(Polices.SECTION.deriveFont(22f));
         titre.setForeground(Palette.OR_CLAIR);
@@ -102,7 +101,7 @@ public class DialogueChoixCible extends JDialog {
         pied.setOpaque(false);
         pied.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         BoutonMedieval annuler = new BoutonMedieval(
-                Traducteur.t("militaire.annuler"),
+                "Annuler",
                 BoutonMedieval.Style.SECONDAIRE);
         annuler.setPreferredSize(new Dimension(140, 36));
         annuler.addActionListener(e -> dispose());
@@ -138,7 +137,7 @@ public class DialogueChoixCible extends JDialog {
         int or = bot.tresor().quantite(Ressource.OR);
         int pop = bot.population().total();
 
-        JLabel labelEff = new JLabel(Traducteur.t("militaire.effectif") + " : " + eff);
+        JLabel labelEff = new JLabel("Effectif" + " : " + eff);
         labelEff.setFont(Polices.LABEL.deriveFont(12f));
         labelEff.setForeground(Palette.TEXTE_PRIMAIRE);
         infos.add(labelEff);
@@ -152,10 +151,10 @@ public class DialogueChoixCible extends JDialog {
         labelEtat.setFont(Polices.LABEL.deriveFont(12f));
         boolean dejaAttaque = joueur.aAttaquePlanifieeContre(bot);
         if (pop <= 0) {
-            labelEtat.setText(Traducteur.t("militaire.elimine"));
+            labelEtat.setText("ELIMINE");
             labelEtat.setForeground(Palette.ROUGE_DANGER);
         } else if (dejaAttaque) {
-            labelEtat.setText(Traducteur.t("militaire.deja_attaque"));
+            labelEtat.setText("Deja attaque ce tour");
             labelEtat.setForeground(Palette.OR_CLAIR);
         }
         infos.add(labelEtat);
@@ -163,7 +162,7 @@ public class DialogueChoixCible extends JDialog {
 
         // Droite : bouton choisir
         BoutonMedieval choisir = new BoutonMedieval(
-                Traducteur.t("militaire.attaquer"),
+                "Attaquer",
                 BoutonMedieval.Style.DANGER);
         choisir.setPreferredSize(new Dimension(120, 30));
         boolean cibleValide = pop > 0 && !dejaAttaque && !joueur.armee().estVide();

@@ -7,13 +7,15 @@ package Modele.evenement;
 public class BonneRecolte extends Evenement {
 
     public BonneRecolte() {
-        super("evenement.bonne_recolte.titre", "evenement.bonne_recolte.description");
+        super("Bonne recolte !",
+                "Les saisons sont clementes, les fermiers ramenent une"
+                + " recolte exceptionnelle.");
 
         ajouterChoix(new Choix(
-                "evenement.bonne_recolte.choix.stocker",
+                "Constituer des reserves (+100 nourriture, +3 moral)",
                 new EffetStocker()));
         ajouterChoix(new Choix(
-                "evenement.bonne_recolte.choix.fete",
+                "Organiser une grande fete (-50 or, +10 moral)",
                 new EffetSimple(-50, 0, 10)));
     }
 

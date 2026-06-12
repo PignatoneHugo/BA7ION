@@ -9,7 +9,6 @@ import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 import Vue.FenetreJeu;
 import Vue.dialogue.DialogueChoixCible;
-import Vue.i18n.Traducteur;
 import Vue.onglets.OngletMilitaire;
 
 /**
@@ -43,8 +42,8 @@ public class ControleurMilitaire {
                     joueur.notifierTresorChange();
                     joueur.notifierPopulationChangee();
                     this.fenetre.statusBar().setMessage(
-                            Traducteur.t("status.soldat_recrute")
-                                    + " " + Traducteur.t(type.cleI18n()));
+                            "Soldat recrute :"
+                                    + " " + type.libelle());
                 }
             });
             onglet.boutonDemobiliser(type).addActionListener(e -> {
@@ -54,8 +53,8 @@ public class ControleurMilitaire {
                     joueur.notifierArmeeChangee();
                     joueur.notifierPopulationChangee();
                     this.fenetre.statusBar().setMessage(
-                            Traducteur.t("status.soldat_demobilise")
-                                    + " " + Traducteur.t(type.cleI18n()));
+                            "Soldat demobilise :"
+                                    + " " + type.libelle());
                 }
             });
         }
@@ -66,8 +65,8 @@ public class ControleurMilitaire {
                 joueur.armee().definirPosture(posture);
                 joueur.notifierArmeeChangee();
                 this.fenetre.statusBar().setMessage(
-                        Traducteur.t("status.posture_changee")
-                                + " : " + Traducteur.t(posture.cleI18n()));
+                        "Posture changee"
+                                + " : " + posture.libelle());
             });
         }
 
@@ -90,7 +89,7 @@ public class ControleurMilitaire {
                     action.executer(joueur);
                     joueur.notifierFileActionsChangee();
                     this.fenetre.statusBar().setMessage(
-                            Traducteur.t("status.attaque_planifiee")
+                            "Attaque planifiee"
                                     + " : " + cible.nom());
                 });
         popup.setVisible(true);

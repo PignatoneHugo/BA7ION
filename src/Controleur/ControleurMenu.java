@@ -6,7 +6,6 @@ import Modele.partie.Partie;
 import Modele.partie.PartieBuilder;
 import Modele.population.Role;
 import Vue.FenetreJeu;
-import Vue.i18n.Traducteur;
 import Vue.menu.VueMenuPrincipal;
 import Vue.menu.VueNouvellePartie;
 
@@ -38,8 +37,8 @@ public class ControleurMenu {
     private void ouvrirOptions() {
         // Sera implemente plus tard (ecran Options pour la langue, le theme, etc.).
         JOptionPane.showMessageDialog(this.fenetre,
-                Traducteur.t("menu.options.indisponible"),
-                Traducteur.t("menu.options"),
+                "Cet ecran n'est pas encore disponible.",
+                "Options",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 

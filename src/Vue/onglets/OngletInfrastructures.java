@@ -21,7 +21,6 @@ import Modele.infrastructure.Batiment;
 import Modele.infrastructure.TypeBatiment;
 import Modele.notification.Notification;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -56,7 +55,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
         // Titre compact
-        JLabel titre = new JLabel(Traducteur.t("onglet.infrastructures").toUpperCase(),
+        JLabel titre = new JLabel("Infrastructures".toUpperCase(),
                 SwingConstants.LEFT);
         titre.setFont(Polices.SECTION.deriveFont(16f));
         titre.setForeground(Palette.OR);
@@ -148,7 +147,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                     BorderFactory.createEmptyBorder(6, 6, 6, 6)));
 
             // === HEADER : nom du batiment ===
-            JLabel nom = new JLabel(Traducteur.t(type.cleI18n()).toUpperCase(),
+            JLabel nom = new JLabel(type.libelle().toUpperCase(),
                     SwingConstants.CENTER);
             nom.setFont(Polices.SECTION.deriveFont(13f));
             nom.setForeground(Palette.OR);
@@ -166,18 +165,18 @@ public class OngletInfrastructures extends JPanel implements Observer {
             this.valeurNiveau.setFont(Polices.VALEUR.deriveFont(15f));
             this.valeurNiveau.setForeground(Palette.TEXTE_PRIMAIRE);
             this.valeurNiveau.setVerticalAlignment(SwingConstants.CENTER);
-            corps.add(creerColonne("infra.niveau", this.valeurNiveau));
+            corps.add(creerColonne("Niveau", this.valeurNiveau));
 
             // Colonne 2 : STATUT
             this.valeurStatut = new JLabel("", SwingConstants.CENTER);
             this.valeurStatut.setFont(Polices.LABEL.deriveFont(11f));
             this.valeurStatut.setVerticalAlignment(SwingConstants.CENTER);
-            corps.add(creerColonne("infra.statut", this.valeurStatut));
+            corps.add(creerColonne("Statut", this.valeurStatut));
 
             // Colonne 3 : COUT (panel rempli dynamiquement)
             this.valeurCout = new JPanel(new GridLayout(0, 1, 0, 1));
             this.valeurCout.setOpaque(false);
-            corps.add(creerColonne("infra.cout", this.valeurCout));
+            corps.add(creerColonne("Cout", this.valeurCout));
 
             add(corps, BorderLayout.CENTER);
 
@@ -185,7 +184,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
             // carte grace au BorderLayout, hauteur calculee depuis sa police) ===
             JPanel piedBouton = new JPanel(new BorderLayout());
             piedBouton.setOpaque(false);
-            this.bouton = new BoutonMedieval(Traducteur.t("infra.ameliorer"),
+            this.bouton = new BoutonMedieval("Ameliorer",
                     BoutonMedieval.Style.PRIMAIRE);
             piedBouton.add(this.bouton, BorderLayout.CENTER);
             piedBouton.setBorder(BorderFactory.createEmptyBorder(3, 0, 0, 0));
@@ -197,7 +196,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
          * pour que les deux soient toujours visibles a part egales, peu
          * importe la taille du contenu.
          */
-        private JPanel creerColonne(String cleI18n, JComponent valeur) {
+        private JPanel creerColonne(String libelle, JComponent valeur) {
             JPanel col = new JPanel(new GridLayout(2, 1, 0, 0));
             col.setOpaque(true);
             col.setBackground(new Color(8, 6, 4));
@@ -206,7 +205,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                     BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
             // Cellule du haut : titre, ancre en bas pour qu'il colle a la valeur
-            JLabel titre = new JLabel(Traducteur.t(cleI18n).toUpperCase(),
+            JLabel titre = new JLabel(libelle.toUpperCase(),
                     SwingConstants.CENTER);
             titre.setFont(Polices.PETIT_LABEL);
             titre.setForeground(Palette.TEXTE_TERTIAIRE);
@@ -225,17 +224,17 @@ public class OngletInfrastructures extends JPanel implements Observer {
 
             // === STATUT ===
             if (planifie) {
-                this.valeurStatut.setText(Traducteur.t("infra.statut.planifie"));
+                this.valeurStatut.setText("Planifie");
                 this.valeurStatut.setForeground(Palette.OR_CLAIR);
             } else if (b.enChantier()) {
-                this.valeurStatut.setText(Traducteur.t("infra.statut.chantier")
+                this.valeurStatut.setText("Chantier"
                         + " (" + b.toursRestants() + ")");
                 this.valeurStatut.setForeground(Palette.OR);
             } else if (b.estEndommage()) {
-                this.valeurStatut.setText(Traducteur.t("infra.statut.endommage"));
+                this.valeurStatut.setText("Endommage");
                 this.valeurStatut.setForeground(Palette.ROUGE_CLAIR);
             } else {
-                this.valeurStatut.setText(Traducteur.t("infra.statut.normal"));
+                this.valeurStatut.setText("Normal");
                 this.valeurStatut.setForeground(Palette.VERT_POSITIF);
             }
 
@@ -248,11 +247,11 @@ public class OngletInfrastructures extends JPanel implements Observer {
                         this.type, b.niveau() + 1);
                 for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {
                     ajouterLigneCout(
-                            e.getValue() + " " + Traducteur.t(e.getKey().cleI18n()),
+                            e.getValue() + " " + e.getKey().libelle(),
                             couleurRessource(e.getKey()));
                 }
             } else {
-                ajouterLigneCout(Traducteur.t("infra.niveau_max"),
+                ajouterLigneCout("Niveau max atteint",
                         Palette.TEXTE_TERTIAIRE);
             }
             this.valeurCout.revalidate();
@@ -260,13 +259,13 @@ public class OngletInfrastructures extends JPanel implements Observer {
 
             // === BOUTON ===
             if (planifie) {
-                this.bouton.setText(Traducteur.t("infra.annuler"));
+                this.bouton.setText("Annuler");
                 this.bouton.setEnabled(true);
             } else if (b.peutEtreAmeliore()) {
-                this.bouton.setText(Traducteur.t("infra.ameliorer"));
+                this.bouton.setText("Ameliorer");
                 this.bouton.setEnabled(payable);
             } else {
-                this.bouton.setText(Traducteur.t("infra.ameliorer"));
+                this.bouton.setText("Ameliorer");
                 this.bouton.setEnabled(false);
             }
         }

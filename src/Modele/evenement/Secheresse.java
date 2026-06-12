@@ -12,19 +12,21 @@ import Modele.royaume.Royaume;
 public class Secheresse extends Evenement {
 
     public Secheresse() {
-        super("evenement.secheresse.titre", "evenement.secheresse.description");
+        super("Secheresse",
+                "Une vague de chaleur frappe les terres. Les recoltes sont"
+                + " compromises.");
 
         ajouterChoix(new Choix(
-                "evenement.secheresse.choix.aide",
+                "Demander de l'aide aux voisins (-150 or, -20 nourriture, -2 moral)",
                 new EffetAide()));
         ajouterChoix(new Choix(
-                "evenement.secheresse.choix.subir",
+                "Serrer les ceintures (-80 nourriture, -5 moral)",
                 new EffetSubir()));
         // Choix toujours disponible : pas de ressources requises, juste
         // un gros impact moral. Garantit que le joueur a toujours une
         // option meme s'il n'a ni or ni nourriture.
         ajouterChoix(new Choix(
-                "evenement.secheresse.choix.abandon",
+                "Abandonner le royaume a son sort (-12 moral)",
                 new EffetSimple(0, 0, -12)));
     }
 

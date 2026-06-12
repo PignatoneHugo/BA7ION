@@ -23,7 +23,6 @@ import Modele.economie.Ressource;
 import Modele.notification.Notification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -78,14 +77,14 @@ public class VueHUD extends JPanel implements Observer {
         JPanel centre = new JPanel(new GridLayout(1, 3, 10, 0));
         centre.setOpaque(false);
 
-        this.labelTour = creerEncadre(Traducteur.t("hud.tour"), "1", Palette.OR_CLAIR, 100);
+        this.labelTour = creerEncadre("Tour", "1", Palette.OR_CLAIR, 100);
         centre.add(this.labelTour);
 
-        this.labelPopulation = creerEncadre(Traducteur.t("population.total"), "10 / 20",
+        this.labelPopulation = creerEncadre("Population", "10 / 20",
                 Palette.TEXTE_PRIMAIRE, 120);
         centre.add(this.labelPopulation);
 
-        this.labelMoral = creerEncadre(Traducteur.t("moral.titre"), "50 / 100",
+        this.labelMoral = creerEncadre("Moral", "50 / 100",
                 Palette.TEXTE_PRIMAIRE, 100);
         centre.add(this.labelMoral);
 
@@ -94,7 +93,7 @@ public class VueHUD extends JPanel implements Observer {
         // === Bloc droit : bouton fin de tour ===
         JPanel droite = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         droite.setOpaque(false);
-        this.boutonFinTour = new BoutonMedieval(Traducteur.t("app.fin_tour"),
+        this.boutonFinTour = new BoutonMedieval("Fin de tour",
                 BoutonMedieval.Style.DANGER);
         this.boutonFinTour.setPreferredSize(new Dimension(150, 64));
         droite.add(this.boutonFinTour);
@@ -169,7 +168,7 @@ public class VueHUD extends JPanel implements Observer {
 
         this.labelTour.setText("<html><div style='text-align:center;'>"
                 + "<span style='font-size:10px; color:#6a4820;'>"
-                + Traducteur.t("hud.tour").toUpperCase()
+                + "Tour".toUpperCase()
                 + "</span><br><span style='font-size:22px;'>"
                 + this.partie.numeroTour()
                 + "</span></div></html>");
@@ -181,7 +180,7 @@ public class VueHUD extends JPanel implements Observer {
         int cap = this.royaumeJoueur.population().capaciteLogement();
         this.labelPopulation.setText("<html><div style='text-align:center;'>"
                 + "<span style='font-size:10px; color:#6a4820;'>"
-                + Traducteur.t("population.total").toUpperCase()
+                + "Population".toUpperCase()
                 + "</span><br><span style='font-size:18px;'>"
                 + total + " / " + cap + "</span></div></html>");
 
@@ -192,7 +191,7 @@ public class VueHUD extends JPanel implements Observer {
                 couleurMoral.getRed(), couleurMoral.getGreen(), couleurMoral.getBlue());
         this.labelMoral.setText("<html><div style='text-align:center;'>"
                 + "<span style='font-size:10px; color:#6a4820;'>"
-                + Traducteur.t("moral.titre").toUpperCase()
+                + "Moral".toUpperCase()
                 + "</span><br><span style='font-size:18px; color:" + couleurHex + ";'>"
                 + moral + " / 100</span></div></html>");
     }
@@ -253,7 +252,7 @@ public class VueHUD extends JPanel implements Observer {
             int xText = cx + diam + 8;
             g2.setColor(Palette.TEXTE_TERTIAIRE);
             g2.setFont(Polices.PETIT_LABEL);
-            g2.drawString(Traducteur.t(this.ressource.cleI18n()).toUpperCase(), xText, 14);
+            g2.drawString(this.ressource.libelle().toUpperCase(), xText, 14);
 
             // Valeur
             g2.setColor(this.couleur);

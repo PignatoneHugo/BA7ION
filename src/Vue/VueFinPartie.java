@@ -21,7 +21,6 @@ import Modele.economie.Ressource;
 import Modele.partie.ConditionsFin;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -69,11 +68,11 @@ public class VueFinPartie extends JPanel {
         boutons.setOpaque(false);
 
         this.boutonRejouer = new BoutonMedieval(
-                Traducteur.t("fin_partie.bouton.rejouer"), BoutonMedieval.Style.PRIMAIRE);
+                "Nouvelle partie", BoutonMedieval.Style.PRIMAIRE);
         this.boutonRejouer.setPreferredSize(new Dimension(220, 50));
 
         this.boutonMenuPrincipal = new BoutonMedieval(
-                Traducteur.t("fin_partie.bouton.menu"), BoutonMedieval.Style.SECONDAIRE);
+                "Menu principal", BoutonMedieval.Style.SECONDAIRE);
         this.boutonMenuPrincipal.setPreferredSize(new Dimension(220, 50));
 
         boutons.add(this.boutonRejouer);
@@ -111,9 +110,9 @@ public class VueFinPartie extends JPanel {
         entete.setLayout(new BorderLayout(0, 12));
 
         boolean victoire = this.etat == ConditionsFin.Etat.VICTOIRE;
-        String titreCle = victoire ? "fin_partie.victoire" : "fin_partie.defaite";
+        String titreTexte = victoire ? "Victoire" : "Defaite";
 
-        JLabel titre = new JLabel(Traducteur.t(titreCle).toUpperCase(), SwingConstants.CENTER);
+        JLabel titre = new JLabel(titreTexte.toUpperCase(), SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(56f));
         titre.setForeground(victoire ? Palette.OR_CLAIR : Palette.ROUGE_CLAIR);
         entete.add(titre, BorderLayout.CENTER);
@@ -131,18 +130,18 @@ public class VueFinPartie extends JPanel {
         Royaume joueur = this.partie.joueur();
         if (this.etat == ConditionsFin.Etat.VICTOIRE) {
             if (joueur.tresor().quantite(Ressource.OR) >= Equilibrage.OR_VICTOIRE_PROSPERITE) {
-                return Traducteur.t("fin_partie.raison.or");
+                return "Vous avez accumule une fortune immense - votre royaume est devenu prospere !";
             }
-            return Traducteur.t("fin_partie.raison.bots");
+            return "Vous avez conquis tous les royaumes adverses !";
         }
         // Defaite
         if (joueur.population().total() <= Equilibrage.POPULATION_MIN_DEFAITE) {
-            return Traducteur.t("fin_partie.raison.population");
+            return "Votre royaume est depeuple. Plus personne ne vit dans vos terres.";
         }
         if (joueur.moral().valeur() <= Equilibrage.MORAL_MIN_DEFAITE) {
-            return Traducteur.t("fin_partie.raison.moral");
+            return "Votre peuple s'est revolte. Le royaume s'effondre.";
         }
-        return Traducteur.t("fin_partie.raison.tour_max");
+        return "Le temps imparti a votre regne est ecoule.";
     }
 
     /** Panel statistiques du regne. */
@@ -155,7 +154,7 @@ public class VueFinPartie extends JPanel {
                 BorderFactory.createEmptyBorder(16, 20, 16, 20)));
         panel.setLayout(new BorderLayout(0, 12));
 
-        JLabel titre = new JLabel(Traducteur.t("fin_partie.stats").toUpperCase());
+        JLabel titre = new JLabel("Statistiques du regne".toUpperCase());
         titre.setFont(Polices.SECTION.deriveFont(16f));
         titre.setForeground(Palette.OR);
         panel.add(titre, BorderLayout.NORTH);
@@ -164,27 +163,27 @@ public class VueFinPartie extends JPanel {
         lignes.setOpaque(false);
 
         Royaume j = this.partie.joueur();
-        lignes.add(ligneStat("fin_partie.stats.tours", String.valueOf(this.partie.numeroTour())));
-        lignes.add(ligneStat("fin_partie.stats.population",
-                j.population().total() + " " + Traducteur.t("population.habitants")));
-        lignes.add(ligneStat("fin_partie.stats.or",
+        lignes.add(ligneStat("Tours regnes", String.valueOf(this.partie.numeroTour())));
+        lignes.add(ligneStat("Population finale",
+                j.population().total() + " habitants"));
+        lignes.add(ligneStat("Or amasse",
                 j.tresor().quantite(Ressource.OR) + ""));
-        lignes.add(ligneStat("fin_partie.stats.armee",
-                j.armee().effectifTotal() + " " + Traducteur.t("fin_partie.stats.soldats")));
-        lignes.add(ligneStat("fin_partie.stats.moral",
+        lignes.add(ligneStat("Force militaire",
+                j.armee().effectifTotal() + " soldats"));
+        lignes.add(ligneStat("Moral final",
                 j.moral().valeur() + " / 100"));
         int batAmeliores = 0;
         for (var b : j.batiments()) {
             if (b.niveau() > 1) batAmeliores++;
         }
-        lignes.add(ligneStat("fin_partie.stats.batiments",
+        lignes.add(ligneStat("Batiments ameliores",
                 batAmeliores + " / " + j.batiments().size()));
 
         panel.add(lignes, BorderLayout.CENTER);
         return panel;
     }
 
-    private JPanel ligneStat(String cle, String valeur) {
+    private JPanel ligneStat(String libelle, String valeur) {
         JPanel l = new JPanel(new BorderLayout());
         l.setOpaque(true);
         l.setBackground(Palette.FOND_PANNEAU_CLAIR);
@@ -192,7 +191,7 @@ public class VueFinPartie extends JPanel {
                 BorderFactory.createLineBorder(Palette.BORDURE_FONCEE, 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
-        JLabel nom = new JLabel(Traducteur.t(cle));
+        JLabel nom = new JLabel(libelle);
         nom.setFont(Polices.LABEL);
         nom.setForeground(Palette.TEXTE_SECONDAIRE);
 
@@ -215,7 +214,7 @@ public class VueFinPartie extends JPanel {
                 BorderFactory.createEmptyBorder(16, 20, 16, 20)));
         panel.setLayout(new BorderLayout(0, 12));
 
-        JLabel titre = new JLabel(Traducteur.t("fin_partie.classement").toUpperCase());
+        JLabel titre = new JLabel("Classement final".toUpperCase());
         titre.setFont(Polices.SECTION.deriveFont(16f));
         titre.setForeground(Palette.OR);
         panel.add(titre, BorderLayout.NORTH);
@@ -262,7 +261,7 @@ public class VueFinPartie extends JPanel {
         nom.setForeground(estJoueur ? Palette.OR_CLAIR : Palette.TEXTE_PRIMAIRE);
 
         JLabel or = new JLabel(r.tresor().quantite(Ressource.OR) + " "
-                + Traducteur.t(Ressource.OR.cleI18n()).toLowerCase(),
+                + Ressource.OR.libelle().toLowerCase(),
                 SwingConstants.RIGHT);
         or.setFont(Polices.VALEUR);
         or.setForeground(Palette.OR_RESSOURCE);

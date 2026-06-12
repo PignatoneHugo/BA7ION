@@ -7,16 +7,15 @@ package Modele.evenement;
 public class FilonDor extends Evenement {
 
     public FilonDor() {
-        super("evenement.filon_or.titre", "evenement.filon_or.description");
+        super("Filon d'or !",
+                "Un mineur a decouvert un filon exceptionnel. Comment l'exploiter ?");
 
-        // Exploiter immediatement : gain immediat important.
         ajouterChoix(new Choix(
-                "evenement.filon_or.choix.exploiter",
+                "Exploiter immediatement (+400 or, +5 moral)",
                 new EffetSimple(400, 0, 5)));
 
-        // Investir dans le materiel : moindre gain mais bonus moral.
         ajouterChoix(new Choix(
-                "evenement.filon_or.choix.investir",
+                "Investir dans le materiel (+250 or, +10 moral)",
                 new EffetSimple(250, 0, 10)));
     }
 }

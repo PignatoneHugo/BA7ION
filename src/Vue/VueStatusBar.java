@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import Vue.i18n.Traducteur;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
@@ -35,7 +34,7 @@ public class VueStatusBar extends JPanel {
         setPreferredSize(new Dimension(1280, 40));
         setBorder(BorderFactory.createEmptyBorder(8, 20, 8, 20));
 
-        this.labelMessage = new JLabel(Traducteur.t("status.pret"));
+        this.labelMessage = new JLabel("Pret a jouer");
         this.labelMessage.setFont(Polices.LABEL.deriveFont(java.awt.Font.ITALIC, 13f));
         this.labelMessage.setForeground(Palette.TEXTE_PRIMAIRE);
         add(this.labelMessage, BorderLayout.WEST);

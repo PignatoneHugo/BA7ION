@@ -11,10 +11,6 @@ import Vue.FenetreJeu;
 public class Main {
 
     public static void main(String[] args) {
-        // Langue de l'interface (FR par defaut).
-        // Pour tester en anglais, decommenter la ligne suivante :
-        // Vue.i18n.Traducteur.definirLocale(java.util.Locale.ENGLISH);
-
         SwingUtilities.invokeLater(() -> {
             FenetreJeu fenetre = new FenetreJeu();
             new ControleurMenu(fenetre);

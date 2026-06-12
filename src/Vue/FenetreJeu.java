@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import Modele.partie.ConditionsFin;
 import Modele.partie.Partie;
-import Vue.i18n.Traducteur;
 import Vue.menu.VueMenuPrincipal;
 import Vue.menu.VueNouvellePartie;
 
@@ -38,7 +37,7 @@ public class FenetreJeu extends JFrame {
     private VueFinPartie vueFinPartie;
 
     public FenetreJeu() {
-        super(Traducteur.t("app.titre"));
+        super("BAS7ION - Simulation de royaume medieval");
 
         this.cards = new CardLayout();
         this.conteneur = new JPanel(this.cards);

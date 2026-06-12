@@ -1,27 +1,27 @@
 package Modele.infrastructure;
 
 /**
- * Les 9 batiments du jeu. Chacun a une cle i18n pour son nom traduit.
+ * Les 9 batiments du jeu, avec leur libelle d'affichage.
  */
 public enum TypeBatiment {
 
-    FERME("batiment.ferme"),
-    MINE("batiment.mine"),
-    SCIERIE("batiment.scierie"),
-    HABITATIONS("batiment.habitations"),
-    CASERNE("batiment.caserne"),
-    REMPARTS("batiment.remparts"),
-    MARCHE("batiment.marche"),
-    BIBLIOTHEQUE("batiment.bibliotheque"),
-    TOUR_GUET("batiment.tour_guet");
+    FERME("Ferme"),
+    MINE("Mine"),
+    SCIERIE("Scierie"),
+    HABITATIONS("Habitations"),
+    CASERNE("Caserne"),
+    REMPARTS("Remparts"),
+    MARCHE("Marche"),
+    BIBLIOTHEQUE("Bibliotheque"),
+    TOUR_GUET("Tour de Guet");
 
-    private final String cleI18n;
+    private final String libelle;
 
-    TypeBatiment(String cleI18n) {
-        this.cleI18n = cleI18n;
+    TypeBatiment(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String cleI18n() {
-        return this.cleI18n;
+    public String libelle() {
+        return this.libelle;
     }
 }

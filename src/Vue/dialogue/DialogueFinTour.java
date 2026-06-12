@@ -26,7 +26,6 @@ import Modele.infrastructure.TypeBatiment;
 import Modele.partie.BilanTour;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -44,7 +43,7 @@ public class DialogueFinTour extends JDialog {
     public DialogueFinTour(Frame parent, BilanTour avant, Royaume apres,
                            int numeroTourTermine, Partie partie) {
         super(parent,
-                Traducteur.t("fin_tour.titre") + " " + numeroTourTermine,
+                "Fin du tour" + " " + numeroTourTermine,
                 true);
         setUndecorated(true);
         setLayout(new BorderLayout());
@@ -88,14 +87,14 @@ public class DialogueFinTour extends JDialog {
         tete.setOpaque(false);
 
         JLabel surTitre = new JLabel(
-                Traducteur.t("fin_tour.sur_titre").toUpperCase(),
+                "Rapport du souverain".toUpperCase(),
                 SwingConstants.CENTER);
         surTitre.setFont(Polices.PETIT_LABEL.deriveFont(11f));
         surTitre.setForeground(new Color(106, 72, 32));
         tete.add(surTitre, BorderLayout.NORTH);
 
         JLabel titre = new JLabel(
-                Traducteur.t("fin_tour.titre") + " " + numeroTour,
+                "Fin du tour" + " " + numeroTour,
                 SwingConstants.CENTER);
         titre.setFont(Polices.SECTION.deriveFont(28f));
         titre.setForeground(Palette.OR_CLAIR);
@@ -127,119 +126,6 @@ public class DialogueFinTour extends JDialog {
     }
 
     /**
-     * Liste les batailles resolues ce tour, cote joueur uniquement
-     * (attaques subies ou lancees). Retourne null si rien.
-     */
-    private JPanel creerBlocCombats() {
-        if (this.partie == null || this.partie.batraillesDuTour().isEmpty()) {
-            return null;
-        }
-        Royaume joueur = this.partie.joueur();
-
-        java.util.List<BatailleResolue> implication = new java.util.ArrayList<>();
-        for (BatailleResolue b : this.partie.batraillesDuTour()) {
-            if (b.attaquant() == joueur || b.defenseur() == joueur) {
-                implication.add(b);
-            }
-        }
-        if (implication.isEmpty()) {
-            return null;
-        }
-
-        JPanel bloc = creerCadre(Traducteur.t("fin_tour.batailles"));
-        JPanel grille = new JPanel(new GridLayout(0, 1, 0, 4));
-        grille.setOpaque(false);
-        for (BatailleResolue b : implication) {
-            grille.add(creerLigneBataille(b, joueur));
-        }
-        bloc.add(grille, BorderLayout.CENTER);
-        return bloc;
-    }
-
-    private JPanel creerLigneBataille(BatailleResolue b, Royaume joueur) {
-        boolean joueurAttaque = (b.attaquant() == joueur);
-        String adversaire = (joueurAttaque ? b.defenseur() : b.attaquant()).nom();
-
-        // Issue
-        String issue;
-        Color couleurIssue;
-        if (b.rapport().vainqueur() == RapportCombat.Vainqueur.EGALITE) {
-            issue = Traducteur.t("fin_tour.combat.egalite");
-            couleurIssue = Palette.OR;
-        } else {
-            boolean joueurGagne =
-                    (b.rapport().vainqueur() == RapportCombat.Vainqueur.ATTAQUANT
-                            && joueurAttaque)
-                    || (b.rapport().vainqueur() == RapportCombat.Vainqueur.DEFENSEUR
-                            && !joueurAttaque);
-            issue = joueurGagne
-                    ? Traducteur.t("fin_tour.combat.victoire")
-                    : Traducteur.t("fin_tour.combat.defaite");
-            couleurIssue = joueurGagne
-                    ? Palette.VERT_POSITIF
-                    : Palette.ROUGE_DANGER;
-        }
-
-        // Detail : pertes + butin + civils
-        int pertesJoueur = joueurAttaque ? b.rapport().pertesAttaquant()
-                : b.rapport().pertesDefenseur();
-        int pertesAdv = joueurAttaque ? b.rapport().pertesDefenseur()
-                : b.rapport().pertesAttaquant();
-
-        StringBuilder detail = new StringBuilder();
-        detail.append("−").append(pertesJoueur)
-                .append(" / +").append("0  •  ennemi −")
-                .append(pertesAdv);
-        if (b.pertesCivilesDefenseur() > 0) {
-            if (joueurAttaque) {
-                detail.append("  •  ").append(pertesAdv > 0 ? "" : "")
-                        .append(b.pertesCivilesDefenseur()).append(" civils ennemis");
-            } else {
-                detail.append("  •  ").append(b.pertesCivilesDefenseur())
-                        .append(" civils perdus");
-            }
-        }
-        if (!b.butin().isEmpty()) {
-            detail.append("  •  butin : ");
-            boolean first = true;
-            for (Map.Entry<Ressource, Integer> e : b.butin().entrySet()) {
-                if (!first) detail.append(", ");
-                detail.append(e.getValue()).append(" ")
-                        .append(Traducteur.t(e.getKey().cleI18n()));
-                first = false;
-            }
-        }
-
-        JPanel ligne = new JPanel(new BorderLayout(8, 0));
-        ligne.setOpaque(true);
-        ligne.setBackground(new Color(10, 8, 4));
-        ligne.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(30, 22, 10), 1),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
-
-        // Gauche : adversaire + sens (attaque ou defense)
-        String sens = joueurAttaque ? "→" : "←";
-        JLabel labelAdv = new JLabel(sens + " " + adversaire);
-        labelAdv.setFont(Polices.LABEL.deriveFont(13f));
-        labelAdv.setForeground(Palette.OR_CLAIR);
-        ligne.add(labelAdv, BorderLayout.WEST);
-
-        // Centre : detail
-        JLabel labelDetail = new JLabel(detail.toString());
-        labelDetail.setFont(Polices.LABEL.deriveFont(11f));
-        labelDetail.setForeground(Palette.TEXTE_SECONDAIRE);
-        labelDetail.setHorizontalAlignment(SwingConstants.CENTER);
-        ligne.add(labelDetail, BorderLayout.CENTER);
-
-        // Droite : issue
-        JLabel labelIssue = new JLabel(issue, SwingConstants.RIGHT);
-        labelIssue.setFont(Polices.VALEUR.deriveFont(13f));
-        labelIssue.setForeground(couleurIssue);
-        ligne.add(labelIssue, BorderLayout.EAST);
-        return ligne;
-    }
-
-    /**
      * Liste les batiments qui ont change ce tour (niveau monte ou
      * chantier demarre/termine). Retourne null si rien a montrer.
      */
@@ -252,21 +138,21 @@ public class DialogueFinTour extends JDialog {
             boolean enChantierAvant = avant.enChantier(t);
             boolean enChantierApres = b.enChantier();
 
-            String nomBat = Traducteur.t(t.cleI18n());
+            String nomBat = t.libelle();
             if (niveauApres > niveauAvant) {
                 // Amelioration terminee ce tour
                 lignes.add(new String[]{nomBat,
-                        Traducteur.t("fin_tour.bat.ameliore"),
+                        "Amelioration terminee",
                         "Niv. " + niveauAvant + " → Niv. " + niveauApres});
             } else if (!enChantierAvant && enChantierApres) {
                 // Nouveau chantier lance ce tour
                 lignes.add(new String[]{nomBat,
-                        Traducteur.t("fin_tour.bat.chantier_lance"),
+                        "Chantier demarre",
                         "(" + b.toursRestants() + " tours)"});
             } else if (enChantierAvant && enChantierApres) {
                 // Chantier continue (compteur descend)
                 lignes.add(new String[]{nomBat,
-                        Traducteur.t("fin_tour.bat.chantier_avance"),
+                        "Chantier en cours",
                         "(" + b.toursRestants() + " tours restants)"});
             }
         }
@@ -274,7 +160,7 @@ public class DialogueFinTour extends JDialog {
             return null;
         }
 
-        JPanel bloc = creerCadre(Traducteur.t("fin_tour.batiments"));
+        JPanel bloc = creerCadre("Batiments");
         JPanel grille = new JPanel(new GridLayout(0, 1, 0, 4));
         grille.setOpaque(false);
         for (String[] ligne : lignes) {
@@ -310,7 +196,7 @@ public class DialogueFinTour extends JDialog {
     }
 
     private JPanel creerBlocRessources(BilanTour avant, Royaume apres) {
-        JPanel bloc = creerCadre(Traducteur.t("fin_tour.ressources"));
+        JPanel bloc = creerCadre("Bilan des ressources");
 
         JPanel grille = new JPanel(new GridLayout(0, 1, 0, 4));
         grille.setOpaque(false);
@@ -335,7 +221,7 @@ public class DialogueFinTour extends JDialog {
                 BorderFactory.createEmptyBorder(6, 10, 6, 10)));
 
         // Nom ressource (gauche)
-        JLabel nom = new JLabel(Traducteur.t(r.cleI18n()));
+        JLabel nom = new JLabel(r.libelle());
         nom.setFont(Polices.LABEL.deriveFont(13f));
         nom.setForeground(couleurRessource(r));
         ligne.add(nom, BorderLayout.WEST);
@@ -361,7 +247,7 @@ public class DialogueFinTour extends JDialog {
     }
 
     private JPanel creerBlocPopulation(BilanTour avant, Royaume apres) {
-        JPanel bloc = creerCadre(Traducteur.t("fin_tour.population"));
+        JPanel bloc = creerCadre("Royaume");
 
         JPanel grille = new JPanel(new GridLayout(1, 2, 10, 0));
         grille.setOpaque(false);
@@ -372,12 +258,12 @@ public class DialogueFinTour extends JDialog {
         int popApres = apres.population().total() + apres.armee().effectifTotal();
 
         grille.add(creerCarteStat(
-                Traducteur.t("population.total"),
+                "Population",
                 popAvant,
                 popApres,
                 false));
         grille.add(creerCarteStat(
-                Traducteur.t("moral.titre"),
+                "Moral",
                 avant.moral(),
                 apres.moral().valeur(),
                 true));
@@ -440,7 +326,7 @@ public class DialogueFinTour extends JDialog {
         pied.setBorder(BorderFactory.createEmptyBorder(12, 0, 0, 0));
 
         BoutonMedieval continuer = new BoutonMedieval(
-                Traducteur.t("fin_tour.continuer"),
+                "Continuer",
                 BoutonMedieval.Style.PRIMAIRE);
         continuer.setPreferredSize(new Dimension(260, 44));
         continuer.addActionListener(e -> dispose());

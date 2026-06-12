@@ -4,23 +4,23 @@ import Modele.royaume.Royaume;
 
 /**
  * Choix propose au joueur lors d'un evenement. Chaque choix associe un
- * libelle (via cle i18n) a un effet sur le royaume.
+ * libelle (texte FR) a un effet sur le royaume.
  */
 public class Choix {
 
-    private final String cleI18n;
+    private final String libelle;
     private final EffetEvenement effet;
 
-    public Choix(String cleI18n, EffetEvenement effet) {
-        if (cleI18n == null || effet == null) {
-            throw new IllegalArgumentException("cleI18n et effet ne peuvent pas etre null.");
+    public Choix(String libelle, EffetEvenement effet) {
+        if (libelle == null || effet == null) {
+            throw new IllegalArgumentException("libelle et effet ne peuvent pas etre null.");
         }
-        this.cleI18n = cleI18n;
+        this.libelle = libelle;
         this.effet = effet;
     }
 
-    public String cleI18n() {
-        return this.cleI18n;
+    public String libelle() {
+        return this.libelle;
     }
 
     public EffetEvenement effet() {

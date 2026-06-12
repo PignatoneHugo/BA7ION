@@ -1,23 +1,23 @@
 package Modele.economie;
 
 /**
- * Les 5 ressources du jeu. Chacune a une cle i18n pour son nom traduit.
+ * Les 5 ressources du jeu, avec leur libelle d'affichage.
  */
 public enum Ressource {
 
-    OR("ressource.or"),
-    NOURRITURE("ressource.nourriture"),
-    BOIS("ressource.bois"),
-    PIERRE("ressource.pierre"),
-    SAVOIR("ressource.savoir");
+    OR("Or"),
+    NOURRITURE("Nourriture"),
+    BOIS("Bois"),
+    PIERRE("Pierre"),
+    SAVOIR("Savoir");
 
-    private final String cleI18n;
+    private final String libelle;
 
-    Ressource(String cleI18n) {
-        this.cleI18n = cleI18n;
+    Ressource(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String cleI18n() {
-        return this.cleI18n;
+    public String libelle() {
+        return this.libelle;
     }
 }

@@ -5,7 +5,6 @@ import Modele.economie.Ressource;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 import Vue.FenetreJeu;
-import Vue.i18n.Traducteur;
 import Vue.onglets.OngletMarche;
 
 /**
@@ -42,9 +41,9 @@ public class ControleurMarche {
             action.executer(joueur);
             joueur.notifierTresorChange();
             this.fenetre.statusBar().setMessage(
-                    Traducteur.t("status.echange_effectue") + " : "
-                            + montant + " " + Traducteur.t(src.cleI18n())
-                            + " → " + Traducteur.t(cible.cleI18n()));
+                    "Echange effectue" + " : "
+                            + montant + " " + src.libelle()
+                            + " → " + cible.libelle());
         });
     }
 }

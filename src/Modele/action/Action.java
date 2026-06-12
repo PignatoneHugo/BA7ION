@@ -14,6 +14,6 @@ public interface Action {
     /** Applique l'effet de l'action sur le royaume. */
     void executer(Royaume royaume);
 
-    /** Cle i18n pour l'affichage dans le journal et l'UI. */
+    /** Identifiant texte pour l affichage dans le journal et l'UI. */
     String description();
 }

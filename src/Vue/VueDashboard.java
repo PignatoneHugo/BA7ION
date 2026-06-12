@@ -19,7 +19,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import Modele.partie.Partie;
-import Vue.i18n.Traducteur;
 import Vue.onglets.OngletEconomie;
 import Vue.onglets.OngletInfrastructures;
 import Vue.onglets.OngletMarche;
@@ -69,10 +68,10 @@ public class VueDashboard extends JPanel {
         barre.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Palette.OR));
         barre.setPreferredSize(new Dimension(1280, 44));
 
-        this.barreEconomie = new BarreOnglet(Traducteur.t("onglet.economie"), true);
-        this.barreInfrastructures = new BarreOnglet(Traducteur.t("onglet.infrastructures"), false);
-        this.barreMilitaire = new BarreOnglet(Traducteur.t("onglet.militaire"), false);
-        this.barreMarche = new BarreOnglet(Traducteur.t("onglet.marche"), false);
+        this.barreEconomie = new BarreOnglet("Economie", true);
+        this.barreInfrastructures = new BarreOnglet("Infrastructures", false);
+        this.barreMilitaire = new BarreOnglet("Militaire", false);
+        this.barreMarche = new BarreOnglet("Marche", false);
 
         this.barreEconomie.addMouseListener(new MouseAdapter() {
             @Override

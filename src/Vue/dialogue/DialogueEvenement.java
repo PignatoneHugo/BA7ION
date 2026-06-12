@@ -22,7 +22,6 @@ import javax.swing.SwingUtilities;
 import Modele.evenement.Choix;
 import Modele.evenement.Evenement;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -82,7 +81,7 @@ public final class DialogueEvenement {
         private Choix selection;
 
         DialogueImpl(Frame parent, Evenement evenement, Royaume royaume) {
-            super(parent, Traducteur.t(evenement.cleTitre()), true);
+            super(parent, evenement.titre(), true);
             setUndecorated(true);
             setLayout(new BorderLayout());
 
@@ -110,13 +109,13 @@ public final class DialogueEvenement {
             tete.setOpaque(false);
 
             JLabel surTitre = new JLabel(
-                    Traducteur.t("evenement.sur_titre").toUpperCase(),
+                    "Evenement".toUpperCase(),
                     SwingConstants.CENTER);
             surTitre.setFont(Polices.PETIT_LABEL.deriveFont(11f));
             surTitre.setForeground(new Color(140, 88, 32));
             tete.add(surTitre, BorderLayout.NORTH);
 
-            JLabel titre = new JLabel(Traducteur.t(evenement.cleTitre()),
+            JLabel titre = new JLabel(evenement.titre(),
                     SwingConstants.CENTER);
             titre.setFont(Polices.SECTION.deriveFont(22f));
             titre.setForeground(Palette.OR_CLAIR);
@@ -129,7 +128,7 @@ public final class DialogueEvenement {
             // Description
             JLabel description = new JLabel(
                     "<html><div style='text-align:center; width:480px;'>"
-                            + Traducteur.t(evenement.cleDescription())
+                            + evenement.description()
                             + "</div></html>",
                     SwingConstants.CENTER);
             description.setFont(Polices.LABEL.deriveFont(14f));
@@ -144,7 +143,7 @@ public final class DialogueEvenement {
             piedChoix.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
             for (Choix c : choix) {
                 BoutonMedieval bouton = new BoutonMedieval(
-                        Traducteur.t(c.cleI18n()),
+                        c.libelle(),
                         BoutonMedieval.Style.PRIMAIRE);
                 bouton.setPreferredSize(new Dimension(520, 40));
                 if (c.peutEtreChoisi(royaume)) {
@@ -154,7 +153,7 @@ public final class DialogueEvenement {
                     });
                 } else {
                     bouton.setEnabled(false);
-                    bouton.setToolTipText(Traducteur.t("evenement.ressources_insuffisantes"));
+                    bouton.setToolTipText("Ressources insuffisantes");
                 }
                 piedChoix.add(bouton);
             }

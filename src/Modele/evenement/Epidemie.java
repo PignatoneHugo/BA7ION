@@ -8,21 +8,20 @@ package Modele.evenement;
 public class Epidemie extends Evenement {
 
     public Epidemie() {
-        super("evenement.epidemie.titre", "evenement.epidemie.description");
+        super("Epidemie !",
+                "Une maladie virulente se propage dans le royaume. Plusieurs"
+                + " habitants sont malades. Que decidez-vous ?");
 
-        // Confinement : on paie pour eviter les pertes humaines, moral en baisse.
         ajouterChoix(new Choix(
-                "evenement.epidemie.choix.confinement",
+                "Confinement strict (-50 or, -5 moral)",
                 new EffetSimple(-50, 0, -5)));
 
-        // Soigner : on paie cher mais on sauve la majorite, peu de pertes.
         ajouterChoix(new Choix(
-                "evenement.epidemie.choix.soigner",
+                "Soigner aux frais du royaume (-200 or, 2 morts, -2 moral)",
                 new EffetSimple(-200, 2, -2)));
 
-        // Ignorer : pas de cout mais beaucoup de morts et moral effondre.
         ajouterChoix(new Choix(
-                "evenement.epidemie.choix.ignorer",
+                "Ignorer (5 morts, -10 moral)",
                 new EffetSimple(0, 5, -10)));
     }
 }

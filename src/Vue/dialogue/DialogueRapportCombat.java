@@ -28,7 +28,6 @@ import Modele.combat.RapportCombat;
 import Modele.economie.Ressource;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
-import Vue.i18n.Traducteur;
 import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
@@ -43,7 +42,7 @@ public class DialogueRapportCombat extends JDialog {
     private static final long serialVersionUID = 1L;
 
     public DialogueRapportCombat(Frame parent, Partie partie, int numeroTour) {
-        super(parent, Traducteur.t("rapport_combat.titre"), true);
+        super(parent, "Rapport de combat", true);
         setUndecorated(true);
         setLayout(new BorderLayout());
 
@@ -70,13 +69,13 @@ public class DialogueRapportCombat extends JDialog {
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
         JLabel surTitre = new JLabel(
-                Traducteur.t("rapport_combat.sur_titre").toUpperCase(),
+                "Cris d'armes".toUpperCase(),
                 SwingConstants.CENTER);
         surTitre.setFont(Polices.PETIT_LABEL.deriveFont(11f));
         surTitre.setForeground(new Color(140, 70, 40));
         tete.add(surTitre, BorderLayout.NORTH);
         JLabel titre = new JLabel(
-                Traducteur.t("rapport_combat.titre_principal") + " " + numeroTour,
+                "Combats du tour" + " " + numeroTour,
                 SwingConstants.CENTER);
         titre.setFont(Polices.SECTION.deriveFont(26f));
         titre.setForeground(Palette.OR_CLAIR);
@@ -121,7 +120,7 @@ public class DialogueRapportCombat extends JDialog {
         pied.setOpaque(false);
         pied.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         BoutonMedieval continuer = new BoutonMedieval(
-                Traducteur.t("rapport_combat.continuer"),
+                "Continuer",
                 BoutonMedieval.Style.PRIMAIRE);
         continuer.setPreferredSize(new Dimension(220, 40));
         continuer.addActionListener(e -> dispose());
@@ -158,13 +157,13 @@ public class DialogueRapportCombat extends JDialog {
         String texteIssue;
         if (egalite) {
             couleurIssue = Palette.OR;
-            texteIssue = Traducteur.t("rapport_combat.egalite");
+            texteIssue = "EGALITE";
         } else if (joueurGagne) {
             couleurIssue = Palette.VERT_POSITIF;
-            texteIssue = Traducteur.t("rapport_combat.victoire");
+            texteIssue = "VICTOIRE";
         } else {
             couleurIssue = Palette.ROUGE_DANGER;
-            texteIssue = Traducteur.t("rapport_combat.defaite");
+            texteIssue = "DEFAITE";
         }
 
         JPanel carte = new JPanel(new BorderLayout(0, 6));
@@ -179,8 +178,8 @@ public class DialogueRapportCombat extends JDialog {
         header.setOpaque(false);
 
         String sens = joueurAttaque
-                ? Traducteur.t("rapport_combat.vous_attaquez")
-                : Traducteur.t("rapport_combat.vous_attaque");
+                ? "Vous attaquez"
+                : "Attaque de";
         JLabel titreBat = new JLabel(sens + " " + adv.nom());
         titreBat.setFont(Polices.SECTION.deriveFont(14f));
         titreBat.setForeground(Palette.OR_CLAIR);
@@ -213,7 +212,7 @@ public class DialogueRapportCombat extends JDialog {
 
         // Colonne joueur
         corps.add(creerColonneCamp(
-                Traducteur.t("rapport_combat.vous"),
+                "Votre royaume",
                 effAvantJoueur, pertesJoueur, civilsJoueur,
                 joueurAttaque ? null : b.butin(),
                 !egalite && !joueurGagne,
@@ -255,7 +254,7 @@ public class DialogueRapportCombat extends JDialog {
         tete.add(labelNom, BorderLayout.WEST);
         if (estAttaquant) {
             JLabel labelRole = new JLabel(
-                    Traducteur.t("rapport_combat.attaquant"),
+                    "ATTAQUANT",
                     SwingConstants.RIGHT);
             labelRole.setFont(Polices.PETIT_LABEL);
             labelRole.setForeground(Palette.TEXTE_TERTIAIRE);
@@ -274,20 +273,20 @@ public class DialogueRapportCombat extends JDialog {
             restant = 0; // armee aneantie
         }
         infos.add(ligneInfo(
-                Traducteur.t("rapport_combat.troupes_engagees"),
+                "Troupes engagees",
                 effAvant + " → " + restant,
                 Palette.TEXTE_PRIMAIRE));
         infos.add(Box.createVerticalStrut(2));
 
         infos.add(ligneInfo(
-                Traducteur.t("rapport_combat.pertes_militaires"),
+                "Pertes militaires",
                 "-" + pertesMil + (estPerdant ? " (anéantis)" : ""),
                 Palette.ROUGE_DANGER));
 
         if (civils > 0) {
             infos.add(Box.createVerticalStrut(2));
             infos.add(ligneInfo(
-                    Traducteur.t("rapport_combat.pertes_civiles"),
+                    "Pertes civiles",
                     "-" + civils,
                     Palette.ROUGE_DANGER));
         }
@@ -299,14 +298,12 @@ public class DialogueRapportCombat extends JDialog {
             for (Map.Entry<Ressource, Integer> e : butin.entrySet()) {
                 if (!first) bsb.append(", ");
                 bsb.append("+").append(e.getValue()).append(" ")
-                        .append(Traducteur.t(e.getKey().cleI18n()));
+                        .append(e.getKey().libelle());
                 first = false;
             }
-            String cleButin = estAttaquant
-                    ? "rapport_combat.butin_pris"
-                    : "rapport_combat.butin_perdu";
+            String labelButin = estAttaquant ? "Butin pris" : "Butin perdu";
             infos.add(ligneInfo(
-                    Traducteur.t(cleButin),
+                    labelButin,
                     bsb.toString(),
                     estAttaquant ? Palette.VERT_POSITIF : Palette.ROUGE_DANGER));
         }

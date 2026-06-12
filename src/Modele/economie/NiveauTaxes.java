@@ -6,22 +6,22 @@ package Modele.economie;
  */
 public enum NiveauTaxes {
 
-    FAIBLE("taxes.faible", 1, 2),
-    NORMAL("taxes.normal", 2, 0),
-    ELEVE("taxes.eleve", 3, -3);
+    FAIBLE("Faibles", 1, 2),
+    NORMAL("Normales", 2, 0),
+    ELEVE("Elevees", 3, -3);
 
-    private final String cleI18n;
+    private final String libelle;
     private final int orParHabitant;
     private final int impactMoralParTour;
 
-    NiveauTaxes(String cleI18n, int orParHabitant, int impactMoralParTour) {
-        this.cleI18n = cleI18n;
+    NiveauTaxes(String libelle, int orParHabitant, int impactMoralParTour) {
+        this.libelle = libelle;
         this.orParHabitant = orParHabitant;
         this.impactMoralParTour = impactMoralParTour;
     }
 
-    public String cleI18n() {
-        return this.cleI18n;
+    public String libelle() {
+        return this.libelle;
     }
 
     public int orParHabitant() {

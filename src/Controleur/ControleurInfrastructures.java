@@ -10,7 +10,6 @@ import Modele.infrastructure.Batiment;
 import Modele.infrastructure.TypeBatiment;
 import Modele.partie.Partie;
 import Vue.FenetreJeu;
-import Vue.i18n.Traducteur;
 import Vue.onglets.OngletInfrastructures;
 
 import config.Equilibrage;
@@ -73,9 +72,9 @@ public class ControleurInfrastructures extends ControleurOnglet {
         this.royaumeJoueur.notifierTresorChange();
         this.royaumeJoueur.notifierFileActionsChangee();
 
-        String nomBatiment = Traducteur.t(type.cleI18n());
+        String nomBatiment = type.libelle();
         this.fenetre.statusBar().setMessage(
-                Traducteur.t("status.amelioration_planifiee") + " : " + nomBatiment);
+                "Amelioration planifiee" + " : " + nomBatiment);
     }
 
     private void deplanifier(TypeBatiment type) {
@@ -93,9 +92,9 @@ public class ControleurInfrastructures extends ControleurOnglet {
                 this.royaumeJoueur.notifierTresorChange();
                 this.royaumeJoueur.notifierFileActionsChangee();
 
-                String nomBatiment = Traducteur.t(type.cleI18n());
+                String nomBatiment = type.libelle();
                 this.fenetre.statusBar().setMessage(
-                        Traducteur.t("status.amelioration_annulee") + " : " + nomBatiment);
+                        "Amelioration annulee" + " : " + nomBatiment);
                 return;
             }
         }
