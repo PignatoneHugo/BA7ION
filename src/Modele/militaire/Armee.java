@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Armee d'un royaume : liste d'Unite avec une posture de combat.
- */
+// Armee d'un royaume : ses unites et sa posture.
 public class Armee {
 
     private final List<Unite> unites;
@@ -42,7 +40,7 @@ public class Armee {
         }
     }
 
-    /** Somme des effectifs de toutes les unites. */
+    // Effectif total de l'armee.
     public int effectifTotal() {
         int total = 0;
         for (Unite u : this.unites) {
@@ -51,7 +49,7 @@ public class Armee {
         return total;
     }
 
-    /** Effectif d'un type donne (somme si plusieurs entrees du meme type). */
+    // Effectif d'un type donne.
     public int effectifParType(TypeUnite type) {
         int total = 0;
         for (Unite u : this.unites) {
@@ -62,11 +60,7 @@ public class Armee {
         return total;
     }
 
-    /**
-     * Recrute n soldats du type donne en fusionnant avec une unite
-     * existante si possible -- evite de creer plusieurs entrees du
-     * meme type dans la liste.
-     */
+    // Ajoute des soldats du type donne (fusionne avec l'unite existante si elle existe).
     public void recruter(TypeUnite type, int nombre) {
         if (nombre <= 0) {
             return;
@@ -80,11 +74,7 @@ public class Armee {
         this.unites.add(new Unite(type, nombre));
     }
 
-    /**
-     * Retire jusqu'a {@code nombre} soldats du type donne. Si plusieurs
-     * entrees du meme type existent, vide les plus petites d'abord.
-     * Retourne le nombre reellement retire.
-     */
+    // Retire jusqu'a nombre soldats du type donne. Renvoie combien ont ete retires.
     public int retirer(TypeUnite type, int nombre) {
         if (nombre <= 0) {
             return 0;
@@ -96,7 +86,7 @@ public class Armee {
                 aRetirer -= u.subirPertes(aRetirer);
             }
         }
-        // Nettoyer les unites vides
+        // on enleve les unites vides
         this.unites.removeIf(u -> u.effectif() == 0);
         return nombre - aRetirer;
     }

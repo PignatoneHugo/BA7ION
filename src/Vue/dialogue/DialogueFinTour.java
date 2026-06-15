@@ -30,10 +30,7 @@ import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Recap modal en fin de tour : variations des 5 ressources, evolution
- * de la population et du moral. Sobre, lisible, un seul bouton Continuer.
- */
+/** Recap de fin de tour : variations des ressources, population et moral. */
 public class DialogueFinTour extends JDialog {
 
     private static final long serialVersionUID = 1L;
@@ -49,7 +46,7 @@ public class DialogueFinTour extends JDialog {
         setLayout(new BorderLayout());
         this.partie = partie;
 
-        // Panneau fond medieval
+        // panneau avec fond degrade
         JPanel panneau = new JPanel(new BorderLayout(0, 12)) {
             private static final long serialVersionUID = 1L;
             @Override
@@ -75,7 +72,7 @@ public class DialogueFinTour extends JDialog {
 
         setContentPane(panneau);
         pack();
-        // Garantit une largeur minimale agreable meme si les libelles courts
+        // largeur minimale
         if (getWidth() < 720) {
             setSize(720, getHeight());
         }
@@ -120,15 +117,11 @@ public class DialogueFinTour extends JDialog {
             corps.add(javax.swing.Box.createVerticalStrut(12));
             corps.add(blocBat);
         }
-        // Les batailles sont desormais affichees dans DialogueRapportCombat
-        // (avant ce dialogue), donc on ne duplique plus la section ici.
+        // les combats sont affiches dans DialogueRapportCombat, pas ici
         return corps;
     }
 
-    /**
-     * Liste les batiments qui ont change ce tour (niveau monte ou
-     * chantier demarre/termine). Retourne null si rien a montrer.
-     */
+    // liste les batiments qui ont change ce tour (null si rien)
     private JPanel creerBlocBatiments(BilanTour avant, Royaume apres) {
         java.util.List<String[]> lignes = new java.util.ArrayList<>();
         for (Batiment b : apres.batiments()) {
@@ -140,17 +133,17 @@ public class DialogueFinTour extends JDialog {
 
             String nomBat = t.libelle();
             if (niveauApres > niveauAvant) {
-                // Amelioration terminee ce tour
+                // amelioration finie
                 lignes.add(new String[]{nomBat,
                         "Amelioration terminee",
                         "Niv. " + niveauAvant + " → Niv. " + niveauApres});
             } else if (!enChantierAvant && enChantierApres) {
-                // Nouveau chantier lance ce tour
+                // chantier lance
                 lignes.add(new String[]{nomBat,
                         "Chantier demarre",
                         "(" + b.toursRestants() + " tours)"});
             } else if (enChantierAvant && enChantierApres) {
-                // Chantier continue (compteur descend)
+                // chantier en cours
                 lignes.add(new String[]{nomBat,
                         "Chantier en cours",
                         "(" + b.toursRestants() + " tours restants)"});
@@ -220,13 +213,13 @@ public class DialogueFinTour extends JDialog {
                 BorderFactory.createLineBorder(new Color(30, 22, 10), 1),
                 BorderFactory.createEmptyBorder(6, 10, 6, 10)));
 
-        // Nom ressource (gauche)
+        // nom a gauche
         JLabel nom = new JLabel(r.libelle());
         nom.setFont(Polices.LABEL.deriveFont(13f));
         nom.setForeground(couleurRessource(r));
         ligne.add(nom, BorderLayout.WEST);
 
-        // Bloc droite : ancien -> nouveau (delta)
+        // a droite : avant -> apres (delta)
         JPanel droite = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         droite.setOpaque(false);
 
@@ -252,8 +245,7 @@ public class DialogueFinTour extends JDialog {
         JPanel grille = new JPanel(new GridLayout(1, 2, 10, 0));
         grille.setOpaque(false);
 
-        // Population = civils + soldats (les unites combattantes font toujours
-        // partie du royaume, juste plus du pool civil).
+        // population = civils + soldats
         int popAvant = avant.populationTotale() + avant.effectifArmee();
         int popApres = apres.population().total() + apres.armee().effectifTotal();
 

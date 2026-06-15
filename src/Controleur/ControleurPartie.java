@@ -1,31 +1,26 @@
 package Controleur;
 
+import java.io.IOException;
+
 import javax.swing.SwingUtilities;
 
 import Modele.evenement.Choix;
 import Modele.partie.BilanTour;
 import Modele.partie.ConditionsFin;
 import Modele.partie.Partie;
+import Modele.persistance.GestionnaireSauvegardes;
 import Vue.FenetreJeu;
 import Vue.VueHUD;
 import Vue.dialogue.DialogueEvenement;
 import Vue.dialogue.DialogueFinTour;
 import Vue.dialogue.DialogueRapportCombat;
-/**
- * Controleur principal. Ecoute les actions du joueur (clic sur "Fin de tour")
- * et fait avancer le modele en consequence.
- *
- * Apres chaque tour, verifie l'etat de fin de partie : si VICTOIRE ou
- * DEFAITE, bascule l'ecran sur VueFinPartie.
- */
+// Controleur principal : gere le bouton "Fin de tour" et l'avancement du jeu.
 public class ControleurPartie {
 
     private final Partie partie;
     private final FenetreJeu fenetre;
 
-    // Snapshot pris au DEBUT du tour, AVANT que le joueur ait planifie quoi
-    // que ce soit. Sinon le cout des ameliorations (deduit a la planification)
-    // serait invisible dans le bilan.
+    // Etat pris au debut du tour, pour le bilan de fin de tour.
     private BilanTour bilanDebutTour;
 
     public ControleurPartie(Partie partie, FenetreJeu fenetre) {
@@ -39,28 +34,38 @@ public class ControleurPartie {
         VueHUD hud = this.fenetre.hud();
         hud.boutonFinTour().addActionListener(e -> terminerTour());
 
-        // Controleurs des onglets metier.
+        // Les controleurs des onglets.
         new ControleurEconomie(this.partie, this.fenetre);
         new ControleurInfrastructures(this.partie, this.fenetre);
         new ControleurMilitaire(this.partie, this.fenetre);
         new ControleurMarche(this.partie, this.fenetre);
     }
 
+    // Sauvegarde auto de fin de tour. On n'embete pas le joueur si ca rate.
+    private void sauvegardeAutomatique() {
+        try {
+            GestionnaireSauvegardes.sauvegarderAuto(this.partie);
+            this.fenetre.statusBar().setMessage(
+                    "Tour " + this.partie.numeroTour()
+                            + " - sauvegarde automatique : "
+                            + GestionnaireSauvegardes.fichierAuto(this.partie).getName());
+        } catch (IOException ex) {
+            this.fenetre.statusBar().setMessage(
+                    "Echec de la sauvegarde automatique : " + ex.getMessage());
+        }
+    }
+
     public void terminerTour() {
         SwingUtilities.invokeLater(() -> {
-            // Snapshot pris au debut du tour (avant que le joueur ait paye
-            // le cout de ses planifications).
             int numeroAvant = this.partie.numeroTour();
             BilanTour bilanAvant = this.bilanDebutTour;
 
-            // On vide les batailles du tour precedent.
             this.partie.viderBatraillesDuTour();
 
-            // === Phase 1 : sortir de la planification et avancer jusqu'a
-            // un evenement en attente OU la fin du tour s'il n'y en a pas. ===
+            // On avance jusqu'a un evenement ou la fin du tour.
             avancerDepuisPlanification();
 
-            // === Phase 2 : rapports avant l'evenement du nouveau tour ===
+            // Rapports de combat puis recap du tour.
             if (!this.partie.batraillesDuTour().isEmpty()) {
                 DialogueRapportCombat rc = new DialogueRapportCombat(
                         this.fenetre, this.partie, numeroAvant);
@@ -71,7 +76,7 @@ public class ControleurPartie {
                     numeroAvant, this.partie);
             recap.setVisible(true);
 
-            // === Phase 3 : evenement (s'il y en a un en attente) ===
+            // L'evenement du tour, s'il y en a un.
             if (this.partie.enAttenteEvenement()) {
                 String titre = this.partie.evenementEnAttente().titre();
                 Choix choix = DialogueEvenement.afficher(this.fenetre,
@@ -83,16 +88,14 @@ public class ControleurPartie {
                                 + " - " + choix.libelle());
             }
 
-            // === Phase 4 : achever les phases restantes UNIQUEMENT si on
-            // n'est pas deja revenu en planification (= cas ou un evenement
-            // a interrompu la phase 1). Sinon on entamerait un second tour. ===
+            // On termine les phases restantes du tour.
             avancerJusquaJoueur();
 
             this.partie.notifierTourDemarre();
             this.fenetre.statusBar().setMessage(
                     "Nouveau tour :" + " " + this.partie.numeroTour());
 
-            // === Phase 5 : verifier fin de partie ===
+            // Fin de partie ?
             ConditionsFin.Etat etat = ConditionsFin.evaluer(this.partie);
             if (etat != ConditionsFin.Etat.EN_COURS) {
                 this.fenetre.afficherFinPartie(this.partie, etat);
@@ -100,17 +103,14 @@ public class ControleurPartie {
                 return;
             }
 
-            // Snapshot pour le nouveau tour.
+            sauvegardeAutomatique();
+
             this.bilanDebutTour = new BilanTour(this.partie.numeroTour(),
                     this.partie.joueur());
         });
     }
 
-    /**
-     * Phase 1 : sortir de EtatPlanification (do-while pour forcer au moins
-     * un passerEtape) et continuer jusqu'a un evenement en attente OU
-     * le retour en planification s'il n'y a aucun evenement ce tour.
-     */
+    // Sort de la planification et avance jusqu'a un evenement ou la fin du tour.
     private void avancerDepuisPlanification() {
         int garde = 0;
         do {
@@ -126,11 +126,7 @@ public class ControleurPartie {
         } while (!this.partie.enAttenteJoueur());
     }
 
-    /**
-     * Phase 4 : avance jusqu'a etre en attente du joueur (= retour en
-     * planification). NE FAIT RIEN si on y est deja, ce qui evite
-     * d'entamer un second tour quand la phase 1 a deja tout fait.
-     */
+    // Avance jusqu'au retour en planification (ne fait rien si on y est deja).
     private void avancerJusquaJoueur() {
         int garde = 0;
         while (!this.partie.enAttenteJoueur()) {

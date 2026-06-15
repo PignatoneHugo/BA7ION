@@ -13,10 +13,9 @@ import Modele.notification.Notification;
 import Modele.notification.TypeNotification;
 import Modele.royaume.Royaume;
 
-/**
- * Classe racine du modele. Contient le royaume du joueur, les bots et le tour courant.
- * Observable : notifie les vues des changements globaux (phase, fin de tour, fin de partie).
- */
+import config.Equilibrage;
+
+// Racine du modele : royaume du joueur, bots et tour courant.
 public class Partie extends Observable {
 
     private final Royaume joueur;
@@ -24,6 +23,7 @@ public class Partie extends Observable {
     private final Tour tour;
     private final List<BatailleResolue> batraillesDuTour;
     private Evenement evenementEnAttente;
+    private boolean grenouilleEmpoisonneeDeclenchee;
     private Random aleatoire = new Random();
 
     public Partie(Royaume joueur) {
@@ -40,19 +40,17 @@ public class Partie extends Observable {
         this.batraillesDuTour = new ArrayList<>();
     }
 
-    /** Batailles resolues durant le tour courant (lectures pour le recap). */
+    // Batailles resolues ce tour (pour le recap).
     public List<BatailleResolue> batraillesDuTour() {
         return Collections.unmodifiableList(this.batraillesDuTour);
     }
 
-    /** Ajoute un rapport de combat a la liste du tour courant. */
     public void enregistrerBataille(BatailleResolue resolue) {
         if (resolue != null) {
             this.batraillesDuTour.add(resolue);
         }
     }
 
-    /** Vide la liste des batailles -- appele au debut du tour suivant. */
     public void viderBatraillesDuTour() {
         this.batraillesDuTour.clear();
     }
@@ -65,7 +63,7 @@ public class Partie extends Observable {
         return Collections.unmodifiableList(this.bots);
     }
 
-    /** Liste du joueur suivi des bots. */
+    // Le joueur puis tous les bots.
     public List<Royaume> tousLesRoyaumes() {
         List<Royaume> tous = new ArrayList<>(this.bots.size() + 1);
         tous.add(this.joueur);
@@ -85,11 +83,16 @@ public class Partie extends Observable {
         this.tour.incrementer();
     }
 
+    // True si on a atteint le tour ou les combats sont permis.
+    public boolean combatsAutorises() {
+        return numeroTour() >= Equilibrage.TOUR_DEBUT_COMBATS;
+    }
+
     public boolean enAttenteJoueur() {
         return this.tour.enAttenteJoueur();
     }
 
-    /** Avance d'une phase. Appele en boucle apres "Fin de tour". */
+    // Avance d'une phase.
     public void passerEtape() {
         this.tour.executerPhaseCourante(this);
     }
@@ -98,47 +101,45 @@ public class Partie extends Observable {
         notifier(new Notification(TypeNotification.TOUR_DEMARRE, this.numeroTour()));
     }
 
-    /**
-     * Helper public pour notifier depuis les classes des sous-packages
-     * (les EtatXxx ne peuvent pas appeler setChanged() directement car protected).
-     */
+    // Notifie les vues (les EtatXxx passent par ici car setChanged est protege).
     public void notifier(Notification n) {
         setChanged();
         notifyObservers(n);
     }
 
-    // ----- Aleatoire seedable -----
-
-    /** Generateur aleatoire partage par la partie (combats, evenements...). */
+    // Generateur aleatoire partage (combats, evenements...).
     public Random aleatoire() {
         return this.aleatoire;
     }
 
-    /** Reinitialise le generateur avec la graine donnee (pour tests reproductibles). */
+    // Remet le generateur avec une graine fixe (utile pour les tests).
     public void definirGraineAleatoire(long graine) {
         this.aleatoire = new Random(graine);
     }
 
-    // ----- Gestion des evenements aleatoires -----
-
     public boolean enAttenteEvenement() {
         return this.evenementEnAttente != null;
+    }
+
+    // True si la grenouille empoisonnee a deja eu lieu.
+    public boolean grenouilleEmpoisonneeDeclenchee() {
+        return this.grenouilleEmpoisonneeDeclenchee;
+    }
+
+    public void marquerGrenouilleEmpoisonneeDeclenchee() {
+        this.grenouilleEmpoisonneeDeclenchee = true;
     }
 
     public Evenement evenementEnAttente() {
         return this.evenementEnAttente;
     }
 
-    /** A appeler par EtatEvenement quand un evenement est tire. */
     public void declencherEvenement(Evenement e) {
         this.evenementEnAttente = e;
         notifier(new Notification(TypeNotification.EVENEMENT_EN_ATTENTE, e));
     }
 
-    /**
-     * Applique le choix retenu par le joueur sur le royaume du joueur,
-     * puis notifie la fin de l'evenement.
-     */
+    // Applique le choix du joueur puis termine l'evenement.
     public void resoudreEvenement(Choix choix) {
         if (this.evenementEnAttente == null || choix == null) {
             return;

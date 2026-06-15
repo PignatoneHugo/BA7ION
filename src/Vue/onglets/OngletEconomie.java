@@ -30,11 +30,7 @@ import Vue.theme.Palette;
 import Vue.theme.Polices;
 import Vue.theme.ToggleMedieval;
 
-/**
- * Onglet Economie style medieval : repartition des habitants par role,
- * boutons +/- pour chaque role (sur INACTIF, le + recrute un villageois
- * pour 100 nourriture). Selecteur de taxes en bas.
- */
+/** Onglet Economie : repartition des habitants par role + niveau de taxes. */
 public class OngletEconomie extends JPanel implements Observer {
 
     private static final long serialVersionUID = 1L;
@@ -53,9 +49,7 @@ public class OngletEconomie extends JPanel implements Observer {
         this.boutonsMoins = new EnumMap<>(Role.class);
         this.togglesTaxes = new EnumMap<>(NiveauTaxes.class);
 
-        // Bouton + sur la ligne INACTIF = recruter un villageois.
-        // On le cree en amont pour avoir une reference utilisable par
-        // ControleurEconomie via boutonRecruterVillageois().
+        // le + sur la ligne INACTIF sert a recruter un villageois
         this.boutonRecruter = new BoutonMedieval("+", BoutonMedieval.Style.SECONDAIRE);
         this.boutonRecruter.setPreferredSize(new Dimension(44, 30));
 
@@ -64,10 +58,9 @@ public class OngletEconomie extends JPanel implements Observer {
         setLayout(new BorderLayout(8, 8));
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        // Titre section (meme style que Infrastructures et Militaire)
         add(creerTitreSection("Economie"), BorderLayout.NORTH);
 
-        // Contenu central : bloc roles + bloc taxes
+        // roles + taxes
         JPanel centre = new JPanel();
         centre.setOpaque(false);
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
@@ -122,7 +115,7 @@ public class OngletEconomie extends JPanel implements Observer {
         return bloc;
     }
 
-    /** Une ligne pour un role : pastille + nom + cout (si INACTIF) + effectif + boutons. */
+    // une ligne de role : pastille + nom + effectif + boutons +/-
     private JPanel creerLigneRole(Role r) {
         JPanel ligne = new JPanel(new BorderLayout(12, 0));
         ligne.setOpaque(false);
@@ -130,7 +123,7 @@ public class OngletEconomie extends JPanel implements Observer {
         ligne.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
         ligne.setPreferredSize(new Dimension(1, 36));
 
-        // Gauche : pastille + nom + (libelle de cout si INACTIF)
+        // gauche : pastille + nom
         JPanel gauche = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         gauche.setOpaque(false);
         gauche.add(creerPastilleRole(r));
@@ -146,10 +139,10 @@ public class OngletEconomie extends JPanel implements Observer {
         }
         ligne.add(gauche, BorderLayout.WEST);
 
-        // Centre vide (pour pousser les boutons a droite)
+        // vide au centre pour pousser les boutons a droite
         ligne.add(new JLabel(""), BorderLayout.CENTER);
 
-        // Droite : effectif + boutons +/-
+        // droite : effectif + boutons
         JPanel droite = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         droite.setOpaque(false);
 
@@ -161,8 +154,7 @@ public class OngletEconomie extends JPanel implements Observer {
         droite.add(valeur);
 
         if (r == Role.INACTIF) {
-            // Sur INACTIF : un bouton - desactive (on ne peut pas "retirer" un
-            // habitant sans raison) et le bouton + = recruter villageois.
+            // pour INACTIF : le - est desactive, le + recrute
             BoutonMedieval bMoins = new BoutonMedieval("−", BoutonMedieval.Style.SECONDAIRE);
             bMoins.setPreferredSize(new Dimension(44, 30));
             bMoins.setEnabled(false);
@@ -184,7 +176,7 @@ public class OngletEconomie extends JPanel implements Observer {
         return ligne;
     }
 
-    /** Bloc taxes : 3 toggle. */
+    // bloc taxes : 3 boutons bascule
     private JPanel creerBlocTaxes() {
         JPanel bloc = new JPanel();
         bloc.setLayout(new BoxLayout(bloc, BoxLayout.Y_AXIS));
@@ -246,7 +238,7 @@ public class OngletEconomie extends JPanel implements Observer {
             case MINEUR: return Palette.PIERRE_RESSOURCE;
             case BUCHERON: return Palette.BOIS_RESSOURCE;
             case ERUDIT: return Palette.SAVOIR_RESSOURCE;
-            case SOLDAT: return Palette.ROUGE_BANNIERE;
+            case SOLDAT: return Palette.ROUGE_DANGER;
             default: return Palette.TEXTE_PRIMAIRE;
         }
     }
@@ -289,7 +281,7 @@ public class OngletEconomie extends JPanel implements Observer {
         for (NiveauTaxes n : NiveauTaxes.values()) {
             this.togglesTaxes.get(n).setSelected(n == courant);
         }
-        // Bouton + sur INACTIF (= recruter villageois)
+        // peut-on recruter un villageois ?
         boolean peutRecruter = this.royaume.tresor().contient(
                 Modele.economie.Ressource.NOURRITURE,
                 config.Equilibrage.COUT_NOURRITURE_PAR_VILLAGEOIS)

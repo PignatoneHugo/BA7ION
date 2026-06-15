@@ -2,18 +2,15 @@ package Modele.action;
 
 import Modele.royaume.Royaume;
 
-/**
- * Action que le joueur planifie pendant son tour et qui sera executee
- * plus tard pendant la phase de resolution. Pattern Command.
- */
+// Une action planifiee pendant le tour et executee a la resolution.
 public interface Action {
 
-    /** Verifie si l'action peut etre executee (ressources dispo, etc.). */
+    // Verifie si l'action peut etre executee.
     boolean estExecutable(Royaume royaume);
 
-    /** Applique l'effet de l'action sur le royaume. */
+    // Applique l'action sur le royaume.
     void executer(Royaume royaume);
 
-    /** Identifiant texte pour l affichage dans le journal et l'UI. */
+    // Identifiant texte pour l'affichage.
     String description();
 }

@@ -6,12 +6,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Phase pendant laquelle les bots jouent leur tour. Chaque bot consulte sa
- * StrategieIA et empile/execute des Actions dans la foulee.
- *
- * Au Sprint 3 : seule StrategieEquilibree est implementee.
- */
+// Phase ou chaque bot joue son tour via sa strategie.
 public class EtatTourIA implements EtatTour {
 
     @Override

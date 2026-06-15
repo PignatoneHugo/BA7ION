@@ -5,16 +5,14 @@ import java.util.List;
 
 import Modele.economie.Ressource;
 import Modele.ia.FabriqueIA;
+import Modele.persistance.EtatRoyaume;
+import Modele.persistance.Sauvegarde;
 import Modele.royaume.Royaume;
 
 import config.Difficulte;
 
-/**
- * Pattern Builder pour creer une Partie. Permet de chainer les parametres
- * optionnels avant de construire l'objet final.
- *
- * Exemple : new PartieBuilder().nomJoueur("X").nombreBots(2).build();
- */
+// Sert a creer une Partie en chainant les parametres.
+// Ex : new PartieBuilder().nomJoueur("X").nombreBots(2).build();
 public class PartieBuilder {
 
     private String nomJoueur = "Royaume du Joueur";
@@ -72,10 +70,35 @@ public class PartieBuilder {
         return partie;
     }
 
-    /**
-     * Applique le bonus / malus d'or de la difficulte sur le royaume joueur.
-     * Les bots restent en parametres standards pour Sprint 2.
-     */
+    // Recree une Partie a partir d'une sauvegarde.
+    public static Partie depuisSauvegarde(Sauvegarde s) {
+        if (s == null) {
+            throw new IllegalArgumentException("Sauvegarde null.");
+        }
+
+        Royaume joueur = new Royaume(s.joueur.nom);
+        s.joueur.appliquerA(joueur);
+
+        List<Royaume> bots = new ArrayList<>();
+        for (EtatRoyaume etatBot : s.bots) {
+            Royaume bot = new Royaume(etatBot.nom);
+            if (etatBot.estBot) {
+                bot.definirStrategieIA(FabriqueIA.creerEquilibree());
+            }
+            etatBot.appliquerA(bot);
+            bots.add(bot);
+        }
+
+        Partie partie = new Partie(joueur, bots);
+        partie.definirGraineAleatoire(s.graineAleatoire);
+        partie.tour().definirNumero(s.numeroTour);
+        if (s.grenouilleEmpoisonneeDeclenchee) {
+            partie.marquerGrenouilleEmpoisonneeDeclenchee();
+        }
+        return partie;
+    }
+
+    // Applique le bonus ou malus d'or de la difficulte au joueur.
     private void appliquerDifficulte(Royaume joueur) {
         int bonus = this.difficulte.bonusOrInitial();
         if (bonus > 0) {

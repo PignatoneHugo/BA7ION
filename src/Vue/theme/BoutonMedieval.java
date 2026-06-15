@@ -10,13 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
-/**
- * Bouton stylise medieval : fond sombre, bordure doree, effet de survol
- * qui eclaircit le fond et le texte.
- *
- * Utiliser les constructeurs pour creer un bouton "primaire" (bordure
- * doree) ou "secondaire" (bordure brun fonce) ou "danger" (bordure rouge).
- */
+/** Bouton du theme, en 3 styles : primaire, secondaire ou danger. */
 public class BoutonMedieval extends JButton {
 
     private static final long serialVersionUID = 1L;
@@ -98,7 +92,7 @@ public class BoutonMedieval extends JButton {
         return this.style;
     }
 
-    /** Reinitialise le rendu apres un changement d'etat enable/disable. */
+    // remet les bonnes couleurs quand on active/desactive
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -111,14 +105,14 @@ public class BoutonMedieval extends JButton {
         }
     }
 
-    /** Helper : cree un bouton primaire de taille standard. */
+    // bouton primaire de taille standard
     public static BoutonMedieval primaire(String texte) {
         BoutonMedieval b = new BoutonMedieval(texte, Style.PRIMAIRE);
         b.setPreferredSize(new Dimension(280, 50));
         return b;
     }
 
-    /** Helper : cree un bouton secondaire compact. */
+    // bouton secondaire compact
     public static BoutonMedieval secondaire(String texte) {
         BoutonMedieval b = new BoutonMedieval(texte, Style.SECONDAIRE);
         b.setPreferredSize(new Dimension(180, 36));

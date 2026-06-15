@@ -26,27 +26,14 @@ import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Popup modale d'un evenement style medieval. Affiche titre + description,
- * et un bouton par choix. Les boutons des choix dont le royaume n'a pas
- * les ressources sont desactives, avec un tooltip "Ressources insuffisantes".
- *
- * Vue passive : retourne juste le Choix selectionne, c'est au controleur
- * d'appeler partie.resoudreEvenement(choix).
- */
+/** Popup d'un evenement : titre, description et un bouton par choix possible. */
 public final class DialogueEvenement {
 
     private DialogueEvenement() {
-        // Classe utilitaire.
+        // classe utilitaire
     }
 
-    /**
-     * Affiche le dialogue modal et bloque jusqu'a la reponse du joueur.
-     *
-     * @param parent fenetre parente (pour le positionnement)
-     * @param evenement evenement a presenter
-     * @param royaume royaume du joueur (pour verifier les ressources requises)
-     */
+    // affiche la popup et renvoie le choix du joueur
     public static Choix afficher(java.awt.Component parent,
                                  Evenement evenement,
                                  Royaume royaume) {
@@ -55,7 +42,7 @@ public final class DialogueEvenement {
         dialog.setVisible(true);
         Choix selection = dialog.choixSelectionne();
         if (selection == null) {
-            // Securite : si fermeture sans choisir, premier dispo (ou 1er).
+            // si on ferme sans choisir : premier choix possible
             for (Choix c : evenement.choix()) {
                 if (c.peutEtreChoisi(royaume)) {
                     return c;
@@ -74,7 +61,7 @@ public final class DialogueEvenement {
         return null;
     }
 
-    /** Implementation interne du JDialog. */
+    // le JDialog interne
     private static class DialogueImpl extends JDialog {
         private static final long serialVersionUID = 1L;
 
@@ -104,7 +91,7 @@ public final class DialogueEvenement {
                     BorderFactory.createLineBorder(Palette.OR, 2),
                     BorderFactory.createEmptyBorder(22, 28, 22, 28)));
 
-            // En-tete : "EVENEMENT" + titre
+            // en-tete
             JPanel tete = new JPanel(new BorderLayout());
             tete.setOpaque(false);
 
@@ -125,7 +112,7 @@ public final class DialogueEvenement {
             tete.add(titre, BorderLayout.CENTER);
             panneau.add(tete, BorderLayout.NORTH);
 
-            // Description
+            // description
             JLabel description = new JLabel(
                     "<html><div style='text-align:center; width:480px;'>"
                             + evenement.description()
@@ -136,7 +123,7 @@ public final class DialogueEvenement {
             description.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
             panneau.add(description, BorderLayout.CENTER);
 
-            // Choix : un bouton par option
+            // un bouton par choix
             List<Choix> choix = evenement.choix();
             JPanel piedChoix = new JPanel(new GridLayout(0, 1, 0, 6));
             piedChoix.setOpaque(false);

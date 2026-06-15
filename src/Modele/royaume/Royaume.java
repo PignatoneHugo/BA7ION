@@ -31,13 +31,7 @@ import Modele.population.Role;
 
 import config.Equilibrage;
 
-/**
- * Royaume du joueur ou d'un bot. Contient le tresor, la population,
- * les batiments et la file d'actions planifiees.
- *
- * Seul Observable cote royaume : Tresor et Population n'envoient pas
- * de notifications eux-memes, c'est le Royaume qui notifie pour eux.
- */
+// Royaume du joueur ou d'un bot : tresor, population, batiments, armee.
 public class Royaume extends Observable {
 
     private final String nom;
@@ -63,7 +57,7 @@ public class Royaume extends Observable {
         this.niveauTaxes = NiveauTaxes.NORMAL;
         this.strategieIA = null;
 
-        // Tous les batiments sont presents au niveau 1 des le tour 1.
+        // Tous les batiments au niveau 1 des le depart.
         this.batiments.add(new Ferme());
         this.batiments.add(new Mine());
         this.batiments.add(new Scierie());
@@ -95,7 +89,6 @@ public class Royaume extends Observable {
         return this.niveauTaxes;
     }
 
-    /** Change le niveau de taxes et notifie. */
     public void definirNiveauTaxes(NiveauTaxes niveau) {
         if (niveau == null || niveau == this.niveauTaxes) {
             return;
@@ -109,7 +102,7 @@ public class Royaume extends Observable {
         return this.batiments;
     }
 
-    /** Retourne le batiment du type demande, ou null si pas trouve. */
+    // Cherche le batiment du type donne, null si absent.
     public Batiment batiment(TypeBatiment type) {
         for (Batiment b : this.batiments) {
             if (b.type() == type) {
@@ -131,35 +124,31 @@ public class Royaume extends Observable {
         return this.strategieIA;
     }
 
-    /** Assigne une strategie d'IA a ce royaume (typiquement pour un bot). */
     public void definirStrategieIA(StrategieIA strategie) {
         this.strategieIA = strategie;
     }
 
-    /** True si le royaume est controle par une IA (bot). */
+    // True si c'est un bot.
     public boolean estBot() {
         return this.strategieIA != null;
     }
 
-    /** A appeler apres modification de l'armee (recrutement, pertes en combat). */
     public void notifierArmeeChangee() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.BATIMENTS_CHANGES));
     }
 
-    /** Liste des batailles que ce royaume a planifiees contre d'autres. */
     public List<Bataille> bataillesOffensives() {
         return this.bataillesOffensives;
     }
 
-    /** Ajoute une bataille a la liste des attaques planifiees. */
     public void ajouterBatailleOffensive(Bataille bataille) {
         if (bataille != null) {
             this.bataillesOffensives.add(bataille);
         }
     }
 
-    /** True si une attaque contre {@code cible} est deja planifiee ce tour. */
+    // True si une attaque contre cette cible est deja prevue.
     public boolean aAttaquePlanifieeContre(Royaume cible) {
         for (Bataille b : this.bataillesOffensives) {
             if (b.defenseur() == cible) {
@@ -169,12 +158,11 @@ public class Royaume extends Observable {
         return false;
     }
 
-    /** Vide la liste des batailles offensives (appele apres resolution). */
     public void viderBataillesOffensives() {
         this.bataillesOffensives.clear();
     }
 
-    /** Deplace des habitants d'un role vers un autre. Notifie si OK. */
+    // Deplace des habitants d'un role a un autre.
     public boolean reaffecter(Role source, Role cible, int montant) {
         boolean ok = this.population.reaffecter(source, cible, montant);
         if (ok) {
@@ -184,11 +172,7 @@ public class Royaume extends Observable {
         return ok;
     }
 
-    /**
-     * Retire la nourriture necessaire aux habitants. En cas de penurie,
-     * declenche une famine (1 mort par 5 unites manquantes). Les victimes
-     * sont tirees au hasard parmi la population (n'importe quel role).
-     */
+    // Retire la nourriture des habitants. Si manque, famine (1 mort / 5 manquants).
     public void appliquerConsommationCivile(Random aleatoire) {
         int total = this.population.total();
         int besoin = total * Equilibrage.CONSOMMATION_NOURRITURE_PAR_HABITANT;
@@ -204,7 +188,7 @@ public class Royaume extends Observable {
                 setChanged();
                 notifyObservers(new Notification(TypeNotification.POPULATION_CHANGEE));
 
-                // La famine fait baisser le moral.
+                // La famine baisse le moral.
                 this.moral.ajuster(Equilibrage.IMPACT_MORAL_PAR_FAMINE * retireReellement);
                 setChanged();
                 notifyObservers(new Notification(TypeNotification.MORAL_CHANGE));
@@ -212,10 +196,7 @@ public class Royaume extends Observable {
         }
     }
 
-    /**
-     * Collecte les taxes et applique leur effet sur le moral.
-     * Appele a chaque tour, generalement pendant la phase de production.
-     */
+    // Collecte les taxes et applique leur effet sur le moral.
     public void appliquerTaxes() {
         int habitants = this.population.total();
         int revenu = habitants * this.niveauTaxes.orParHabitant();
@@ -233,37 +214,32 @@ public class Royaume extends Observable {
         }
     }
 
-    /** A appeler apres modification de la file d'actions (ajout/retrait). */
+    // Petits helpers pour prevenir les vues quand quelque chose change.
     public void notifierFileActionsChangee() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.FILE_ACTIONS_CHANGEE));
     }
 
-    /** A appeler apres la production de tous les batiments du royaume. */
     public void notifierProduction() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.TRESOR_CHANGE));
     }
 
-    /** A appeler apres une modification directe du tresor (ex : cout d'une action). */
     public void notifierTresorChange() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.TRESOR_CHANGE));
     }
 
-    /** A appeler apres un changement sur les batiments (chantier avance/termine). */
     public void notifierBatimentsChanges() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.BATIMENTS_CHANGES));
     }
 
-    /** A appeler apres une modification directe de la population. */
     public void notifierPopulationChangee() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.POPULATION_CHANGEE));
     }
 
-    /** A appeler apres une modification directe du moral. */
     public void notifierMoralChange() {
         setChanged();
         notifyObservers(new Notification(TypeNotification.MORAL_CHANGE));

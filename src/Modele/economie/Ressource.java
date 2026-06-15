@@ -1,8 +1,6 @@
 package Modele.economie;
 
-/**
- * Les 5 ressources du jeu, avec leur libelle d'affichage.
- */
+// Les 5 ressources du jeu.
 public enum Ressource {
 
     OR("Or"),

@@ -4,13 +4,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Habitations : ne produit pas de ressource mais fixe la capacite de logement
- * de la population. Recalcule la capacite a chaque tour selon son niveau :
- * niveau 1 = capacite initiale, +10 places par niveau au-dessus.
- *
- * Si endommagee, la capacite supplementaire des niveaux est divisee par 2.
- */
+// Habitations : ne produit rien, fixe la capacite de logement selon le niveau.
 public class Habitations extends Batiment {
 
     @Override

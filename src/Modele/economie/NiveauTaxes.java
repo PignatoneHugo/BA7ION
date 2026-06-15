@@ -1,9 +1,6 @@
 package Modele.economie;
 
-/**
- * Niveau de taxation choisi par le joueur.
- * Chaque niveau donne un revenu d'or par habitant et un impact sur le moral.
- */
+// Niveau de taxes choisi par le joueur (or par habitant + effet sur le moral).
 public enum NiveauTaxes {
 
     FAIBLE("Faibles", 1, 2),

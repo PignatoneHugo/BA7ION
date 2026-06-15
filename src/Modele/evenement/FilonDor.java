@@ -1,9 +1,6 @@
 package Modele.evenement;
 
-/**
- * Filon d'or : un mineur decouvre un filon. Evenement positif, peu
- * importe le choix (juste de la saveur).
- */
+/** Filon d'or : evenement positif, les deux choix sont bons. */
 public class FilonDor extends Evenement {
 
     public FilonDor() {

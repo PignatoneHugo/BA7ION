@@ -6,13 +6,8 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Action symetrique de {@link ActionMobiliser} : retire des soldats du
- * type donne et les renvoie en recrues (Role.SOLDAT). Pas de
- * remboursement d'or -- l'or a deja ete depense pour l'equipement.
- * La recrue peut ensuite etre re-equipee, ou ramenee dans le pool des
- * inactifs via l'onglet Economie (bouton - de la ligne Soldat).
- */
+// Inverse de ActionMobiliser : retire des soldats et les remet en recrues.
+// Pas de remboursement de l'or.
 public class ActionDemobiliser implements Action {
 
     private final TypeUnite type;
@@ -43,8 +38,7 @@ public class ActionDemobiliser implements Action {
     public void executer(Royaume royaume) {
         int retire = royaume.armee().retirer(this.type, this.effectif);
         int recrues = retire * Equilibrage.HABITANTS_PAR_SOLDAT;
-        // L'unite demobilisee redevient une recrue (Role.SOLDAT).
-        // Population.ajouterInactifs puis reaffectation INACTIF -> SOLDAT.
+        // le soldat redevient une recrue
         royaume.population().ajouterInactifs(recrues);
         royaume.population().reaffecter(Role.INACTIF, Role.SOLDAT, recrues);
     }

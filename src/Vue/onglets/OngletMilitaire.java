@@ -31,11 +31,7 @@ import Vue.theme.ToggleMedieval;
 
 import config.Equilibrage;
 
-/**
- * Onglet militaire : recrute/demobilise les unites, choisit la posture.
- * Au sprint 3 seule l'INFANTERIE_LEGERE est recrutable. Les autres types
- * sont affiches mais marques "Bientot disponible".
- */
+/** Onglet Militaire : recrute/demobilise les unites, choisit la posture, attaque. */
 public class OngletMilitaire extends JPanel implements Observer {
 
     private static final long serialVersionUID = 1L;
@@ -60,7 +56,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         setLayout(new BorderLayout(8, 8));
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        // === TITRE + effectif total ===
+        // titre + effectif total
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
 
@@ -72,7 +68,7 @@ public class OngletMilitaire extends JPanel implements Observer {
 
         this.labelEffectifTotal = new JLabel("", SwingConstants.RIGHT);
         this.labelEffectifTotal.setFont(Polices.VALEUR.deriveFont(14f));
-        this.labelEffectifTotal.setForeground(Palette.ROUGE_BANNIERE);
+        this.labelEffectifTotal.setForeground(Palette.ROUGE_DANGER);
         tete.add(this.labelEffectifTotal, BorderLayout.EAST);
 
         tete.setBorder(BorderFactory.createCompoundBorder(
@@ -80,7 +76,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                 BorderFactory.createEmptyBorder(0, 0, 6, 0)));
         add(tete, BorderLayout.NORTH);
 
-        // === Centre : grille des types + bloc posture ===
+        // grille des unites + bloc combat
         JPanel centre = new JPanel();
         centre.setOpaque(false);
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
@@ -94,14 +90,14 @@ public class OngletMilitaire extends JPanel implements Observer {
 
         rafraichir();
         this.royaume.addObserver(this);
-        // L'onglet rafraichit aussi quand un bot change (effectif, or, mort).
+        // on observe aussi les bots (effectif, or...)
         for (Royaume bot : this.partie.bots()) {
             bot.addObserver(this);
         }
     }
 
     private JPanel creerGrilleUnites() {
-        // Une carte par type d'unite, en 2 colonnes.
+        // une carte par type d'unite
         JPanel grille = new JPanel(new GridLayout(2, 2, 10, 10));
         grille.setOpaque(false);
         for (TypeUnite t : TypeUnite.values()) {
@@ -112,11 +108,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         return grille;
     }
 
-    /**
-     * Bloc Combat compact : posture (3 toggles) + bouton Attaquer
-     * sur la meme ligne. Le compteur d'attaques planifiees est en
-     * dessous, en petit, italique.
-     */
+    // bloc combat : posture + bouton Attaquer + compteur d'attaques
     private JPanel creerBlocCombat() {
         JPanel bloc = new JPanel(new BorderLayout(0, 6));
         bloc.setOpaque(true);
@@ -125,17 +117,17 @@ public class OngletMilitaire extends JPanel implements Observer {
                 BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                 BorderFactory.createEmptyBorder(8, 14, 8, 14)));
 
-        // Titre du bloc
+        // titre
         JLabel sousTitre = new JLabel("Combat".toUpperCase());
         sousTitre.setFont(Polices.SECTION.deriveFont(13f));
         sousTitre.setForeground(Palette.OR);
         bloc.add(sousTitre, BorderLayout.NORTH);
 
-        // Ligne unique : Posture (3 toggles) + Attaquer
+        // posture + bouton Attaquer sur la meme ligne
         JPanel ligne = new JPanel(new BorderLayout(16, 0));
         ligne.setOpaque(false);
 
-        // Gauche : posture
+        // la posture
         JPanel groupePosture = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         groupePosture.setOpaque(false);
         ButtonGroup grp = new ButtonGroup();
@@ -148,7 +140,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         }
         ligne.add(groupePosture, BorderLayout.WEST);
 
-        // Droite : bouton Attaquer (seulement si bots presents)
+        // bouton Attaquer (seulement s'il y a des bots)
         if (!this.partie.bots().isEmpty()) {
             this.boutonAttaquer = new BoutonMedieval(
                     "Attaquer".toUpperCase(),
@@ -158,7 +150,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         }
         bloc.add(ligne, BorderLayout.CENTER);
 
-        // Pied : compteur d'attaques planifiees (si bots)
+        // compteur d'attaques planifiees
         if (!this.partie.bots().isEmpty()) {
             this.labelAttaquesPlanifiees = new JLabel("", SwingConstants.CENTER);
             this.labelAttaquesPlanifiees.setFont(Polices.LABEL.deriveFont(
@@ -178,7 +170,7 @@ public class OngletMilitaire extends JPanel implements Observer {
     }
 
     private void rafraichir() {
-        // En-tete : effectif total + recrues disponibles
+        // effectif total + recrues dispo
         int recrues = this.royaume.population().effectif(Role.SOLDAT);
         this.labelEffectifTotal.setText(
                 "Effectif total" + " : "
@@ -186,20 +178,20 @@ public class OngletMilitaire extends JPanel implements Observer {
                         + "    |    "
                         + "Recrues dispo." + " : " + recrues);
 
-        // Chaque carte
+        // les cartes
         for (TypeUnite t : TypeUnite.values()) {
             this.cartes.get(t).rafraichir();
         }
 
-        // Posture courante
+        // posture courante
         PostureCombat courant = this.royaume.armee().posture();
         for (PostureCombat p : PostureCombat.values()) {
             this.togglesPosture.get(p).setSelected(p == courant);
         }
 
-        // Bouton Attaquer : actif si on a une armee et au moins un bot
-        // vivant non deja attaque.
+        // bouton Attaquer : actif si on a une armee et une cible dispo
         if (this.boutonAttaquer != null) {
+            boolean combatsOuverts = this.partie.combatsAutorises();
             boolean armeeOk = !this.royaume.armee().estVide();
             boolean cibleDispo = false;
             int planifiees = 0;
@@ -210,9 +202,13 @@ public class OngletMilitaire extends JPanel implements Observer {
                     cibleDispo = true;
                 }
             }
-            this.boutonAttaquer.setEnabled(armeeOk && cibleDispo);
+            this.boutonAttaquer.setEnabled(combatsOuverts && armeeOk && cibleDispo);
             if (this.labelAttaquesPlanifiees != null) {
-                if (planifiees == 0) {
+                if (!combatsOuverts) {
+                    this.labelAttaquesPlanifiees.setText(
+                            "Combats verrouilles jusqu'au tour "
+                                    + Equilibrage.TOUR_DEBUT_COMBATS);
+                } else if (planifiees == 0) {
                     this.labelAttaquesPlanifiees.setText(
                             "Aucune attaque planifiee ce tour");
                 } else {
@@ -224,14 +220,10 @@ public class OngletMilitaire extends JPanel implements Observer {
         }
     }
 
-    /** Accesseur du gros bouton Attaquer (pour le controleur). */
     public BoutonMedieval boutonAttaquer() {
         return this.boutonAttaquer;
     }
 
-    // ============================================================
-    // Accesseurs pour le controleur
-    // ============================================================
     public BoutonMedieval boutonRecruter(TypeUnite type) {
         return this.cartes.get(type).boutonRecruter;
     }
@@ -244,9 +236,7 @@ public class OngletMilitaire extends JPanel implements Observer {
         return this.togglesPosture.get(posture);
     }
 
-    // ============================================================
-    // Une carte = un type d'unite
-    // ============================================================
+    // une carte = un type d'unite
     private class CarteUnite extends JPanel {
         private static final long serialVersionUID = 1L;
 
@@ -266,7 +256,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                     BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                     BorderFactory.createEmptyBorder(8, 10, 8, 10)));
 
-            // === Nom du type ===
+            // nom du type
             JLabel nom = new JLabel(type.libelle().toUpperCase(),
                     SwingConstants.CENTER);
             nom.setFont(Polices.SECTION.deriveFont(13f));
@@ -276,7 +266,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                     BorderFactory.createEmptyBorder(0, 0, 4, 0)));
             add(nom, BorderLayout.NORTH);
 
-            // === 3 colonnes : Effectif / Stats / Cout ===
+            // 3 colonnes : effectif / stats / cout
             JPanel corps = new JPanel(new GridLayout(1, 3, 4, 0));
             corps.setOpaque(false);
 
@@ -297,7 +287,7 @@ public class OngletMilitaire extends JPanel implements Observer {
 
             add(corps, BorderLayout.CENTER);
 
-            // === Footer : 2 boutons cote a cote ===
+            // 2 boutons en bas
             JPanel pied = new JPanel(new GridLayout(1, 2, 6, 0));
             pied.setOpaque(false);
             pied.setBorder(BorderFactory.createEmptyBorder(4, 0, 0, 0));
@@ -332,21 +322,21 @@ public class OngletMilitaire extends JPanel implements Observer {
         }
 
         void rafraichir() {
-            // Effectif
+            // effectif
             this.valeurEffectif.setText(String.valueOf(
                     royaume.armee().effectifParType(this.type)));
 
-            // Stats Att / Def
+            // stats att / def
             this.valeurStats.setText("A " + this.type.attaqueBase()
                     + " / D " + this.type.defenseBase());
 
-            // Deblocage : la Caserne doit avoir le niveau requis pour ce type.
+            // debloque si la caserne est au bon niveau
             Modele.infrastructure.Batiment caserne =
                     royaume.batiment(Modele.infrastructure.TypeBatiment.CASERNE);
             int niveauCaserne = (caserne != null) ? caserne.niveau() : 0;
             boolean debloque = niveauCaserne >= this.type.niveauCaserneRequis();
 
-            // Cout / condition
+            // cout ou condition de deblocage
             if (debloque) {
                 this.valeurCout.setText(
                         Equilibrage.COUT_OR_PAR_SOLDAT + " Or + 1 recrue");
@@ -358,7 +348,7 @@ public class OngletMilitaire extends JPanel implements Observer {
                 this.valeurCout.setForeground(Palette.TEXTE_TERTIAIRE);
             }
 
-            // Boutons : recruter requiert debloque + recrue (Role.SOLDAT) + or.
+            // recruter demande : debloque + une recrue + assez d'or
             int effectifType = royaume.armee().effectifParType(this.type);
             int recrues = royaume.population().effectif(Role.SOLDAT);
             boolean peutPayer = royaume.tresor().contient(Ressource.OR,

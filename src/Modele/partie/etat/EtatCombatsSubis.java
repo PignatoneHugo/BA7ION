@@ -10,25 +10,22 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Phase de resolution des combats subis : les bots attaquent le joueur.
- * Pour chaque bot, on parcourt ses batailles offensives dont la cible est
- * le joueur et on les resout via EffetsCombat (qui applique les pertes
- * militaires, les pertes civiles si defaite defensive et le butin si
- * victoire offensive).
- */
+// Phase ou les bots attaquent le joueur.
 public class EtatCombatsSubis implements EtatTour {
 
     @Override
     public void executer(Partie partie) {
-        Royaume joueur = partie.joueur();
-        for (Royaume bot : partie.bots()) {
-            // Copie defensive : la liste sera modifiee.
-            List<Bataille> aResoudre = new ArrayList<>(bot.bataillesOffensives());
-            for (Bataille b : aResoudre) {
-                if (b.defenseur() == joueur) {
-                    EffetsCombat.appliquer(b, partie);
-                    bot.bataillesOffensives().remove(b);
+        // Rien tant que les combats ne sont pas ouverts.
+        if (partie.combatsAutorises()) {
+            Royaume joueur = partie.joueur();
+            for (Royaume bot : partie.bots()) {
+                // Copie car on va modifier la liste.
+                List<Bataille> aResoudre = new ArrayList<>(bot.bataillesOffensives());
+                for (Bataille b : aResoudre) {
+                    if (b.defenseur() == joueur) {
+                        EffetsCombat.appliquer(b, partie);
+                        bot.bataillesOffensives().remove(b);
+                    }
                 }
             }
         }

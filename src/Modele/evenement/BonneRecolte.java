@@ -1,9 +1,6 @@
 package Modele.evenement;
 
-/**
- * Bonne recolte : un evenement positif sans choix difficile.
- * Les fermiers ont eu de la chance cette saison.
- */
+/** Bonne recolte : evenement positif, stocker ou faire la fete. */
 public class BonneRecolte extends Evenement {
 
     public BonneRecolte() {

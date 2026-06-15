@@ -6,12 +6,8 @@ import java.util.Map;
 import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
 
-/**
- * Bataille resolue : la Bataille initiale + le rapport du resolveur +
- * les effets de bord effectivement appliques (pertes civiles, butin
- * transfere). Stockee dans Partie.batraillesDuTour pour pouvoir etre
- * affichee dans le recap de fin de tour.
- */
+// Une bataille terminee : le rapport plus ce qui a vraiment ete applique
+// (pertes civiles, butin). Sert au recap de fin de tour.
 public class BatailleResolue {
 
     private final Royaume attaquant;
@@ -57,12 +53,12 @@ public class BatailleResolue {
         return this.rapport;
     }
 
-    /** Effectif d'armee de l'attaquant juste avant la bataille. */
+    // Effectif de l'attaquant avant la bataille.
     public int effectifAvantAttaquant() {
         return this.effectifAvantAttaquant;
     }
 
-    /** Effectif d'armee du defenseur juste avant la bataille. */
+    // Effectif du defenseur avant la bataille.
     public int effectifAvantDefenseur() {
         return this.effectifAvantDefenseur;
     }

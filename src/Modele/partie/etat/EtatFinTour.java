@@ -5,11 +5,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.ConditionsFin;
 import Modele.partie.Partie;
 
-/**
- * Derniere phase du tour : on incremente le compteur et on verifie les
- * conditions de fin de partie. Si la partie est gagnee ou perdue, on
- * notifie l'observateur (qui peut afficher un ecran de fin).
- */
+// Derniere phase : incremente le tour et verifie la fin de partie.
 public class EtatFinTour implements EtatTour {
 
     @Override

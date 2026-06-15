@@ -8,15 +8,8 @@ import Modele.infrastructure.Batiment;
 import Modele.infrastructure.TypeBatiment;
 import Modele.royaume.Royaume;
 
-/**
- * Photo des valeurs cles du royaume joueur a un instant donne.
- * Utilise pour calculer le bilan d'un tour (variations entre debut
- * et fin de tour) et l'afficher dans le DialogueFinTour.
- *
- * Le snapshot doit etre pris AU DEBUT du tour, avant que le joueur
- * ait planifie quoi que ce soit -- sinon les couts des ameliorations
- * (deduits a la planification) seraient invisibles dans le bilan.
- */
+// Photo du royaume joueur a un instant, pour comparer debut et fin de tour.
+// A prendre en debut de tour, avant que le joueur planifie quoi que ce soit.
 public class BilanTour {
 
     private final int numeroTour;

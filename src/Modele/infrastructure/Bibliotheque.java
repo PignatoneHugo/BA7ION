@@ -6,10 +6,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Bibliotheque : produit du savoir selon le nombre d'erudits.
- * Bonus +10% par niveau au-dessus de 1, divise par 2 si endommagee.
- */
+// Bibliotheque : produit du savoir selon le nombre d'erudits.
 public class Bibliotheque extends Batiment {
 
     @Override

@@ -1,6 +1,7 @@
 package Modele.partie.etat;
 
 import Modele.evenement.Evenement;
+import Modele.evenement.GrenouilleEmpoisonnee;
 import Modele.evenement.TirageEvenement;
 import Modele.notification.Notification;
 import Modele.notification.TypeNotification;
@@ -8,27 +9,29 @@ import Modele.partie.Partie;
 
 import config.Equilibrage;
 
-/**
- * Phase qui peut declencher un evenement aleatoire.
- *
- * A chaque tour (sauf le tour 1, ou on laisse le joueur prendre ses marques),
- * on tire un nombre aleatoire : s'il est inferieur a la probabilite definie
- * dans Equilibrage, un evenement est tire dans le CatalogueEvenements
- * (selon les poids relatifs) et stocke dans la Partie comme "en attente".
- *
- * Le ControleurPartie detecte l'etat "en attente", ouvre le dialogue modal
- * et reprend la chaine apres reponse du joueur.
- */
+// Phase qui peut declencher un evenement aleatoire (sauf au tour 1).
 public class EtatEvenement implements EtatTour {
 
     @Override
     public void executer(Partie partie) {
-        boolean peutTirer = partie.numeroTour() > 1 && !partie.enAttenteEvenement();
-        if (peutTirer && partie.aleatoire().nextDouble() < Equilibrage.PROBABILITE_EVENEMENT_PAR_TOUR) {
-            Evenement evenement = TirageEvenement.tirer(partie.aleatoire());
-            partie.declencherEvenement(evenement);
+        if (!partie.enAttenteEvenement()) {
+            if (estTourGrenouilleEmpoisonnee(partie)) {
+                // Evenement scripte : une seule fois.
+                partie.marquerGrenouilleEmpoisonneeDeclenchee();
+                partie.declencherEvenement(new GrenouilleEmpoisonnee());
+            } else if (partie.numeroTour() > 1
+                    && partie.aleatoire().nextDouble() < Equilibrage.PROBABILITE_EVENEMENT_PAR_TOUR) {
+                Evenement evenement = TirageEvenement.tirer(partie.aleatoire());
+                partie.declencherEvenement(evenement);
+            }
         }
         partie.notifier(new Notification(TypeNotification.PHASE_CHANGEE, this.nomCle()));
+    }
+
+    // True si la grenouille doit se declencher ce tour.
+    private boolean estTourGrenouilleEmpoisonnee(Partie partie) {
+        return partie.numeroTour() == Equilibrage.TOUR_GRENOUILLE_EMPOISONNEE
+                && !partie.grenouilleEmpoisonneeDeclenchee();
     }
 
     @Override

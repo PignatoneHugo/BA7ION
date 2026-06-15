@@ -1,17 +1,12 @@
 package Modele.ia;
 
-/**
- * Fabrique de strategies d'IA. Pattern Factory.
- * Au Sprint 3 : une seule strategie (equilibree), mais l'interface est en
- * place pour ajouter Agressif / Defensif / Commercant plus tard.
- */
+// Cree les strategies d'IA.
 public final class FabriqueIA {
 
     private FabriqueIA() {
-        // Classe utilitaire.
     }
 
-    /** Cree une instance de la strategie equilibree (la seule disponible). */
+    // Cree la strategie equilibree.
     public static StrategieIA creerEquilibree() {
         return new StrategieEquilibree();
     }

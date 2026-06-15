@@ -1,23 +1,15 @@
 package Modele.militaire;
 
-/**
- * Table des avantages entre types d'unites (Pierre-Feuille-Ciseaux).
- *
- * Chaine d'avantages :
- *   Cavalerie > Archer > Infanterie > Lancier > Cavalerie
- *
- * Une unite qui a l'avantage sur sa cible voit son attaque multipliee par
- * BONUS_AVANTAGE (1.5 par defaut, soit +50%).
- */
+// Avantages entre unites facon pierre-feuille-ciseaux.
+// Cavalerie > Archer > Infanterie > Lancier > Cavalerie.
 public final class TableAvantages {
 
     public static final double BONUS_AVANTAGE = 1.5;
 
     private TableAvantages() {
-        // Classe utilitaire.
     }
 
-    /** Retourne le multiplicateur d'attaque de l'attaquant contre le defenseur. */
+    // Multiplicateur d'attaque de l'attaquant contre le defenseur.
     public static double bonusContre(TypeUnite attaquant, TypeUnite defenseur) {
         if (attaquant == TypeUnite.CAVALERIE_LOURDE && defenseur == TypeUnite.ARCHER) {
             return BONUS_AVANTAGE;

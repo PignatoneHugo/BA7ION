@@ -1,10 +1,6 @@
 package Modele.economie;
 
-/**
- * Quantite stockee d'une ressource, bornee entre 0 et une capacite max.
- * Les methodes ajouter() et retirer() retournent la quantite reellement
- * appliquee (utile pour detecter les saturations).
- */
+// Quantite d'une ressource, bornee entre 0 et une capacite max.
 public class Stock {
 
     private final Ressource ressource;
@@ -35,7 +31,7 @@ public class Stock {
         return this.capaciteMax;
     }
 
-    /** Ajoute des unites, limité par la capacite. Retourne ce qui a ete ajoute. */
+    // Ajoute des unites (limite par la capacite), renvoie ce qui a ete ajoute.
     public int ajouter(int montant) {
         if (montant < 0) {
             throw new IllegalArgumentException("Utiliser retirer() pour soustraire.");
@@ -45,7 +41,7 @@ public class Stock {
         return this.quantite - avant;
     }
 
-    /** Retire des unites sans descendre sous 0. Retourne ce qui a ete retire. */
+    // Retire des unites (sans aller sous 0), renvoie ce qui a ete retire.
     public int retirer(int montant) {
         if (montant < 0) {
             throw new IllegalArgumentException("Utiliser ajouter() pour ajouter.");
@@ -55,9 +51,13 @@ public class Stock {
         return avant - this.quantite;
     }
 
-    /** True si le stock contient au moins le montant demande. */
     public boolean contient(int montant) {
         return this.quantite >= montant;
+    }
+
+    // Force la quantite (utilise au chargement d'une sauvegarde).
+    public void definirQuantite(int nouvelleQuantite) {
+        this.quantite = Math.max(0, Math.min(nouvelleQuantite, this.capaciteMax));
     }
 
     public void redimensionner(int nouvelleCapacite) {

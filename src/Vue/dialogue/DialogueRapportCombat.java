@@ -32,11 +32,7 @@ import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Popup dediee aux rapports de combat du tour : une grande carte par
- * bataille avec verdict colore, pertes des deux cotes, pertes civiles
- * et butin. S'affiche avant le bilan de fin de tour.
- */
+/** Popup des combats du tour : une carte par bataille (verdict, pertes, butin). */
 public class DialogueRapportCombat extends JDialog {
 
     private static final long serialVersionUID = 1L;
@@ -65,7 +61,7 @@ public class DialogueRapportCombat extends JDialog {
                 BorderFactory.createLineBorder(Palette.ROUGE_BANNIERE, 2),
                 BorderFactory.createEmptyBorder(20, 26, 18, 26)));
 
-        // === Tête ===
+        // en-tete
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
         JLabel surTitre = new JLabel(
@@ -85,7 +81,7 @@ public class DialogueRapportCombat extends JDialog {
         tete.add(titre, BorderLayout.CENTER);
         panneau.add(tete, BorderLayout.NORTH);
 
-        // === Liste des batailles ===
+        // liste des batailles
         JPanel liste = new JPanel();
         liste.setOpaque(false);
         liste.setLayout(new BoxLayout(liste, BoxLayout.Y_AXIS));
@@ -115,7 +111,7 @@ public class DialogueRapportCombat extends JDialog {
         scroll.getVerticalScrollBar().setUnitIncrement(16);
         panneau.add(scroll, BorderLayout.CENTER);
 
-        // === Pied : Continuer ===
+        // bouton Continuer
         JPanel pied = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pied.setOpaque(false);
         pied.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -129,14 +125,14 @@ public class DialogueRapportCombat extends JDialog {
 
         setContentPane(panneau);
         pack();
-        // Borne de taille
+        // on borne la taille
         int w = Math.max(720, getWidth());
         int h = Math.min(620, Math.max(380, getHeight()));
         setSize(w, h);
         setLocationRelativeTo(parent);
     }
 
-    /** Une carte detaillee par bataille. */
+    // une carte pour une bataille
     private JPanel creerCarteBataille(BatailleResolue b, Royaume joueur) {
         boolean joueurAttaque = (b.attaquant() == joueur);
         Royaume adv = joueurAttaque ? b.defenseur() : b.attaquant();
@@ -152,7 +148,7 @@ public class DialogueRapportCombat extends JDialog {
                     && !joueurAttaque);
         }
 
-        // Couleur dominante selon issue
+        // couleur selon l'issue
         Color couleurIssue;
         String texteIssue;
         if (egalite) {
@@ -173,7 +169,7 @@ public class DialogueRapportCombat extends JDialog {
                 BorderFactory.createLineBorder(couleurIssue, 2),
                 BorderFactory.createEmptyBorder(10, 14, 10, 14)));
 
-        // === En-tete : adversaire + verdict ===
+        // en-tete : adversaire + verdict
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
@@ -195,7 +191,7 @@ public class DialogueRapportCombat extends JDialog {
                 BorderFactory.createEmptyBorder(0, 0, 4, 0)));
         carte.add(header, BorderLayout.NORTH);
 
-        // === Corps : 2 colonnes (joueur / adversaire) ===
+        // 2 colonnes : joueur / adversaire
         JPanel corps = new JPanel(new GridLayout(1, 2, 12, 0));
         corps.setOpaque(false);
 
@@ -210,7 +206,7 @@ public class DialogueRapportCombat extends JDialog {
         int civilsJoueur = !joueurAttaque ? b.pertesCivilesDefenseur() : 0;
         int civilsAdv = joueurAttaque ? b.pertesCivilesDefenseur() : 0;
 
-        // Colonne joueur
+        // colonne joueur
         corps.add(creerColonneCamp(
                 "Votre royaume",
                 effAvantJoueur, pertesJoueur, civilsJoueur,
@@ -218,7 +214,7 @@ public class DialogueRapportCombat extends JDialog {
                 !egalite && !joueurGagne,
                 joueurAttaque));
 
-        // Colonne adversaire
+        // colonne adversaire
         corps.add(creerColonneCamp(
                 adv.nom(),
                 effAvantAdv, pertesAdv, civilsAdv,
@@ -230,10 +226,7 @@ public class DialogueRapportCombat extends JDialog {
         return carte;
     }
 
-    /**
-     * Une moitie de carte de bataille : nom du camp + pertes militaires +
-     * pertes civiles + butin (pris ou perdu).
-     */
+    // une colonne (un camp) : nom, pertes, civils, butin
     private JPanel creerColonneCamp(String nom, int effAvant,
                                     int pertesMil, int civils,
                                     Map<Ressource, Integer> butin,
@@ -245,7 +238,7 @@ public class DialogueRapportCombat extends JDialog {
                 BorderFactory.createLineBorder(new Color(40, 24, 12), 1),
                 BorderFactory.createEmptyBorder(8, 10, 8, 10)));
 
-        // Tete
+        // tete
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
         JLabel labelNom = new JLabel(nom);
@@ -262,12 +255,12 @@ public class DialogueRapportCombat extends JDialog {
         }
         col.add(tete, BorderLayout.NORTH);
 
-        // Corps : effectif initial + pertes + civils + butin
+        // effectif + pertes + civils + butin
         JPanel infos = new JPanel();
         infos.setOpaque(false);
         infos.setLayout(new BoxLayout(infos, BoxLayout.Y_AXIS));
 
-        // Effectif engage dans la bataille + ce qu'il reste apres pertes
+        // ce qui reste apres la bataille
         int restant = Math.max(0, effAvant - pertesMil);
         if (estPerdant) {
             restant = 0; // armee aneantie

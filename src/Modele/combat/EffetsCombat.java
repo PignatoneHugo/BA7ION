@@ -14,36 +14,19 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Helper qui resout une bataille de bout en bout : appel au resolveur,
- * application des pertes militaires, des consequences sur la population
- * du defenseur si defaite, et du butin pour l'attaquant si victoire.
- *
- * Utilise par EtatCombatsSubis (bots -> joueur) et EtatCombatsOffensifs
- * (joueur -> bots) pour appliquer la meme regle aux deux camps.
- *
- * Regle defaite defensive : le defenseur perd TOUTE son armee + un % de
- * sa population civile (tirage aleatoire pondere). L'attaquant vainqueur
- * vole un % de chaque ressource du defenseur.
- */
+// Resout une bataille en entier : pertes des deux camps, et si le defenseur
+// perd, pertes civiles + butin pour l'attaquant.
 public final class EffetsCombat {
 
     private EffetsCombat() {
-        // utilitaire
     }
 
-    /**
-     * Applique une bataille : delegue le calcul au ResolveurCombat,
-     * applique les pertes militaires de chaque cote, puis les
-     * consequences cote defenseur perdant ou attaquant vainqueur.
-     * Enregistre la BatailleResolue dans la Partie.
-     */
+    // Resout la bataille et applique tous ses effets, puis l'enregistre dans la Partie.
     public static BatailleResolue appliquer(Bataille bataille, Partie partie) {
         int bonusRemparts = bonusRemparts(bataille.defenseur());
         long seed = partie.aleatoire().nextLong();
 
-        // Capture les effectifs AVANT la bataille pour les afficher dans
-        // le rapport (apres, on n'a plus que les effectifs restants).
+        // on garde les effectifs avant la bataille pour le rapport
         int effAvantAtt = bataille.attaquant().armee().effectifTotal();
         int effAvantDef = bataille.defenseur().armee().effectifTotal();
 
@@ -54,22 +37,20 @@ public final class EffetsCombat {
                 bonusRemparts,
                 seed);
 
-        // Pertes militaires standards des deux cotes
+        // pertes militaires des deux cotes
         appliquerPertesArmee(bataille.attaquant().armee(), rapport.pertesAttaquant());
         appliquerPertesArmee(bataille.defenseur().armee(), rapport.pertesDefenseur());
 
         int pertesCivilesDef = 0;
         Map<Ressource, Integer> butinTransfere = new EnumMap<>(Ressource.class);
 
-        // Defenseur perdant : armee entierement aneantie + civils + moral
+        // si le defenseur perd : armee detruite, civils tues, butin et moral en baisse
         if (rapport.vainqueur() == RapportCombat.Vainqueur.ATTAQUANT) {
             aneantirArmee(bataille.defenseur().armee());
             pertesCivilesDef = appliquerPertesCiviles(
                     bataille.defenseur(), partie);
             butinTransfere = transfererButin(
                     bataille.attaquant(), bataille.defenseur());
-            // Effondrement du moral : -X points qui peuvent declencher la
-            // condition de defaite par moral si trop bas.
             bataille.defenseur().moral().ajuster(
                     -Equilibrage.IMPACT_MORAL_DEFAITE_DEFENSIVE);
             bataille.defenseur().notifierMoralChange();
@@ -93,7 +74,7 @@ public final class EffetsCombat {
         return resolue;
     }
 
-    /** Bonus en pourcentage donne par les Remparts du defenseur. */
+    // Bonus de defense (en %) donne par les remparts du defenseur.
     private static int bonusRemparts(Royaume defenseur) {
         Batiment b = defenseur.batiment(TypeBatiment.REMPARTS);
         if (b instanceof Remparts) {
@@ -102,7 +83,7 @@ public final class EffetsCombat {
         return 0;
     }
 
-    /** Repartit des pertes proportionnellement sur les unites de l'armee. */
+    // Repartit les pertes proportionnellement sur les unites.
     private static void appliquerPertesArmee(Armee armee, int pertesTotales) {
         if (pertesTotales <= 0 || armee.estVide()) {
             return;
@@ -120,17 +101,14 @@ public final class EffetsCombat {
         }
     }
 
-    /** Reduit toutes les unites a 0 (defaite defensive ecrasante). */
+    // Met toutes les unites a 0.
     private static void aneantirArmee(Armee armee) {
         for (Unite u : armee.unites()) {
             u.subirPertes(u.effectif());
         }
     }
 
-    /**
-     * Tue un pourcentage de la population civile du defenseur.
-     * Retourne le nombre effectivement retire.
-     */
+    // Tue un % des civils du defenseur. Renvoie combien sont morts.
     private static int appliquerPertesCiviles(Royaume defenseur, Partie partie) {
         int pop = defenseur.population().total();
         int aRetirer = (int) Math.round(
@@ -141,10 +119,7 @@ public final class EffetsCombat {
         return defenseur.population().retirerHabitants(aRetirer, partie.aleatoire());
     }
 
-    /**
-     * L'attaquant vole un pourcentage de chaque ressource du defenseur.
-     * Retourne la map des quantites effectivement transferees.
-     */
+    // L'attaquant vole un % de chaque ressource du defenseur. Renvoie ce qui a ete pris.
     private static Map<Ressource, Integer> transfererButin(Royaume attaquant,
                                                             Royaume defenseur) {
         Map<Ressource, Integer> transfere = new EnumMap<>(Ressource.class);

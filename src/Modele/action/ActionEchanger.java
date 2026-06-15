@@ -5,11 +5,7 @@ import Modele.infrastructure.Marche;
 import Modele.infrastructure.TypeBatiment;
 import Modele.royaume.Royaume;
 
-/**
- * Action immediate qui convertit {@code montantSource} unites de la
- * ressource {@code source} en unites de la ressource {@code cible},
- * au taux defini par le niveau du Marche.
- */
+// Echange une ressource contre une autre au taux du Marche.
 public class ActionEchanger implements Action {
 
     private final Ressource source;
@@ -45,8 +41,7 @@ public class ActionEchanger implements Action {
 
     @Override
     public boolean estExecutable(Royaume royaume) {
-        // Le Marche est present a la creation du royaume (niveau 1) mais
-        // verifions tout de meme. Et l'echange doit produire au moins 1 unite.
+        // il faut un Marche et que l'echange rapporte au moins 1 unite
         Marche marche = (Marche) royaume.batiment(TypeBatiment.MARCHE);
         if (marche == null) {
             return false;

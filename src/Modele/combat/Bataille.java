@@ -3,11 +3,7 @@ package Modele.combat;
 import Modele.militaire.PostureCombat;
 import Modele.royaume.Royaume;
 
-/**
- * Combat planifie entre deux royaumes, en attente de resolution.
- * Stocke par la Partie entre la phase ou il est declenche (ActionAttaquer
- * ou IA des bots) et la phase de resolution (EtatCombatsSubis / Offensifs).
- */
+// Un combat prevu entre deux royaumes, pas encore resolu.
 public class Bataille {
 
     private final Royaume attaquant;

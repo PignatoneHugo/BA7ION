@@ -27,13 +27,7 @@ import Vue.theme.Polices;
 
 import config.Equilibrage;
 
-/**
- * Ecran de fin de partie : victoire ou defaite avec la raison, statistiques
- * du regne et classement par or final. Boutons de navigation pour rejouer
- * ou retourner au menu.
- *
- * S'affiche en plein ecran via le CardLayout de FenetreJeu.
- */
+/** Ecran de fin : victoire/defaite, stats du regne et classement par or. */
 public class VueFinPartie extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -53,17 +47,16 @@ public class VueFinPartie extends JPanel {
         setLayout(new BorderLayout(0, 24));
         setBorder(BorderFactory.createEmptyBorder(40, 80, 40, 80));
 
-        // EN-TETE
         add(creerEnTete(), BorderLayout.NORTH);
 
-        // CONTENU CENTRAL (stats + classement)
+        // stats + classement
         JPanel centre = new JPanel(new GridLayout(1, 2, 24, 0));
         centre.setOpaque(false);
         centre.add(creerStats());
         centre.add(creerClassement());
         add(centre, BorderLayout.CENTER);
 
-        // BOUTONS DU BAS
+        // boutons du bas
         JPanel boutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 32, 0));
         boutons.setOpaque(false);
 
@@ -89,14 +82,14 @@ public class VueFinPartie extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        // Fond degrade : dore pour victoire, sombre rouge pour defaite
+        // fond doré si victoire, rouge sombre si defaite
         Color top = this.etat == ConditionsFin.Etat.VICTOIRE
                 ? new Color(40, 32, 8) : new Color(40, 8, 8);
         Color bot = Palette.FOND_BAS;
         g2.setPaint(new GradientPaint(0, 0, top, 0, h, bot));
         g2.fillRect(0, 0, w, h);
 
-        // Cadre or
+        // cadre or
         g2.setColor(Palette.OR);
         g2.setStroke(new java.awt.BasicStroke(2));
         g2.drawRect(8, 8, w - 16, h - 16);
@@ -125,7 +118,7 @@ public class VueFinPartie extends JPanel {
         return entete;
     }
 
-    /** Genere le texte explicatif selon les conditions de fin. */
+    // texte selon la raison de fin
     private String raisonFin() {
         Royaume joueur = this.partie.joueur();
         if (this.etat == ConditionsFin.Etat.VICTOIRE) {
@@ -134,7 +127,7 @@ public class VueFinPartie extends JPanel {
             }
             return "Vous avez conquis tous les royaumes adverses !";
         }
-        // Defaite
+        // defaite
         if (joueur.population().total() <= Equilibrage.POPULATION_MIN_DEFAITE) {
             return "Votre royaume est depeuple. Plus personne ne vit dans vos terres.";
         }
@@ -144,7 +137,7 @@ public class VueFinPartie extends JPanel {
         return "Le temps imparti a votre regne est ecoule.";
     }
 
-    /** Panel statistiques du regne. */
+    // panneau des stats
     private JPanel creerStats() {
         JPanel panel = new JPanel();
         panel.setOpaque(true);
@@ -204,7 +197,7 @@ public class VueFinPartie extends JPanel {
         return l;
     }
 
-    /** Panel classement (joueur + bots tries par or final). */
+    // panneau classement (joueur + bots tries par or)
     private JPanel creerClassement() {
         JPanel panel = new JPanel();
         panel.setOpaque(true);

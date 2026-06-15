@@ -3,11 +3,8 @@ package Modele.evenement;
 import java.util.function.Supplier;
 
 /**
- * Catalogue des evenements disponibles avec leur poids relatif pour le
- * tirage. Un evenement est instancie a la demande via un Supplier pour
- * eviter de partager le meme objet entre plusieurs tirages.
- *
- * Pour ajouter un evenement : creer la classe + l'enregistrer ici.
+ * Liste des evenements tirables avec leur poids.
+ * Pour en ajouter un : creer la classe et l'enregistrer ici.
  */
 public final class CatalogueEvenements {
 
@@ -15,7 +12,7 @@ public final class CatalogueEvenements {
         // Classe utilitaire.
     }
 
-    /** Une entree du catalogue : un fournisseur d'evenement et son poids. */
+    /** Une entree : un fournisseur d'evenement et son poids. */
     public static class Entree {
         public final Supplier<Evenement> fabrique;
         public final int poids;
@@ -26,10 +23,7 @@ public final class CatalogueEvenements {
         }
     }
 
-    /**
-     * Toutes les entrees du catalogue. Le poids influence la probabilite
-     * de tirage : un poids 3 = trois fois plus probable qu'un poids 1.
-     */
+    // poids plus eleve = plus probable
     public static final Entree[] ENTREES = {
         new Entree(Epidemie::new, 2),
         new Entree(Secheresse::new, 2),
@@ -39,7 +33,7 @@ public final class CatalogueEvenements {
         new Entree(AttaqueBrigands::new, 1)
     };
 
-    /** Somme des poids, calculee une seule fois. */
+    /** Somme des poids. */
     public static final int POIDS_TOTAL = calculerPoidsTotal();
 
     private static int calculerPoidsTotal() {

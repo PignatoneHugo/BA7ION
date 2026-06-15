@@ -1,9 +1,6 @@
 package config;
 
-/**
- * Niveau de difficulte choisi au demarrage de la partie. Ajuste l'or
- * initial du joueur.
- */
+// Difficulte choisie au depart : change l'or initial du joueur.
 public enum Difficulte {
 
     FACILE("Facile", 500),
@@ -22,7 +19,6 @@ public enum Difficulte {
         return this.libelle;
     }
 
-    /** Bonus (ou malus si negatif) d'or applique au demarrage. */
     public int bonusOrInitial() {
         return this.bonusOrInitial;
     }

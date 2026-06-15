@@ -6,9 +6,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Phase de production : chaque batiment de chaque royaume produit ses ressources.
- */
+// Phase de production : chaque batiment produit ses ressources.
 public class EtatProduction implements EtatTour {
 
     @Override

@@ -5,10 +5,7 @@ import java.util.Random;
 import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
 
-/**
- * Secheresse : la nourriture des stocks se gate. Deux choix : payer pour
- * de l'aide exterieure ou subir la perte.
- */
+/** Secheresse : payer de l'aide, serrer les ceintures ou tout abandonner. */
 public class Secheresse extends Evenement {
 
     public Secheresse() {
@@ -22,9 +19,7 @@ public class Secheresse extends Evenement {
         ajouterChoix(new Choix(
                 "Serrer les ceintures (-80 nourriture, -5 moral)",
                 new EffetSubir()));
-        // Choix toujours disponible : pas de ressources requises, juste
-        // un gros impact moral. Garantit que le joueur a toujours une
-        // option meme s'il n'a ni or ni nourriture.
+        // choix toujours dispo (gros malus moral) si plus d'or ni de nourriture
         ajouterChoix(new Choix(
                 "Abandonner le royaume a son sort (-12 moral)",
                 new EffetSimple(0, 0, -12)));

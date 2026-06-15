@@ -5,10 +5,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Phase de consommation : chaque royaume retire la nourriture de ses habitants.
- * S'il n'y a pas assez, on declenche une famine.
- */
+// Phase de consommation : on mange la nourriture, famine si pas assez.
 public class EtatConsommation implements EtatTour {
 
     @Override

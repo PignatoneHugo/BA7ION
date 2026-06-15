@@ -6,10 +6,7 @@ import java.util.Random;
 
 import config.Equilibrage;
 
-/**
- * Population d'un royaume : repartition d'habitants par role,
- * limitee par une capacite de logement.
- */
+// Habitants d'un royaume, repartis par role et limites par le logement.
 public class Population {
 
     private final Map<Role, Integer> effectifs = new EnumMap<>(Role.class);
@@ -27,7 +24,7 @@ public class Population {
         this.capaciteLogement = capaciteLogement;
     }
 
-    /** Somme des effectifs de tous les roles. */
+    // Somme de tous les roles.
     public int total() {
         int t = 0;
         for (int n : this.effectifs.values()) {
@@ -38,6 +35,14 @@ public class Population {
 
     public int effectif(Role role) {
         return this.effectifs.get(role);
+    }
+
+    // Force l'effectif d'un role (chargement de sauvegarde).
+    public void definirEffectif(Role role, int effectif) {
+        if (effectif < 0) {
+            throw new IllegalArgumentException("Un effectif ne peut pas etre negatif.");
+        }
+        this.effectifs.put(role, effectif);
     }
 
     public int capaciteLogement() {
@@ -51,10 +56,7 @@ public class Population {
         this.capaciteLogement = nouvelle;
     }
 
-    /**
-     * Deplace des habitants d'un role vers un autre.
-     * Retourne false si le role source n'a pas assez d'habitants.
-     */
+    // Deplace des habitants d'un role vers un autre. False si pas assez de monde.
     public boolean reaffecter(Role source, Role cible, int montant) {
         if (montant <= 0) {
             return false;
@@ -67,10 +69,7 @@ public class Population {
         return true;
     }
 
-    /**
-     * Ajoute des inactifs (croissance demographique).
-     * Le surplus au-dela de la capacite est ignore.
-     */
+    // Ajoute des inactifs (croissance), dans la limite du logement.
     public int ajouterInactifs(int montant) {
         if (montant <= 0) {
             return 0;
@@ -81,17 +80,8 @@ public class Population {
         return ajoute;
     }
 
-    /**
-     * Retire des habitants (famine, evenements, etc.) en tirant chaque
-     * victime au hasard parmi la population totale. Chaque habitant a la
-     * meme probabilite d'etre choisi, quelle que soit son role : un fermier
-     * a autant de chances qu'un inactif.
-     *
-     * @param montant nombre d'habitants a retirer
-     * @param aleatoire generateur aleatoire (typiquement celui de la Partie,
-     *                  seedable pour reproductibilite)
-     * @return le nombre d'habitants effectivement retires
-     */
+    // Retire des habitants (famine...) tires au hasard parmi tous les roles.
+    // Renvoie le nombre reellement retire.
     public int retirerHabitants(int montant, Random aleatoire) {
         if (montant <= 0 || aleatoire == null) {
             return 0;
@@ -110,12 +100,7 @@ public class Population {
         return aRetirer;
     }
 
-    /**
-     * Retire un nombre d'inactifs (utilise pour le recrutement : les soldats
-     * sont preleves dans les inactifs, pas au hasard).
-     *
-     * @return le nombre d'inactifs effectivement retires
-     */
+    // Retire des inactifs (recrutement de soldats). Renvoie le nombre retire.
     public int retirerInactifs(int montant) {
         if (montant <= 0) {
             return 0;
@@ -126,10 +111,7 @@ public class Population {
         return retire;
     }
 
-    /**
-     * Tire un role au hasard, avec une probabilite proportionnelle a son
-     * effectif dans la population. Retourne null si la population est vide.
-     */
+    // Tire un role au hasard, proportionnellement a son effectif.
     private Role tirerRoleAleatoire(Random aleatoire) {
         int total = this.total();
         if (total == 0) {

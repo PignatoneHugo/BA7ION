@@ -24,20 +24,12 @@ import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Popup qui s'ouvre depuis le bouton "Attaquer" de l'onglet militaire.
- * Liste les bots avec leur etat (effectif, or, eliminé, attaque deja
- * planifiee) et permet d'en choisir un comme cible.
- *
- * Le bouton Attaquer dans la ligne est desactive si la cible n'est pas
- * valide. La selection se fait via le bouton de chaque ligne -- la
- * popup se ferme et notifie le controleur via le callback.
- */
+/** Popup qui liste les bots pour en choisir un a attaquer. */
 public class DialogueChoixCible extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
-    /** Callback appele quand le joueur a choisi une cible (null si annule). */
+    // appele quand le joueur a choisi une cible
     public interface CibleChoisie {
         void choisir(Royaume cible);
     }
@@ -69,7 +61,7 @@ public class DialogueChoixCible extends JDialog {
                 BorderFactory.createLineBorder(Palette.OR, 2),
                 BorderFactory.createEmptyBorder(20, 24, 18, 24)));
 
-        // En-tete
+        // en-tete
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
         JLabel surTitre = new JLabel(
@@ -88,7 +80,7 @@ public class DialogueChoixCible extends JDialog {
         tete.add(titre, BorderLayout.CENTER);
         panneau.add(tete, BorderLayout.NORTH);
 
-        // Centre : liste des bots
+        // liste des bots
         JPanel liste = new JPanel(new GridLayout(0, 1, 0, 6));
         liste.setOpaque(false);
         for (Royaume bot : bots) {
@@ -96,7 +88,7 @@ public class DialogueChoixCible extends JDialog {
         }
         panneau.add(liste, BorderLayout.CENTER);
 
-        // Pied : bouton Annuler
+        // bouton Annuler
         JPanel pied = new JPanel(new FlowLayout(FlowLayout.CENTER));
         pied.setOpaque(false);
         pied.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
@@ -124,13 +116,13 @@ public class DialogueChoixCible extends JDialog {
                 BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
-        // Gauche : nom
+        // nom a gauche
         JLabel nom = new JLabel(bot.nom());
         nom.setFont(Polices.LABEL.deriveFont(14f));
         nom.setForeground(Palette.OR_CLAIR);
         ligne.add(nom, BorderLayout.WEST);
 
-        // Centre : effectif + or + etat
+        // au centre : effectif + or + etat
         JPanel infos = new JPanel(new FlowLayout(FlowLayout.CENTER, 16, 0));
         infos.setOpaque(false);
         int eff = bot.armee().effectifTotal();
@@ -160,7 +152,7 @@ public class DialogueChoixCible extends JDialog {
         infos.add(labelEtat);
         ligne.add(infos, BorderLayout.CENTER);
 
-        // Droite : bouton choisir
+        // bouton attaquer a droite
         BoutonMedieval choisir = new BoutonMedieval(
                 "Attaquer",
                 BoutonMedieval.Style.DANGER);

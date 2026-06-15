@@ -26,15 +26,7 @@ import Vue.onglets.OngletMilitaire;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Panneau central de la fenetre de jeu. Au lieu d'un JTabbedPane natif
- * (au look gris/blanc), on utilise un systeme custom medieval :
- *  - une barre d'onglets en haut avec des "boutons-onglets" stylises,
- *  - un CardLayout en dessous qui swap entre les panneaux.
- *
- * Onglet actif : fond brun fonce, bordure doree, texte or.
- * Onglet inactif : fond noir, bordure brun fonce, texte beige.
- */
+/** Panneau central avec nos propres onglets (Economie, Infra, Militaire, Marche). */
 public class VueDashboard extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -61,7 +53,7 @@ public class VueDashboard extends JPanel {
         this.ongletMilitaire = new OngletMilitaire(partie);
         this.ongletMarche = new OngletMarche(partie.joueur());
 
-        // Barre d'onglets en haut
+        // barre d'onglets
         JPanel barre = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
         barre.setOpaque(true);
         barre.setBackground(new Color(20, 14, 6));
@@ -104,7 +96,7 @@ public class VueDashboard extends JPanel {
         barre.add(this.barreMarche);
         add(barre, BorderLayout.NORTH);
 
-        // Zone des onglets (cards)
+        // zone qui change selon l'onglet
         this.cards = new CardLayout();
         this.zoneOnglets = new JPanel(this.cards);
         this.zoneOnglets.setOpaque(true);
@@ -140,9 +132,7 @@ public class VueDashboard extends JPanel {
         return this.ongletMarche;
     }
 
-    // ============================================================
-    // Bouton-onglet stylise medieval
-    // ============================================================
+    // un onglet cliquable
     private static class BarreOnglet extends JLabel {
         private static final long serialVersionUID = 1L;
         private boolean actif;
@@ -150,7 +140,7 @@ public class VueDashboard extends JPanel {
         BarreOnglet(String texte, boolean actif) {
             super(texte.toUpperCase(), SwingConstants.CENTER);
             this.actif = actif;
-            setOpaque(false); // on peint nous-meme le fond
+            setOpaque(false); // on dessine le fond nous-meme
             setFont(Polices.SECTION.deriveFont(13f));
             setPreferredSize(new Dimension(180, 38));
             setBorder(BorderFactory.createEmptyBorder(0, 16, 0, 16));
@@ -176,7 +166,7 @@ public class VueDashboard extends JPanel {
 
         @Override
         protected void paintComponent(Graphics g) {
-            // On dessine d'abord notre fond custom
+            // le fond d'abord
             Graphics2D g2 = (Graphics2D) g.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
@@ -203,7 +193,7 @@ public class VueDashboard extends JPanel {
             }
             g2.dispose();
 
-            // Puis le texte par-dessus (le super.paintComponent du JLabel dessine le texte)
+            // puis le texte par-dessus
             super.paintComponent(g);
         }
     }

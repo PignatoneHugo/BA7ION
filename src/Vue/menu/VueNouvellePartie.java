@@ -26,16 +26,13 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 
 import Vue.theme.BoutonMedieval;
+import Vue.theme.ChampsMedievaux;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
 import config.Difficulte;
 
-/**
- * Ecran de configuration d'une nouvelle partie, style medieval cohrent avec
- * le menu principal : fond degrade, panneau central type parchemin sombre
- * avec bordure doree, champs personnalises.
- */
+/** Ecran de config d'une nouvelle partie : nom, nombre de bots, difficulte. */
 public class VueNouvellePartie extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -51,7 +48,7 @@ public class VueNouvellePartie extends JPanel {
         setBackground(Palette.FOND_BAS);
         setLayout(new BorderLayout());
 
-        // Panneau central qui contient le formulaire
+        // panneau du formulaire
         JPanel panneau = new JPanel(new GridBagLayout());
         panneau.setOpaque(true);
         panneau.setBackground(Palette.FOND_PANNEAU);
@@ -62,7 +59,7 @@ public class VueNouvellePartie extends JPanel {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(8, 8, 8, 8);
 
-        // Titre
+        // titre
         JLabel titre = new JLabel("Nouvelle partie", SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(36f));
         titre.setForeground(Palette.OR);
@@ -73,7 +70,7 @@ public class VueNouvellePartie extends JPanel {
         c.insets = new Insets(0, 0, 8, 0);
         panneau.add(titre, c);
 
-        // Separateur dore
+        // separateur
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
         sep.setForeground(Palette.OR);
         sep.setBackground(Palette.OR);
@@ -86,7 +83,7 @@ public class VueNouvellePartie extends JPanel {
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(12, 8, 12, 8);
 
-        // Nom du royaume
+        // nom du royaume
         c.gridx = 0;
         c.gridy = 2;
         c.anchor = GridBagConstraints.LINE_END;
@@ -102,7 +99,7 @@ public class VueNouvellePartie extends JPanel {
         c.anchor = GridBagConstraints.LINE_START;
         panneau.add(this.champNom, c);
 
-        // Nombre de bots
+        // nombre de bots
         c.gridx = 0;
         c.gridy = 3;
         c.anchor = GridBagConstraints.LINE_END;
@@ -111,11 +108,12 @@ public class VueNouvellePartie extends JPanel {
         this.spinnerBots = new JSpinner(new SpinnerNumberModel(1, 1, 4, 1));
         this.spinnerBots.setPreferredSize(new Dimension(80, 36));
         this.spinnerBots.setFont(Polices.VALEUR);
+        ChampsMedievaux.stylerSpinner(this.spinnerBots);
         c.gridx = 1;
         c.anchor = GridBagConstraints.LINE_START;
         panneau.add(this.spinnerBots, c);
 
-        // Difficulte
+        // difficulte
         c.gridx = 0;
         c.gridy = 4;
         c.anchor = GridBagConstraints.LINE_END;
@@ -126,11 +124,12 @@ public class VueNouvellePartie extends JPanel {
         this.comboDifficulte.setPreferredSize(new Dimension(200, 36));
         this.comboDifficulte.setRenderer(new RendererDifficulte());
         this.comboDifficulte.setFont(Polices.LABEL);
+        ChampsMedievaux.stylerCombo(this.comboDifficulte);
         c.gridx = 1;
         c.anchor = GridBagConstraints.LINE_START;
         panneau.add(this.comboDifficulte, c);
 
-        // Boutons en bas
+        // boutons
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
         actions.setOpaque(false);
         this.boutonRetour = new BoutonMedieval(
@@ -150,7 +149,7 @@ public class VueNouvellePartie extends JPanel {
         c.insets = new Insets(28, 0, 0, 0);
         panneau.add(actions, c);
 
-        // Wrapper pour centrer le panneau verticalement et horizontalement
+        // on centre le panneau
         JPanel wrapper = new JPanel(new GridBagLayout());
         wrapper.setOpaque(false);
         wrapper.add(panneau);
@@ -166,12 +165,12 @@ public class VueNouvellePartie extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        // Fond degrade vertical
+        // fond degrade
         GradientPaint grad = new GradientPaint(0, 0, Palette.FOND_HAUT, 0, h, Palette.FOND_BAS);
         g2.setPaint(grad);
         g2.fillRect(0, 0, w, h);
 
-        // Cadre ornemental general
+        // cadre
         g2.setColor(Palette.OR_FONCE);
         g2.setStroke(new java.awt.BasicStroke(2));
         g2.drawRect(8, 8, w - 16, h - 16);
@@ -187,13 +186,8 @@ public class VueNouvellePartie extends JPanel {
     }
 
     private void stylerChamp(JTextField champ) {
-        champ.setBackground(Palette.CHAMP_FOND);
-        champ.setForeground(Palette.CHAMP_TEXTE);
-        champ.setCaretColor(Palette.OR);
+        ChampsMedievaux.stylerChamp(champ);
         champ.setFont(Polices.LABEL.deriveFont(14f));
-        champ.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Palette.OR, 1),
-                BorderFactory.createEmptyBorder(6, 10, 6, 10)));
     }
 
     public String nomJoueur() {
@@ -216,7 +210,7 @@ public class VueNouvellePartie extends JPanel {
         return this.boutonRetour;
     }
 
-    /** Renderer custom pour afficher le libelle traduit de chaque Difficulte. */
+    // affiche le libelle de chaque difficulte dans la combo
     private static class RendererDifficulte extends DefaultListCellRenderer {
         private static final long serialVersionUID = 1L;
 

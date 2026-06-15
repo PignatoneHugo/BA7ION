@@ -5,14 +5,7 @@ import Modele.notification.TypeNotification;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Phase qui execute les actions empilees par les joueurs (et plus tard par
- * les bots) pendant la phase de planification.
- *
- * Pour chaque royaume, on vide la file et on applique chaque action via
- * Action.executer(). Les actions non executables au moment du traitement
- * sont silencieusement ignorees (cf. FileActions.executerToutes()).
- */
+// Phase qui execute les actions planifiees, royaume par royaume.
 public class EtatActionsDifferees implements EtatTour {
 
     @Override

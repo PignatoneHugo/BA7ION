@@ -1,9 +1,6 @@
 package Modele.notification;
 
-/**
- * Message envoye aux vues par les Observable du modele.
- * Contient un type et eventuellement une donnee (numero de tour, ressource, etc.).
- */
+/** Message envoye aux vues : un type et parfois une donnee. */
 public class Notification {
 
     private final TypeNotification type;

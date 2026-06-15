@@ -2,11 +2,7 @@ package Modele.infrastructure;
 
 import Modele.royaume.Royaume;
 
-/**
- * Tour de Guet : donne de l'information sur les armees ennemies en approche.
- * Aucune production de ressource. Sera consultee lors de la phase EtatCombatsSubis
- * quand le module combat sera branche.
- */
+// Tour de Guet : detecte les armees ennemies en approche, pas de production.
 public class TourDeGuet extends Batiment {
 
     @Override
@@ -16,10 +12,10 @@ public class TourDeGuet extends Batiment {
 
     @Override
     protected void appliquerProduction(Royaume royaume) {
-        // Pas de production : la Tour de Guet ne fait que de l'observation.
+        // Rien : la tour ne fait qu'observer.
     }
 
-    /** Distance en tours a laquelle la tour detecte les armees ennemies. */
+    // Portee de detection (en tours).
     public int porteeDetection() {
         return this.niveau;
     }

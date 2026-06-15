@@ -1,9 +1,6 @@
 package Modele.notification;
 
-/**
- * Liste des differents types d'evenements que le modele peut envoyer aux vues.
- * Les vues utilisent ce type pour savoir si elles doivent se rafraichir ou non.
- */
+/** Types de notifications que le modele envoie aux vues. */
 public enum TypeNotification {
 
     // Cycle de tour

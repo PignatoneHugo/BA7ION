@@ -14,14 +14,8 @@ import Vue.onglets.OngletInfrastructures;
 
 import config.Equilibrage;
 
-/**
- * Controleur de l'onglet Infrastructures. Attache les listeners sur les
- * boutons "Ameliorer" / "Annuler".
- *
- * Le cout d'amelioration est retire au moment de la planification (et
- * rembourse a l'annulation), pour eviter que le joueur planifie plus
- * d'ameliorations qu'il ne peut payer.
- */
+// Controleur de l'onglet Infrastructures (boutons Ameliorer / Annuler).
+// Le cout est paye a la planification et rembourse a l'annulation.
 public class ControleurInfrastructures extends ControleurOnglet {
 
     private final OngletInfrastructures onglet;
@@ -56,15 +50,14 @@ public class ControleurInfrastructures extends ControleurOnglet {
         }
         Map<Ressource, Integer> cout = Equilibrage.coutAmelioration(type, b.niveau() + 1);
 
-        // Verifier que toutes les ressources sont disponibles (compte tenu
-        // des deductions deja faites pour les ameliorations precedemment planifiees).
+        // On verifie qu'on a de quoi payer.
         for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {
             if (!this.royaumeJoueur.tresor().contient(e.getKey(), e.getValue())) {
                 return;
             }
         }
 
-        // Retirer le cout et empiler l'action.
+        // On paye et on empile l'action.
         for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {
             this.royaumeJoueur.tresor().retirer(e.getKey(), e.getValue());
         }
@@ -82,8 +75,7 @@ public class ControleurInfrastructures extends ControleurOnglet {
             if (a instanceof ActionAmeliorer && ((ActionAmeliorer) a).type() == type) {
                 this.royaumeJoueur.fileActions().retirer(a);
 
-                // Rembourser le cout (le batiment est toujours au niveau d'avant
-                // puisque le chantier n'a pas demarre).
+                // On rembourse le cout.
                 Batiment b = this.royaumeJoueur.batiment(type);
                 Map<Ressource, Integer> cout = Equilibrage.coutAmelioration(type, b.niveau() + 1);
                 for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {

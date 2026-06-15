@@ -3,10 +3,7 @@ package Controleur;
 import Modele.partie.Partie;
 import Modele.royaume.Royaume;
 
-/**
- * Classe parente des controleurs d'onglets metier.
- * Donne acces a la Partie et au Royaume joueur a toutes les sous-classes.
- */
+// Classe mere des controleurs d'onglets : donne acces a la Partie et au joueur.
 public abstract class ControleurOnglet {
 
     protected final Partie partie;

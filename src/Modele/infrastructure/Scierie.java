@@ -6,10 +6,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Scierie : produit du bois selon le nombre de bucherons.
- * Bonus +10% par niveau au-dessus de 1, divise par 2 si endommagee.
- */
+// Scierie : produit du bois selon le nombre de bucherons.
 public class Scierie extends Batiment {
 
     @Override

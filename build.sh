@@ -22,11 +22,14 @@ clean() {
     echo "[clean] bin/ supprime."
 }
 
+# Gson (serialisation JSON des sauvegardes) : jar fourni dans lib/.
+GSON="lib/gson-2.13.2.jar"
+
 build() {
     mkdir -p bin
 
-    # 1. Compilation Java des sources de production.
-    find src -name "*.java" -print0 | xargs -0 javac -d bin -encoding UTF-8
+    # 1. Compilation Java des sources de production (Gson au classpath).
+    find src -name "*.java" -print0 | xargs -0 javac -d bin -cp "$GSON" -encoding UTF-8
     echo "[build] compilation OK."
 
     # 2. Copie des ressources non-Java (images).
@@ -36,15 +39,29 @@ build() {
 }
 
 run() {
-    java -cp bin Main
+    # Gson est requis a l'execution (sauvegarde / chargement de partie).
+    java -cp "bin:$GSON" Main
 }
 
 test() {
     mkdir -p bin
+    # JUnit 4 (+ hamcrest) et Gson sont fournis dans lib/ : aucune dependance reseau.
+    JUNIT="lib/junit-4.13.2.jar:lib/hamcrest-core-1.3.jar"
+    CP="bin:$JUNIT:$GSON"
     # Compile les tests par-dessus les classes de production deja dans bin/.
-    find tests -name "*.java" -print0 | xargs -0 javac -d bin -cp bin -encoding UTF-8
+    find tests -name "*.java" -print0 | xargs -0 javac -d bin -cp "$CP" -encoding UTF-8
     echo "[test] compilation des tests OK."
-    java -cp bin ResolveurCombatTest
+    # Lance toutes les classes de test via le runner console de JUnit.
+    java -cp "$CP" org.junit.runner.JUnitCore \
+        EconomieTest \
+        PopulationTest \
+        MoralTest \
+        InfrastructureTest \
+        EvenementTest \
+        ActionTest \
+        PartieTest \
+        PersistanceTest \
+        ResolveurCombatTest
 }
 
 case "${1:-build}" in

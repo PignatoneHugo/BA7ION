@@ -7,42 +7,20 @@ import Modele.militaire.PostureCombat;
 import Modele.militaire.TableAvantages;
 import Modele.militaire.Unite;
 
-/**
- * Resolveur de combat. Methode statique pure (sans etat), deterministe via
- * la graine aleatoire fournie, ce qui rend les tests JUnit reproductibles.
- *
- * Algorithme :
- *  1. Calcule la puissance offensive de l'attaquant (effectif x attaque x
- *     bonus PFC moyen contre les unites du defenseur).
- *  2. Calcule la puissance defensive du defenseur (idem en defense).
- *  3. Applique les multiplicateurs de la posture choisie par l'attaquant.
- *  4. Applique le bonus des remparts (sauf en CONTOURNEMENT).
- *  5. Applique un alea de plus ou moins 10% sur chaque puissance.
- *  6. Vainqueur = celui dont la puissance depasse l'autre de plus de 10%.
- *  7. Pertes : 50% pour le perdant, 20% pour le gagnant, 30% chacun en cas
- *     d'egalite.
- */
+// Calcule le resultat d'un combat. La meme seed donne toujours le meme
+// resultat, pratique pour les tests.
 public final class ResolveurCombat {
 
-    /** Marge relative au-dela de laquelle on declare un vainqueur. */
+    // Ecart de puissance a partir duquel il y a un vainqueur.
     private static final double MARGE_VICTOIRE = 1.1;
 
-    /** Amplitude de l'alea applique sur chaque puissance (10%). */
+    // Amplitude de l'alea sur chaque puissance.
     private static final double AMPLITUDE_ALEA = 0.1;
 
     private ResolveurCombat() {
-        // Classe utilitaire.
     }
 
-    /**
-     * Resout un combat entre un attaquant et un defenseur.
-     *
-     * @param attaquant armee attaquante
-     * @param defenseur armee defenseuse
-     * @param postureAttaquant posture choisie par l'attaquant
-     * @param bonusRempartsPct bonus des remparts du defenseur, en pourcentage
-     * @param seed graine pour l'alea (meme seed => meme resultat)
-     */
+    // Resout un combat entre l'armee attaquante et l'armee defenseuse.
     public static RapportCombat resoudre(Armee attaquant,
                                          Armee defenseur,
                                          PostureCombat postureAttaquant,
@@ -58,21 +36,21 @@ public final class ResolveurCombat {
         double puissanceA = calculerPuissanceOffensive(attaquant, defenseur);
         double puissanceD = calculerPuissanceDefensive(defenseur, attaquant);
 
-        // Multiplicateurs de posture (cote attaquant).
+        // bonus de posture
         puissanceA *= postureAttaquant.multAttaque();
         puissanceD *= postureAttaquant.multDefense();
 
-        // Bonus remparts (sauf si l'attaquant contourne).
+        // bonus remparts (sauf contournement)
         if (postureAttaquant.utiliseRemparts() && bonusRempartsPct > 0) {
             puissanceD *= 1.0 + bonusRempartsPct / 100.0;
         }
 
-        // Alea borne sur chaque puissance.
+        // un peu d'alea
         Random r = new Random(seed);
         puissanceA *= 1.0 + (r.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
         puissanceD *= 1.0 + (r.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
 
-        // Determination du vainqueur.
+        // qui gagne ?
         RapportCombat.Vainqueur v;
         if (puissanceA > puissanceD * MARGE_VICTOIRE) {
             v = RapportCombat.Vainqueur.ATTAQUANT;
@@ -82,7 +60,7 @@ public final class ResolveurCombat {
             v = RapportCombat.Vainqueur.EGALITE;
         }
 
-        // Calcul des pertes selon le vainqueur.
+        // pertes selon le vainqueur
         int effectifA = attaquant.effectifTotal();
         int effectifD = defenseur.effectifTotal();
         int pertesA;
@@ -105,10 +83,7 @@ public final class ResolveurCombat {
         return new RapportCombat(v, pertesA, pertesD, puissanceA, puissanceD);
     }
 
-    /**
-     * Puissance offensive = somme sur chaque unite attaquante de
-     * (effectif x attaqueBase x bonus PFC moyen contre l'armee defenseur).
-     */
+    // Puissance offensive de l'attaquant en tenant compte des avantages de type.
     private static double calculerPuissanceOffensive(Armee attaquant, Armee defenseur) {
         double puissance = 0;
         int totalDef = defenseur.effectifTotal();
@@ -119,10 +94,7 @@ public final class ResolveurCombat {
         return puissance;
     }
 
-    /**
-     * Puissance defensive = somme sur chaque unite defenseuse de
-     * (effectif x defenseBase x bonus PFC moyen contre l'armee attaquante).
-     */
+    // Puissance defensive du defenseur en tenant compte des avantages de type.
     private static double calculerPuissanceDefensive(Armee defenseur, Armee attaquant) {
         double puissance = 0;
         int totalAtt = attaquant.effectifTotal();
@@ -133,10 +105,7 @@ public final class ResolveurCombat {
         return puissance;
     }
 
-    /**
-     * Calcule le bonus PFC moyen d'une unite contre une armee adverse,
-     * pondere par la proportion de chaque type ennemi.
-     */
+    // Bonus moyen d'une unite contre une armee, pondere par les types adverses.
     private static double bonusMoyenContre(Unite uA, Armee adversaire, int totalAdv) {
         if (totalAdv == 0) {
             return 1.0;

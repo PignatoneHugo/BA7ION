@@ -6,10 +6,7 @@ import java.util.List;
 
 import Modele.royaume.Royaume;
 
-/**
- * File FIFO des actions planifiees par un royaume.
- * Videe et appliquee pendant la phase de resolution.
- */
+// File des actions planifiees par un royaume, jouees a la resolution.
 public class FileActions {
 
     private final List<Action> actions = new ArrayList<>();
@@ -37,15 +34,12 @@ public class FileActions {
         return this.actions.isEmpty();
     }
 
-    /** Vue non modifiable pour l'affichage. */
+    // Vue non modifiable pour l'affichage.
     public List<Action> contenu() {
         return Collections.unmodifiableList(this.actions);
     }
 
-    /**
-     * Execute toutes les actions executables dans l'ordre puis vide la file.
-     * Les actions non executables sont ignorees.
-     */
+    // Execute les actions executables dans l'ordre puis vide la file.
     public int executerToutes(Royaume royaume) {
         int compte = 0;
         for (Action action : this.actions) {

@@ -10,12 +10,7 @@ import Vue.onglets.OngletEconomie;
 
 import config.Equilibrage;
 
-/**
- * Controleur de l'onglet Economie. Attache les listeners sur :
- * - les boutons +/- des roles (deplace 1 habitant)
- * - les toggles de niveau de taxes
- * - le bouton Recruter villageois (100 nourriture pour 1 inactif)
- */
+// Controleur de l'onglet Economie : boutons +/-, taxes et recrutement.
 public class ControleurEconomie extends ControleurOnglet {
 
     private final OngletEconomie onglet;
@@ -74,8 +69,7 @@ public class ControleurEconomie extends ControleurOnglet {
         if (!action.estExecutable(this.royaumeJoueur)) {
             return;
         }
-        // Execution immediate (pas via la file) car c'est une action instantanee
-        // qui ne necessite pas la phase EtatActionsDifferees.
+        // Action immediate, pas besoin de la file.
         this.royaumeJoueur.tresor().retirer(Ressource.NOURRITURE,
                 Equilibrage.COUT_NOURRITURE_PAR_VILLAGEOIS);
         this.royaumeJoueur.population().ajouterInactifs(1);

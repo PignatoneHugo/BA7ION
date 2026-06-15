@@ -5,14 +5,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Action qui recrute un nouvel habitant : retire 100 nourriture du tresor
- * et ajoute 1 inactif a la population.
- *
- * Conditions :
- *  - le royaume a au moins COUT_NOURRITURE_PAR_VILLAGEOIS nourriture
- *  - il reste de la place dans la capacite de logement
- */
+// Recrute un habitant : coute de la nourriture, ajoute un inactif s'il reste de la place.
 public class ActionRecruterVillageois implements Action {
 
     @Override

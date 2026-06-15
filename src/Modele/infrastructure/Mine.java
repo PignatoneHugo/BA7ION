@@ -6,10 +6,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Mine : produit de la pierre et de l'or selon le nombre de mineurs.
- * Bonus +10% par niveau au-dessus de 1, divise par 2 si endommagee.
- */
+// Mine : produit de la pierre et de l'or selon le nombre de mineurs.
 public class Mine extends Batiment {
 
     @Override

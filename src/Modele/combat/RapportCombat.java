@@ -1,10 +1,6 @@
 package Modele.combat;
 
-/**
- * Resultat immuable d'un combat resolu par ResolveurCombat.
- * Contient le vainqueur, les pertes des deux camps et les puissances
- * calculees (utile pour le debug et l'affichage detaille).
- */
+// Resultat d'un combat : vainqueur, pertes et puissances calculees.
 public class RapportCombat {
 
     public enum Vainqueur {

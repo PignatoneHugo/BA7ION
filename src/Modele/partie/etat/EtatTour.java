@@ -2,18 +2,13 @@ package Modele.partie.etat;
 
 import Modele.partie.Partie;
 
-/**
- * Interface des phases du tour. Pattern State.
- * Chaque sous-classe represente une phase et sait vers quelle phase aller ensuite.
- */
+// Une phase du tour. Chaque phase fait son traitement et donne la suivante.
 public interface EtatTour {
 
-    /** Execute le traitement de la phase et notifie les observers. */
     void executer(Partie partie);
 
-    /** Retourne la phase suivante (jamais null). */
+    // La phase d'apres.
     EtatTour suivant();
 
-    /** Identifiant de la phase. */
     String nomCle();
 }

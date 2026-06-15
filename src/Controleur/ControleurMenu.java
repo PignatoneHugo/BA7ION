@@ -1,19 +1,22 @@
 package Controleur;
 
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import Modele.partie.Partie;
 import Modele.partie.PartieBuilder;
+import Modele.persistance.GestionnaireSauvegardes;
+import Modele.persistance.Sauvegarde;
 import Modele.population.Role;
 import Vue.FenetreJeu;
 import Vue.menu.VueMenuPrincipal;
 import Vue.menu.VueNouvellePartie;
 
-/**
- * Controleur des ecrans hors-jeu : menu principal et configuration de partie.
- * Gere les transitions entre ecrans et instancie la Partie quand le joueur
- * clique "Demarrer".
- */
+// Controleur des ecrans hors-jeu : menu principal et config de partie.
 public class ControleurMenu {
 
     private final FenetreJeu fenetre;
@@ -26,7 +29,7 @@ public class ControleurMenu {
     private void miseEnPlaceEvenements() {
         VueMenuPrincipal menu = this.fenetre.vueMenu();
         menu.boutonNouvellePartie().addActionListener(e -> this.fenetre.afficherNouvellePartie());
-        menu.boutonOptions().addActionListener(e -> ouvrirOptions());
+        menu.boutonCharger().addActionListener(e -> charger());
         menu.boutonQuitter().addActionListener(e -> System.exit(0));
 
         VueNouvellePartie config = this.fenetre.vueNouvellePartie();
@@ -34,12 +37,29 @@ public class ControleurMenu {
         config.boutonDemarrer().addActionListener(e -> demarrer());
     }
 
-    private void ouvrirOptions() {
-        // Sera implemente plus tard (ecran Options pour la langue, le theme, etc.).
-        JOptionPane.showMessageDialog(this.fenetre,
-                "Cet ecran n'est pas encore disponible.",
-                "Options",
-                JOptionPane.INFORMATION_MESSAGE);
+    // Choisit un fichier, charge la sauvegarde et lance la partie.
+    private void charger() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Charger une sauvegarde");
+        File dossier = new File(GestionnaireSauvegardes.DOSSIER);
+        if (dossier.isDirectory()) {
+            chooser.setCurrentDirectory(dossier);
+        }
+        chooser.setFileFilter(new FileNameExtensionFilter(
+                "Sauvegardes BAS7ION (*.json)", "json"));
+        if (chooser.showOpenDialog(this.fenetre) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        try {
+            Sauvegarde s = GestionnaireSauvegardes.chargerDepuis(chooser.getSelectedFile());
+            Partie partie = PartieBuilder.depuisSauvegarde(s);
+            this.fenetre.afficherJeu(partie);
+            new ControleurPartie(partie, this.fenetre);
+        } catch (IOException | RuntimeException ex) {
+            JOptionPane.showMessageDialog(this.fenetre,
+                    "Impossible de charger la sauvegarde :\n" + ex.getMessage(),
+                    "Erreur de chargement", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void demarrer() {
@@ -51,8 +71,7 @@ public class ControleurMenu {
                 .difficulte(config.difficulteSelectionnee())
                 .build();
 
-        // Affectation initiale qui rend la production de nourriture visible
-        // des le premier tour (6 fermiers - 10 habitants = +2 nourriture/tour).
+        // On met 6 fermiers au depart pour avoir de la nourriture des le tour 1.
         partie.joueur().reaffecter(Role.INACTIF, Role.FERMIER, 6);
 
         this.fenetre.afficherJeu(partie);

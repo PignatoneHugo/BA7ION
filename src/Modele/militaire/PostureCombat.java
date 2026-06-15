@@ -1,14 +1,7 @@
 package Modele.militaire;
 
-/**
- * Posture choisie pour un combat. Modifie les puissances d'attaque et de
- * defense, et determine si le bonus des remparts s'applique.
- *
- * - ATTAQUE : favorise l'offensive au detriment de la defense
- * - DEFENSE : favorise la defense au detriment de l'offensive
- * - CONTOURNEMENT : equilibre, ignore le bonus des remparts (utile pour
- *   attaquer une cite fortifiee)
- */
+// Posture de combat : change les multiplicateurs d'attaque/defense.
+// CONTOURNEMENT ignore les remparts.
 public enum PostureCombat {
 
     ATTAQUE("Attaque", 1.2, 0.9, true),
@@ -39,7 +32,7 @@ public enum PostureCombat {
         return this.multDefense;
     }
 
-    /** True si le bonus des remparts s'applique avec cette posture. */
+    // True si les remparts comptent avec cette posture.
     public boolean utiliseRemparts() {
         return this.utiliseRemparts;
     }

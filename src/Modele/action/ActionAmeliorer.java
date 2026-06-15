@@ -4,17 +4,8 @@ import Modele.infrastructure.Batiment;
 import Modele.infrastructure.TypeBatiment;
 import Modele.royaume.Royaume;
 
-/**
- * Action qui demarre un chantier d'amelioration sur un batiment.
- *
- * Le cout en ressources est retire par le controleur au moment de la
- * planification (pas dans executer()). Si l'action est annulee avant
- * execution, le controleur rembourse. Cela evite que le joueur planifie
- * plus d'ameliorations qu'il ne peut payer.
- *
- * estExecutable() verifie donc juste que le batiment peut etre ameliore
- * (pas au niveau max, pas deja en chantier).
- */
+// Lance un chantier d'amelioration sur un batiment.
+// Le cout est paye a la planification par le controleur, pas ici.
 public class ActionAmeliorer implements Action {
 
     private final TypeBatiment type;

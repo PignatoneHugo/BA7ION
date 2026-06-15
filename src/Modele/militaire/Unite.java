@@ -1,8 +1,6 @@
 package Modele.militaire;
 
-/**
- * Groupe d'unites d'un meme type, caracterise par un effectif.
- */
+// Un groupe de soldats du meme type avec son effectif.
 public class Unite {
 
     private final TypeUnite type;
@@ -27,7 +25,7 @@ public class Unite {
         return this.effectif;
     }
 
-    /** Retire un nombre d'unites, s'arrete a 0. Retourne ce qui a ete retire. */
+    // Enleve des soldats sans descendre sous 0. Renvoie combien ont ete enleves.
     public int subirPertes(int pertes) {
         if (pertes < 0) {
             throw new IllegalArgumentException("Les pertes doivent etre positives.");
@@ -37,7 +35,7 @@ public class Unite {
         return avant - this.effectif;
     }
 
-    /** Ajoute des soldats du meme type a cette unite. */
+    // Ajoute des soldats a l'unite.
     public void renforcer(int nombre) {
         if (nombre < 0) {
             throw new IllegalArgumentException("Le renfort doit etre positif ou nul.");

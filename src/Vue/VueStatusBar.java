@@ -15,13 +15,7 @@ import javax.swing.JPanel;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Barre d'etat permanente en bas de la fenetre. Affiche un message court
- * qui informe le joueur de la derniere action effectuee.
- *
- * Style medieval : fond pierre degrade, bordure superieure doree,
- * texte beige et italique.
- */
+/** Barre du bas : affiche un petit message sur la derniere action. */
 public class VueStatusBar extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -50,13 +44,13 @@ public class VueStatusBar extends JPanel {
         int w = getWidth();
         int h = getHeight();
 
-        // Fond pierre degrade
+        // fond degrade
         GradientPaint grad = new GradientPaint(0, 0, new Color(30, 22, 12),
                 0, h, new Color(10, 8, 4));
         g2.setPaint(grad);
         g2.fillRect(0, 0, w, h);
 
-        // Bordure superieure doree
+        // liseré doré en haut
         g2.setColor(Palette.OR);
         g2.fillRect(0, 0, w, 2);
         g2.setColor(new Color(0, 0, 0, 120));

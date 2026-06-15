@@ -27,14 +27,12 @@ import Modele.infrastructure.TypeBatiment;
 import Modele.notification.Notification;
 import Modele.royaume.Royaume;
 import Vue.theme.BoutonMedieval;
+import Vue.theme.ChampsMedievaux;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 import Vue.theme.ToggleMedieval;
 
-/**
- * Onglet Marche : convertit une ressource en une autre selon le taux
- * d'echange du batiment Marche. Le taux s'ameliore avec son niveau.
- */
+/** Onglet Marche : echange une ressource contre une autre selon le taux du marche. */
 public class OngletMarche extends JPanel implements Observer {
 
     private static final long serialVersionUID = 1L;
@@ -58,7 +56,7 @@ public class OngletMarche extends JPanel implements Observer {
         setLayout(new BorderLayout(8, 8));
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        // === Titre + niveau marche ===
+        // titre + niveau du marche
         JPanel tete = new JPanel(new BorderLayout());
         tete.setOpaque(false);
 
@@ -78,15 +76,15 @@ public class OngletMarche extends JPanel implements Observer {
                 BorderFactory.createEmptyBorder(0, 0, 6, 0)));
         add(tete, BorderLayout.NORTH);
 
-        // === Bloc principal : 2 sélecteurs + résultat + bouton ===
+        // 2 selecteurs + resultat + bouton
         JPanel centre = new JPanel();
         centre.setOpaque(false);
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
 
-        // Sous-bloc DONNER
+        // ce qu'on donne
         centre.add(creerSousBloc("Donner", this.togglesSource));
 
-        // Montant
+        // le montant
         centre.add(Box.createVerticalStrut(10));
         JPanel ligneMontant = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         ligneMontant.setOpaque(false);
@@ -97,6 +95,7 @@ public class OngletMarche extends JPanel implements Observer {
         this.spinnerMontant = new JSpinner(new SpinnerNumberModel(10, 1, 9999, 10));
         this.spinnerMontant.setPreferredSize(new Dimension(110, 32));
         this.spinnerMontant.setFont(Polices.VALEUR.deriveFont(14f));
+        ChampsMedievaux.stylerSpinner(this.spinnerMontant);
         ligneMontant.add(labelMontant);
         ligneMontant.add(this.spinnerMontant);
         ligneMontant.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
@@ -104,12 +103,10 @@ public class OngletMarche extends JPanel implements Observer {
 
         centre.add(Box.createVerticalStrut(10));
 
-        // Sous-bloc RECEVOIR
+        // ce qu'on recoit
         centre.add(creerSousBloc("Recevoir", this.togglesCible));
 
-        // Résultat + bouton (chacun dans un panel pleine largeur qui
-        // centre son contenu, pour eviter que la largeur change du label
-        // ne decale tout le BoxLayout vertical).
+        // resultat + bouton
         centre.add(Box.createVerticalStrut(12));
         this.labelResultat = new JLabel("", SwingConstants.CENTER);
         this.labelResultat.setFont(Polices.VALEUR.deriveFont(18f));
@@ -136,7 +133,7 @@ public class OngletMarche extends JPanel implements Observer {
         centre.add(Box.createVerticalGlue());
         add(centre, BorderLayout.CENTER);
 
-        // Listener pour rafraichir le label de resultat
+        // on rafraichit le resultat a chaque changement
         ChangeListener cl = e -> rafraichirResultat();
         this.spinnerMontant.addChangeListener(cl);
         for (ToggleMedieval t : this.togglesSource.values()) {
@@ -146,7 +143,7 @@ public class OngletMarche extends JPanel implements Observer {
             t.addActionListener(e -> rafraichirResultat());
         }
 
-        // Selection initiale : OR donne, NOURRITURE recue.
+        // par defaut : donner OR, recevoir NOURRITURE
         this.togglesSource.get(Ressource.OR).setSelected(true);
         this.togglesCible.get(Ressource.NOURRITURE).setSelected(true);
 
@@ -154,7 +151,7 @@ public class OngletMarche extends JPanel implements Observer {
         this.royaume.addObserver(this);
     }
 
-    /** Cree un sous-bloc avec un label + ligne de toggles ressource. */
+    // un sous-bloc : un titre + une ligne de boutons ressource
     private JPanel creerSousBloc(String titre, Map<Ressource, ToggleMedieval> map) {
         JPanel bloc = new JPanel();
         bloc.setOpaque(true);
@@ -209,7 +206,7 @@ public class OngletMarche extends JPanel implements Observer {
         rafraichirResultat();
     }
 
-    /** Met a jour le label "Vous recevrez : N" et l'etat du bouton. */
+    // met a jour le resultat et active/desactive le bouton
     private void rafraichirResultat() {
         Ressource src = ressourceSelectionnee(this.togglesSource);
         Ressource cible = ressourceSelectionnee(this.togglesCible);
@@ -255,19 +252,14 @@ public class OngletMarche extends JPanel implements Observer {
         }
     }
 
-    // ============================================================
-    // Accesseurs pour le controleur
-    // ============================================================
     public BoutonMedieval boutonEchanger() {
         return this.boutonEchanger;
     }
 
-    /** Ressource selectionnee comme source (peut etre null). */
     public Ressource ressourceSource() {
         return ressourceSelectionnee(this.togglesSource);
     }
 
-    /** Ressource selectionnee comme cible (peut etre null). */
     public Ressource ressourceCible() {
         return ressourceSelectionnee(this.togglesCible);
     }

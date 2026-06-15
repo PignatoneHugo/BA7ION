@@ -27,14 +27,7 @@ import Vue.theme.BoutonMedieval;
 import Vue.theme.Palette;
 import Vue.theme.Polices;
 
-/**
- * Bandeau permanent en haut de la fenetre de jeu, style medieval :
- * fond pierre sombre, icones circulaires colorees pour les 5 ressources,
- * compteur de tour or, indicateurs population et moral, gros bouton "Fin
- * de tour" rouge danger.
- *
- * Observer de Partie (tour) et du Royaume joueur (ressources, pop, moral).
- */
+/** Bandeau du haut : les 5 ressources, le tour, la population, le moral et le bouton fin de tour. */
 public class VueHUD extends JPanel implements Observer {
 
     private static final long serialVersionUID = 1L;
@@ -60,7 +53,7 @@ public class VueHUD extends JPanel implements Observer {
                 BorderFactory.createEmptyBorder(8, 16, 8, 16)));
         setPreferredSize(new Dimension(1280, 90));
 
-        // === Bloc de gauche : 5 ressources ===
+        // les 5 ressources a gauche
         JPanel gauche = new JPanel(new GridLayout(1, Ressource.values().length, 12, 0));
         gauche.setOpaque(false);
         for (Ressource r : Ressource.values()) {
@@ -70,10 +63,7 @@ public class VueHUD extends JPanel implements Observer {
         }
         add(gauche, BorderLayout.WEST);
 
-        // === Bloc central : tour + population + moral ===
-        // GridLayout(1, 3) : garantit que les 3 encadres sont toujours
-        // visibles, meme si la fenetre est etroite (sur portable). Ils se
-        // partagent l'espace dispo equitablement.
+        // au centre : tour + population + moral
         JPanel centre = new JPanel(new GridLayout(1, 3, 10, 0));
         centre.setOpaque(false);
 
@@ -90,7 +80,7 @@ public class VueHUD extends JPanel implements Observer {
 
         add(centre, BorderLayout.CENTER);
 
-        // === Bloc droit : bouton fin de tour ===
+        // bouton fin de tour a droite
         JPanel droite = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
         droite.setOpaque(false);
         this.boutonFinTour = new BoutonMedieval("Fin de tour",
@@ -109,7 +99,7 @@ public class VueHUD extends JPanel implements Observer {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        // Fond pierre degrade vertical
+        // fond degrade
         GradientPaint grad = new GradientPaint(0, 0, new Color(30, 20, 8),
                 0, getHeight(), new Color(10, 8, 4));
         g2.setPaint(grad);
@@ -117,7 +107,7 @@ public class VueHUD extends JPanel implements Observer {
         g2.dispose();
     }
 
-    /** Crée un encadré "label / valeur" centré et bordé d'or. */
+    // petit encadre "titre / valeur"
     private JLabel creerEncadre(String titre, String valeur, Color couleur, int largeur) {
         JLabel l = new JLabel("<html><div style='text-align:center;'>"
                 + "<span style='font-size:10px; color:#6a4820;'>"
@@ -173,8 +163,7 @@ public class VueHUD extends JPanel implements Observer {
                 + this.partie.numeroTour()
                 + "</span></div></html>");
 
-        // Population affichee = civils + soldats. Les unites combattantes
-        // font toujours partie du royaume, juste plus du pool civil.
+        // population = civils + soldats
         int total = this.royaumeJoueur.population().total()
                 + this.royaumeJoueur.armee().effectifTotal();
         int cap = this.royaumeJoueur.population().capaciteLogement();
@@ -196,9 +185,7 @@ public class VueHUD extends JPanel implements Observer {
                 + moral + " / 100</span></div></html>");
     }
 
-    // ============================================================
-    // Petit composant : icone circulaire + nom + quantite/max
-    // ============================================================
+    // un compteur de ressource : rond + nom + quantite/max
     private static class CompteurRessource extends JPanel {
         private static final long serialVersionUID = 1L;
 
@@ -230,7 +217,7 @@ public class VueHUD extends JPanel implements Observer {
             int w = getWidth();
             int h = getHeight();
 
-            // Cercle icone a gauche
+            // le rond a gauche
             int diam = 36;
             int cx = 4;
             int cy = (h - diam) / 2;
@@ -241,25 +228,25 @@ public class VueHUD extends JPanel implements Observer {
             g2.drawOval(cx, cy, diam, diam);
             g2.fillOval(cx + 6, cy + 6, diam - 12, diam - 12);
 
-            // Lettre au centre du cercle
+            // lettre au centre
             g2.setColor(this.couleur.darker());
             g2.setFont(Polices.VALEUR.deriveFont(14f));
             String lettre = String.valueOf(this.ressource.name().charAt(0));
             int fw = g2.getFontMetrics().stringWidth(lettre);
             g2.drawString(lettre, cx + diam / 2 - fw / 2, cy + diam / 2 + 5);
 
-            // Label nom de ressource
+            // nom de la ressource
             int xText = cx + diam + 8;
             g2.setColor(Palette.TEXTE_TERTIAIRE);
             g2.setFont(Polices.PETIT_LABEL);
             g2.drawString(this.ressource.libelle().toUpperCase(), xText, 14);
 
-            // Valeur
+            // la valeur
             g2.setColor(this.couleur);
             g2.setFont(Polices.VALEUR);
             g2.drawString(String.valueOf(this.quantite), xText, 35);
 
-            // Barre de progression
+            // barre de remplissage
             int barX = xText;
             int barY = 44;
             int barW = w - xText - 8;
@@ -275,7 +262,7 @@ public class VueHUD extends JPanel implements Observer {
                 g2.setColor(this.couleur);
                 g2.fillRoundRect(barX, barY, Math.min(rempli, barW), barH, 4, 4);
             }
-            // Capacite max en petit
+            // le max
             g2.setColor(Palette.TEXTE_TERTIAIRE);
             g2.setFont(Polices.PETIT_LABEL);
             String cap = "/ " + this.capacite;

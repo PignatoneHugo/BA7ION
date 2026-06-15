@@ -4,24 +4,16 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Classe abstraite parente des 9 batiments. Pattern Template Method :
- * la methode produire() est finale et appelle appliquerProduction()
- * que chaque sous-classe redefinit avec sa propre formule.
- *
- * Gere aussi le chantier d'amelioration : tant que toursRestants > 0,
- * le batiment ne produit pas, et le compteur descend a chaque tour.
- * Quand il arrive a 0, le niveau monte.
- */
+// Classe mere des 9 batiments. produire() gere le chantier puis delegue
+// a appliquerProduction(), redefinie par chaque batiment.
 public abstract class Batiment {
 
-    /** Niveau du batiment (1 par defaut). */
     protected int niveau;
 
-    /** True si le batiment est endommage : production reduite. */
+    // True si endommage : production reduite.
     protected boolean endommage;
 
-    /** Tours restants avant la fin du chantier d'amelioration (0 si pas de chantier). */
+    // Tours restants avant la fin d'une amelioration (0 si pas de chantier).
     protected int toursRestants;
 
     protected Batiment() {
@@ -52,12 +44,17 @@ public abstract class Batiment {
         return this.toursRestants > 0;
     }
 
-    /** True si on peut encore ameliorer ce batiment (pas au max, pas deja en chantier). */
+    // True si on peut encore ameliorer (pas au max, pas deja en chantier).
     public boolean peutEtreAmeliore() {
         return !enChantier() && this.niveau < Equilibrage.NIVEAU_MAX_BATIMENT;
     }
 
-    /** Demarre un chantier d'amelioration. */
+    // Restaure niveau et chantier depuis une sauvegarde.
+    public void restaurer(int niveau, int toursRestants) {
+        this.niveau = Math.max(1, Math.min(niveau, Equilibrage.NIVEAU_MAX_BATIMENT));
+        this.toursRestants = Math.max(0, toursRestants);
+    }
+
     public void demarrerChantier() {
         if (!peutEtreAmeliore()) {
             throw new IllegalStateException("Batiment non ameliorable.");
@@ -65,10 +62,7 @@ public abstract class Batiment {
         this.toursRestants = Equilibrage.DUREE_CHANTIER_AMELIORATION;
     }
 
-    /**
-     * Applique la production du batiment (ou avance le chantier en cours).
-     * Appele pendant la phase de production.
-     */
+    // Produit, ou fait avancer le chantier en cours.
     public final void produire(Royaume royaume) {
         if (royaume == null) {
             throw new IllegalArgumentException("Royaume requis pour la production.");
@@ -77,12 +71,15 @@ public abstract class Batiment {
             this.toursRestants--;
             if (this.toursRestants == 0) {
                 this.niveau++;
+                // On applique le nouveau niveau tout de suite, sinon
+                // l'amelioration semble sans effet le tour ou elle finit.
+                appliquerProduction(royaume);
             }
             return;
         }
         appliquerProduction(royaume);
     }
 
-    /** Formule de production specifique a chaque type de batiment. */
+    // Production propre a chaque batiment.
     protected abstract void appliquerProduction(Royaume royaume);
 }

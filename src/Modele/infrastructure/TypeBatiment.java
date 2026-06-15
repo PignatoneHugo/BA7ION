@@ -1,8 +1,6 @@
 package Modele.infrastructure;
 
-/**
- * Les 9 batiments du jeu, avec leur libelle d'affichage.
- */
+// Les 9 types de batiments du jeu.
 public enum TypeBatiment {
 
     FERME("Ferme"),

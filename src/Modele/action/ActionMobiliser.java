@@ -9,13 +9,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Action qui equipe des recrues (Role.SOLDAT) en unites combattantes et
- * paie le cout en or. La recrue est d'abord assignee dans l'onglet
- * Economie (gratuit, juste une reaffectation INACTIF -> SOLDAT), puis
- * equipee ici. Au Sprint 3 : seul TypeUnite.INFANTERIE_LEGERE est
- * recrutable (les autres types viendront avec leurs casernes specialisees).
- */
+// Equipe des recrues en soldats combattants et paie le cout en or.
 public class ActionMobiliser implements Action {
 
     private final TypeUnite type;
@@ -48,7 +42,7 @@ public class ActionMobiliser implements Action {
         if (royaume.population().effectif(Role.SOLDAT) < recruesNecessaires) {
             return false;
         }
-        // Verifie que la Caserne a le niveau requis pour ce type d'unite.
+        // la caserne doit avoir le niveau requis
         Batiment caserne = royaume.batiment(TypeBatiment.CASERNE);
         if (caserne == null
                 || caserne.niveau() < this.type.niveauCaserneRequis()) {
@@ -63,9 +57,7 @@ public class ActionMobiliser implements Action {
         int recruesNecessaires = this.effectif * Equilibrage.HABITANTS_PAR_SOLDAT;
 
         royaume.tresor().retirer(Ressource.OR, coutOr);
-        // La recrue quitte le pool de population et devient une unite
-        // combattante. On la retire definitivement (les soldats au combat
-        // sont comptes dans Armee, plus dans Population).
+        // la recrue quitte la population et rejoint l'armee
         royaume.population().reaffecter(Role.SOLDAT, Role.INACTIF, recruesNecessaires);
         royaume.population().retirerInactifs(recruesNecessaires);
         royaume.armee().recruter(this.type, this.effectif);

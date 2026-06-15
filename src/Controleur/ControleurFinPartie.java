@@ -2,11 +2,7 @@ package Controleur;
 
 import Vue.FenetreJeu;
 
-/**
- * Controleur de l'ecran de fin de partie. Cable les boutons Rejouer
- * (retour a l'ecran de configuration de partie) et Menu principal
- * (retour a l'accueil).
- */
+// Controleur de l'ecran de fin de partie : boutons Rejouer et Menu.
 public class ControleurFinPartie {
 
     private final FenetreJeu fenetre;

@@ -2,11 +2,7 @@ package Modele.infrastructure;
 
 import Modele.royaume.Royaume;
 
-/**
- * Remparts : donne un bonus defensif lors des combats subis.
- * Aucune production de ressource. Le bonus est lu par ResolveurCombat
- * quand le module combat sera branche dans le cycle de tour.
- */
+// Remparts : bonus de defense en combat, pas de production.
 public class Remparts extends Batiment {
 
     @Override
@@ -16,11 +12,10 @@ public class Remparts extends Batiment {
 
     @Override
     protected void appliquerProduction(Royaume royaume) {
-        // Pas de production : les remparts agissent passivement
-        // en defense lors de la phase EtatCombatsSubis.
+        // Rien : agit seulement en defense pendant les combats.
     }
 
-    /** Bonus defensif a appliquer dans le ResolveurCombat (en pourcentage). */
+    // Bonus defensif en pourcentage.
     public int bonusDefensif() {
         if (this.endommage) {
             return 5 * (this.niveau - 1);

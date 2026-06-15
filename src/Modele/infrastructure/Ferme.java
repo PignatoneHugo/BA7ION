@@ -6,10 +6,7 @@ import Modele.royaume.Royaume;
 
 import config.Equilibrage;
 
-/**
- * Ferme : produit de la nourriture proportionnellement au nombre de fermiers.
- * Bonus +10% par niveau au-dessus de 1, divise par 2 si endommagee.
- */
+// Ferme : produit de la nourriture selon le nombre de fermiers.
 public class Ferme extends Batiment {
 
     @Override

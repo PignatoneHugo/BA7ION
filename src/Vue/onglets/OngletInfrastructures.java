@@ -27,17 +27,7 @@ import Vue.theme.Polices;
 
 import config.Equilibrage;
 
-/**
- * Onglet Infrastructures style medieval : grille de cartes pour les 9
- * batiments. Chaque carte affiche clairement :
- *   - le nom du batiment en or,
- *   - le niveau actuel et le niveau max en gros,
- *   - le statut (Normal / Endommage / Chantier / Planifie) colore,
- *   - le cout d'amelioration detaille par ressource,
- *   - un bouton Ameliorer / Annuler.
- *
- * Pas d'icones dessinees : la lisibilite des chiffres et statuts prime.
- */
+/** Onglet Infrastructures : une carte par batiment (niveau, statut, cout, bouton). */
 public class OngletInfrastructures extends JPanel implements Observer {
 
     private static final long serialVersionUID = 1L;
@@ -54,7 +44,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
         setLayout(new BorderLayout(8, 8));
         setBorder(BorderFactory.createEmptyBorder(12, 16, 12, 16));
 
-        // Titre compact
+        // titre
         JLabel titre = new JLabel("Infrastructures".toUpperCase(),
                 SwingConstants.LEFT);
         titre.setFont(Polices.SECTION.deriveFont(16f));
@@ -64,7 +54,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                 BorderFactory.createEmptyBorder(0, 0, 6, 0)));
         add(titre, BorderLayout.NORTH);
 
-        // Grille 3 x 3 (gaps reduits pour donner plus de hauteur aux cartes)
+        // grille 3 x 3
         JPanel grille = new JPanel(new GridLayout(3, 3, 8, 8));
         grille.setOpaque(false);
         for (TypeBatiment t : TypeBatiment.values()) {
@@ -121,12 +111,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
         }
     }
 
-    // ============================================================
-    // Carte d'un batiment :
-    //   - Header : nom du batiment (en or)
-    //   - Corps : 3 colonnes cote a cote -- NIVEAU / ETAT / COUT
-    //   - Footer : bouton Ameliorer / Annuler
-    // ============================================================
+    // la carte d'un batiment : nom, niveau, statut, cout, bouton
     private class CarteBatiment extends JPanel {
         private static final long serialVersionUID = 1L;
 
@@ -146,7 +131,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                     BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                     BorderFactory.createEmptyBorder(6, 6, 6, 6)));
 
-            // === HEADER : nom du batiment ===
+            // nom du batiment
             JLabel nom = new JLabel(type.libelle().toUpperCase(),
                     SwingConstants.CENTER);
             nom.setFont(Polices.SECTION.deriveFont(13f));
@@ -156,32 +141,31 @@ public class OngletInfrastructures extends JPanel implements Observer {
                     BorderFactory.createEmptyBorder(0, 0, 3, 0)));
             add(nom, BorderLayout.NORTH);
 
-            // === CORPS : 3 colonnes (NIVEAU / ETAT / COUT) ===
+            // 3 colonnes : niveau / statut / cout
             JPanel corps = new JPanel(new GridLayout(1, 3, 4, 0));
             corps.setOpaque(false);
 
-            // Colonne 1 : NIVEAU
+            // niveau
             this.valeurNiveau = new JLabel("", SwingConstants.CENTER);
             this.valeurNiveau.setFont(Polices.VALEUR.deriveFont(15f));
             this.valeurNiveau.setForeground(Palette.TEXTE_PRIMAIRE);
             this.valeurNiveau.setVerticalAlignment(SwingConstants.CENTER);
             corps.add(creerColonne("Niveau", this.valeurNiveau));
 
-            // Colonne 2 : STATUT
+            // statut
             this.valeurStatut = new JLabel("", SwingConstants.CENTER);
             this.valeurStatut.setFont(Polices.LABEL.deriveFont(11f));
             this.valeurStatut.setVerticalAlignment(SwingConstants.CENTER);
             corps.add(creerColonne("Statut", this.valeurStatut));
 
-            // Colonne 3 : COUT (panel rempli dynamiquement)
+            // cout (rempli au rafraichissement)
             this.valeurCout = new JPanel(new GridLayout(0, 1, 0, 1));
             this.valeurCout.setOpaque(false);
             corps.add(creerColonne("Cout", this.valeurCout));
 
             add(corps, BorderLayout.CENTER);
 
-            // === FOOTER : bouton (s'etire pour remplir la largeur de la
-            // carte grace au BorderLayout, hauteur calculee depuis sa police) ===
+            // bouton en bas
             JPanel piedBouton = new JPanel(new BorderLayout());
             piedBouton.setOpaque(false);
             this.bouton = new BoutonMedieval("Ameliorer",
@@ -191,11 +175,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
             add(piedBouton, BorderLayout.SOUTH);
         }
 
-        /**
-         * Une colonne titre (en haut) + valeur (en bas) avec GridLayout(2,1)
-         * pour que les deux soient toujours visibles a part egales, peu
-         * importe la taille du contenu.
-         */
+        // une colonne titre (haut) + valeur (bas)
         private JPanel creerColonne(String libelle, JComponent valeur) {
             JPanel col = new JPanel(new GridLayout(2, 1, 0, 0));
             col.setOpaque(true);
@@ -204,7 +184,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                     BorderFactory.createLineBorder(Palette.BORDURE_FONCEE, 1),
                     BorderFactory.createEmptyBorder(2, 2, 2, 2)));
 
-            // Cellule du haut : titre, ancre en bas pour qu'il colle a la valeur
+            // titre
             JLabel titre = new JLabel(libelle.toUpperCase(),
                     SwingConstants.CENTER);
             titre.setFont(Polices.PETIT_LABEL);
@@ -212,17 +192,17 @@ public class OngletInfrastructures extends JPanel implements Observer {
             titre.setVerticalAlignment(SwingConstants.BOTTOM);
             col.add(titre);
 
-            // Cellule du bas : valeur (label ou panel)
+            // valeur
             col.add(valeur);
             return col;
         }
 
         void rafraichir(Batiment b, boolean planifie, boolean payable) {
-            // === NIVEAU ===
+            // niveau
             this.valeurNiveau.setText(b.niveau() + " / "
                     + Equilibrage.NIVEAU_MAX_BATIMENT);
 
-            // === STATUT ===
+            // statut
             if (planifie) {
                 this.valeurStatut.setText("Planifie");
                 this.valeurStatut.setForeground(Palette.OR_CLAIR);
@@ -238,7 +218,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
                 this.valeurStatut.setForeground(Palette.VERT_POSITIF);
             }
 
-            // === COUT ===
+            // cout
             this.valeurCout.removeAll();
             if (planifie) {
                 ajouterLigneCout("--", Palette.TEXTE_TERTIAIRE);
@@ -257,7 +237,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
             this.valeurCout.revalidate();
             this.valeurCout.repaint();
 
-            // === BOUTON ===
+            // bouton
             if (planifie) {
                 this.bouton.setText("Annuler");
                 this.bouton.setEnabled(true);

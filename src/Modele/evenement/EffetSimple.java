@@ -6,12 +6,8 @@ import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
 
 /**
- * Implementation generique d'un EffetEvenement : modifie l'or, la population
- * et le moral d'un seul coup. Les valeurs negatives signifient une perte.
- *
- * Couvre la majorite des evenements simples sans avoir a creer une classe
- * dediee par effet. Les habitants perdus sont tires au hasard parmi tous
- * les roles (cf. Population.retirerHabitants).
+ * Effet generique : modifie or, population et moral d'un coup.
+ * Les valeurs negatives sont des pertes.
  */
 public class EffetSimple implements EffetEvenement {
 

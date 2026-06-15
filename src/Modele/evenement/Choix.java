@@ -2,10 +2,7 @@ package Modele.evenement;
 
 import Modele.royaume.Royaume;
 
-/**
- * Choix propose au joueur lors d'un evenement. Chaque choix associe un
- * libelle (texte FR) a un effet sur le royaume.
- */
+/** Un choix propose au joueur : un libelle et un effet sur le royaume. */
 public class Choix {
 
     private final String libelle;
@@ -27,7 +24,7 @@ public class Choix {
         return this.effet;
     }
 
-    /** True si le royaume a les ressources requises pour ce choix. */
+    // vrai si le royaume a les ressources pour ce choix
     public boolean peutEtreChoisi(Royaume royaume) {
         return this.effet.peutEtreApplique(royaume);
     }

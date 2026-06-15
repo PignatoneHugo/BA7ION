@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Classe abstraite parente des evenements aleatoires. Un evenement a un
- * titre, une description et plusieurs choix possibles. Le joueur doit en
- * selectionner un pour que la partie continue.
- */
+/** Parent des evenements aleatoires : un titre, une description et des choix. */
 public abstract class Evenement {
 
     private final String titre;
@@ -21,7 +17,7 @@ public abstract class Evenement {
         this.choix = new ArrayList<>();
     }
 
-    /** A appeler dans le constructeur des sous-classes pour ajouter les choix. */
+    // a appeler dans le constructeur des sous-classes
     protected void ajouterChoix(Choix c) {
         if (c != null) {
             this.choix.add(c);

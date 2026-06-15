@@ -1,10 +1,6 @@
 package Modele.evenement;
 
-/**
- * Evenement Epidemie : une maladie virulente touche le royaume.
- * Trois choix possibles, chacun avec un compromis different entre or,
- * pertes humaines et impact sur le moral.
- */
+/** Une maladie frappe le royaume : trois choix, chacun avec son compromis. */
 public class Epidemie extends Evenement {
 
     public Epidemie() {

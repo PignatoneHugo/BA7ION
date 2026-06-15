@@ -11,12 +11,7 @@ import Vue.FenetreJeu;
 import Vue.dialogue.DialogueChoixCible;
 import Vue.onglets.OngletMilitaire;
 
-/**
- * Branche les boutons Recruter / Demobiliser et le selecteur de
- * posture sur le modele militaire. Toutes les actions s'executent
- * immediatement (pas de file d'attente) pour avoir un feedback
- * direct dans l'onglet.
- */
+// Controleur de l'onglet Militaire : recruter, demobiliser, posture, attaque.
 public class ControleurMilitaire {
 
     private final Partie partie;
@@ -70,13 +65,19 @@ public class ControleurMilitaire {
             });
         }
 
-        // Gros bouton Attaquer : ouvre une popup pour choisir la cible.
+        // Bouton Attaquer : ouvre une popup pour choisir la cible.
         if (onglet.boutonAttaquer() != null) {
             onglet.boutonAttaquer().addActionListener(e -> ouvrirPopupAttaque());
         }
     }
 
     private void ouvrirPopupAttaque() {
+        if (!this.partie.combatsAutorises()) {
+            this.fenetre.statusBar().setMessage(
+                    "Les combats ne sont pas encore ouverts (tour "
+                            + config.Equilibrage.TOUR_DEBUT_COMBATS + ").");
+            return;
+        }
         Royaume joueur = this.partie.joueur();
         DialogueChoixCible popup = new DialogueChoixCible(
                 this.fenetre, joueur, this.partie.bots(),

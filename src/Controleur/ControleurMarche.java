@@ -7,11 +7,7 @@ import Modele.royaume.Royaume;
 import Vue.FenetreJeu;
 import Vue.onglets.OngletMarche;
 
-/**
- * Branche le bouton Echanger de l'onglet Marche sur le modele.
- * L'action est executee immediatement (pas dans la file d'attente)
- * pour un feedback direct.
- */
+// Branche le bouton Echanger de l'onglet Marche (action immediate).
 public class ControleurMarche {
 
     private final Partie partie;

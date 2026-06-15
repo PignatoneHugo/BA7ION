@@ -12,10 +12,7 @@ import Modele.partie.Partie;
 import Vue.menu.VueMenuPrincipal;
 import Vue.menu.VueNouvellePartie;
 
-/**
- * Fenetre principale du jeu. Utilise un CardLayout pour swapper entre :
- * menu principal, nouvelle partie, ecran de jeu, ecran de fin de partie.
- */
+/** Fenetre principale : change d'ecran avec un CardLayout (menu, jeu, fin...). */
 public class FenetreJeu extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -76,7 +73,6 @@ public class FenetreJeu extends JFrame {
         this.cards.show(this.conteneur, CARTE_JEU);
     }
 
-    /** Affiche l'ecran de fin de partie (victoire ou defaite). */
     public void afficherFinPartie(Partie partie, ConditionsFin.Etat etat) {
         this.vueFinPartie = new VueFinPartie(partie, etat);
         this.conteneur.add(this.vueFinPartie, CARTE_FIN_PARTIE);

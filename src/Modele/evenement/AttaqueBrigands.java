@@ -5,11 +5,7 @@ import java.util.Random;
 import Modele.economie.Ressource;
 import Modele.royaume.Royaume;
 
-/**
- * Attaque de brigands : des pillards s'attaquent au royaume. Soit on les
- * combat (risque de pertes), soit on paie une rancon, soit on subit
- * passivement.
- */
+/** Brigands : les combattre, payer une rancon ou subir. */
 public class AttaqueBrigands extends Evenement {
 
     public AttaqueBrigands() {
@@ -30,7 +26,7 @@ public class AttaqueBrigands extends Evenement {
     private static class EffetCombattre implements EffetEvenement {
         @Override
         public void appliquer(Royaume r, Random a) {
-            // Combat improvise : pertes humaines aleatoires (0 a 3).
+            // 0 a 3 morts au hasard
             int pertes = a.nextInt(4);
             if (pertes > 0) {
                 r.population().retirerHabitants(pertes, a);

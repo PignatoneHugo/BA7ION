@@ -4,14 +4,8 @@ import Modele.combat.Bataille;
 import Modele.militaire.PostureCombat;
 import Modele.royaume.Royaume;
 
-/**
- * Action qui declare une attaque contre un autre royaume. La bataille est
- * effectivement resolue plus tard dans la phase EtatCombatsSubis / Offensifs
- * via ResolveurCombat.
- *
- * L'action ajoute juste une Bataille en attente dans le royaume attaquant ;
- * c'est l'etat de combat qui la transmettra a la Partie.
- */
+// Declare une attaque contre un autre royaume.
+// Ajoute juste une bataille en attente, resolue plus tard.
 public class ActionAttaquer implements Action {
 
     private final Royaume cible;
@@ -42,11 +36,11 @@ public class ActionAttaquer implements Action {
         if (royaume.armee().estVide() || royaume == this.cible) {
             return false;
         }
-        // Une seule attaque par cible par tour.
+        // une seule attaque par cible par tour
         if (royaume.aAttaquePlanifieeContre(this.cible)) {
             return false;
         }
-        // Cible eliminee : pas d'interet.
+        // inutile d'attaquer une cible deja eliminee
         if (this.cible.population().total() <= 0) {
             return false;
         }

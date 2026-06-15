@@ -8,10 +8,7 @@ import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-/**
- * Panneau decore style "parchemin sombre" : fond sombre, bordure doree
- * fine, coins ornementaux. Reutilisable pour toutes les sections de l'UI.
- */
+/** Panneau sombre avec bordure doree et petits losanges aux coins. */
 public class PanneauOrne extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -44,7 +41,7 @@ public class PanneauOrne extends JPanel {
         int taille = 8;
         Color or = Palette.OR;
 
-        // Petits losanges or aux 4 coins
+        // un losange a chaque coin
         g2.setColor(or);
         dessinerLosange(g2, 0, 0, taille);
         dessinerLosange(g2, w, 0, taille);

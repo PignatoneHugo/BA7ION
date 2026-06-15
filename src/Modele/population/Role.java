@@ -1,8 +1,6 @@
 package Modele.population;
 
-/**
- * Roles possibles d'un habitant. INACTIF est le role par defaut.
- */
+// Roles possibles d'un habitant (INACTIF par defaut).
 public enum Role {
 
     INACTIF("Inactif"),
@@ -10,7 +8,6 @@ public enum Role {
     MINEUR("Mineur"),
     BUCHERON("Bucheron"),
     ERUDIT("Erudit"),
-    /** Recrue assignee a l'armee, en attente d'etre equipee en unite combattante. */
     SOLDAT("Soldat (recrue)");
 
     private final String libelle;

@@ -6,10 +6,7 @@ import Modele.economie.Ressource;
 import Modele.population.Role;
 import Modele.royaume.Royaume;
 
-/**
- * Refugies : un groupe d'habitants demande l'asile. Les accueillir augmente
- * la population mais coute en nourriture ; les refuser blesse le moral.
- */
+/** Refugies : les accueillir (+population, -nourriture) ou les refuser (-moral). */
 public class Refugies extends Evenement {
 
     public Refugies() {
