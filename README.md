@@ -8,74 +8,101 @@ Fabien Serres, Antoine Tuffery.
 
 **Livraison :** 2026-06-19.
 
+## Le jeu
+
+Jeu au tour par tour : on gere un royaume face a 1 a 4 royaumes adverses tenus
+par une IA. A chaque tour on affecte sa population a des metiers (fermier,
+mineur, bucheron, erudit, soldat), on produit des ressources (or, nourriture,
+bois, pierre, savoir), on ameliore ses 9 batiments, on recrute une armee et on
+peut attaquer un voisin (a partir du tour 6). Des evenements aleatoires ou
+scriptes viennent pimenter la partie.
+
+- **Victoire :** accumuler 5000 or, ou eliminer tous les adversaires.
+- **Defaite :** population a 0, moral trop bas, ou tour 50 atteint sans victoire.
+
 ## Structure du depot
 
 ```
 projet/
-├── src/                Code source Java
+├── src/                 Code source Java
 │   ├── Main.java
-│   ├── Modele/         Logique metier (cf. doc/architecture.md)
-│   │   ├── action/         Actions du joueur (pattern Command)
-│   │   ├── combat/         ResolveurCombat + RapportCombat
-│   │   ├── economie/       Ressources, stocks, taxes
-│   │   ├── evenement/      Evenements aleatoires (Epidemie...)
-│   │   ├── infrastructure/ Les 9 batiments
-│   │   ├── militaire/      Armees, unites, postures
-│   │   ├── notification/   Notification + TypeNotification
-│   │   ├── partie/         Partie, Tour, machine a etats (9 phases)
-│   │   ├── population/     Population, Role, Moral
-│   │   └── royaume/        Agregat Royaume (seul Observable cote royaume)
-│   ├── Vue/            Couche d'affichage Swing (passive)
-│   │   ├── dialogue/       Popups modaux (DialogueEvenement)
-│   │   ├── i18n/           Traducteur + strings_fr/en.properties
-│   │   ├── menu/           Menu principal + ecran Nouvelle partie
-│   │   └── onglets/        OngletEconomie, OngletInfrastructures
-│   ├── Controleur/     Couche d'orchestration
-│   └── config/         Constantes d'equilibrage, Difficulte
-├── tests/              Tests automatises (executables sans JUnit)
-├── doc/                Documentation interne (architecture, sprints, roadmap)
-└── livrables/          Documents finaux (rapport.pdf, utilisateur.pdf, ...)
+│   ├── config/          Equilibrage (toutes les constantes), Difficulte
+│   ├── Modele/          Logique metier (sans Swing)
+│   │   ├── action/          Actions du joueur (pattern Command)
+│   │   ├── combat/          ResolveurCombat, EffetsCombat, RapportCombat
+│   │   ├── economie/        Ressources, stocks, tresor, taxes
+│   │   ├── evenement/       Evenements (Epidemie, grenouille empoisonnee...)
+│   │   ├── ia/              Strategie des bots (StrategieEquilibree)
+│   │   ├── infrastructure/  Les 9 batiments
+│   │   ├── militaire/       Armees, unites, postures de combat
+│   │   ├── notification/    Notification + TypeNotification (Observer)
+│   │   ├── partie/          Partie, Tour, machine a etats (9 phases)
+│   │   ├── persistance/     Sauvegarde JSON (Gson) + checksum
+│   │   ├── population/      Population, Role, Moral
+│   │   └── royaume/         Agregat Royaume (seul Observable cote royaume)
+│   ├── Vue/             Couche d'affichage Swing (passive)
+│   │   ├── dialogue/        Popups modaux (evenement, combat, fin de tour)
+│   │   ├── menu/            Menu principal + ecran Nouvelle partie
+│   │   ├── onglets/         Economie, Infrastructures, Militaire, Marche
+│   │   └── theme/           Couleurs, polices, composants stylises
+│   └── Controleur/      Orchestration (branche les ecouteurs Swing)
+├── tests/               Tests JUnit 4
+├── lib/                 Dependances : gson, junit, hamcrest
+├── doc/                 Doc interne (architecture, sprints, roadmap, uml)
+├── saves/               Sauvegardes JSON (creees pendant le jeu)
+├── DOCUMENTATION_TECHNIQUE.md   Doc technique complete du code
+├── UML.md               Diagrammes UML (Mermaid)
+└── livrables/           Documents finaux (rapport, manuel utilisateur...)
 ```
 
 ## Pre-requis
 
-- **Java 17+** (le projet utilise `java.util.Observable`, deprecie depuis
-  Java 9 mais toujours present ; convention du cours).
-- Pas de dependance externe (les tests sont actuellement executes sans JUnit ;
-  migration vers JUnit 5 prevue au Sprint 3 quand le projet aura Maven/Gradle).
+- **Java 17+** (developpe et teste sur Java 21). Le projet utilise
+  `java.util.Observable`, deprecie depuis Java 9 mais toujours present
+  (convention du cours).
+- **Pas de Maven/Gradle** : les dependances sont des jars fournis dans `lib/` :
+  - `gson-2.13.2.jar` : serialisation JSON des sauvegardes ;
+  - `junit-4.13.2.jar` + `hamcrest-core-1.3.jar` : tests.
+  Le script `build.sh` les met automatiquement au classpath.
 
 ## Compiler, lancer, tester
 
-Depuis la racine `projet/`, le plus simple est d'utiliser le script `build.sh` :
+Depuis la racine `projet/`, utiliser le script `build.sh` :
 
 ```bash
-./build.sh build   # compile (bin/)
-./build.sh run     # compile puis lance le jeu
-./build.sh test    # compile puis execute les tests automatises
+./build.sh         # compile (bin/)
+./build.sh run     # compile puis lance le jeu (Gson au classpath)
+./build.sh test    # compile puis execute les tests JUnit
 ./build.sh clean   # nettoie bin/
 ```
-
-Le script s'occupe aussi de copier les fichiers `.properties` (utilises par
-`Traducteur` pour l'internationalisation) dans `bin/Vue/i18n/`, ce que
-`javac` ne fait pas tout seul.
 
 **Manuellement** (si le script ne marche pas) :
 
 ```bash
 mkdir -p bin
-find src -name "*.java" -print0 | xargs -0 javac -d bin -encoding UTF-8
-(cd src && find . -name "*.properties" -exec cp --parents {} ../bin/ \;)
-java -cp bin Main
+find src -name "*.java" -print0 | xargs -0 javac -d bin -cp lib/gson-2.13.2.jar -encoding UTF-8
+java -cp "bin:lib/gson-2.13.2.jar" Main
 ```
 
-Sous Eclipse : importer `projet/` comme projet Java, marquer `src/` comme
-source folder. Eclipse copie automatiquement les `.properties` lors du build.
+Sous **VS Code / Eclipse** : ouvrir `projet/`. Le fichier `.classpath` declare
+deja `src/` et `tests/` comme dossiers sources et les jars de `lib/` comme
+bibliotheques. (Dans VS Code, si les imports ne se resolvent pas : commande
+"Java: Reload Projects".)
+
+## Sauvegarde
+
+La partie est **sauvegardee automatiquement a chaque fin de tour** dans
+`saves/<nom du royaume>.json`. Le fichier est en JSON lisible, avec une
+empreinte **SHA-256** qui detecte toute modification manuelle ou corruption.
+On recharge une partie via le bouton "Charger une sauvegarde" du menu.
 
 ## Architecture
 
-Voir `doc/architecture.md` pour le document de cadrage complet (MVC +
-Observer/Observable, decoupage en sous-equipes, conventions de code,
-risques techniques) et `doc/roadmap.md` pour la roadmap des 4 sprints.
+- Architecture **MVC** stricte (`Modele` / `Vue` / `Controleur`) avec le pattern
+  **Observer** (`Observable` / `Notification`).
+- Voir `doc/architecture.md` pour le document de cadrage.
+- Voir **`DOCUMENTATION_TECHNIQUE.md`** pour l'explication complete du code et
+  **`UML.md`** pour les diagrammes.
 
 ## Conventions de code (extrait)
 
@@ -84,43 +111,46 @@ risques techniques) et `doc/roadmap.md` pour la roadmap des 4 sprints.
 - Metier en francais (`Royaume`, `produire`), termes Java en anglais
   (`getX`, `Listener`).
 - **Aucun nombre magique** : tout passe par `config/Equilibrage.java`.
-- Les Vues n'appellent **jamais** un setter du modele ; toutes les actions
-  passent par un Controleur.
-- Pattern Observer : un seul `Observable` par agregat (`Partie`, `Royaume`),
-  arg toujours une `Notification`.
+- Les Vues n'appellent **jamais** un setter du modele ; tout passe par un
+  Controleur.
+- Un seul `Observable` par agregat (`Partie`, `Royaume`), argument toujours une
+  `Notification`.
+- Sauvegarde JSON via **Gson** (serialisation automatique).
 
 ## Etat des sprints
 
 | Sprint | Statut | Contenu |
 |---|---|---|
-| 1 | Termine | Squelette MVC, cycle de tour a 4 phases, Ferme productrice |
-| 2 | Termine | 9 batiments, ameliorations, taxes & moral, UI interactive, evenement Epidemie, ResolveurCombat + tests, difficulte, 9 phases completes |
-| 3 | A venir | Combats branches, IA des bots, catalogue d'evenements, sauvegarde |
-| 4 | A venir | Tests etendus, equilibrage, redaction du rapport et de la presentation |
+| 1 | Termine | Squelette MVC, cycle de tour, Ferme productrice |
+| 2 | Termine | 9 batiments, ameliorations, taxes & moral, UI interactive, evenement Epidemie, ResolveurCombat |
+| 3 | Termine | Combats branches (ouverts au tour 6), IA des bots, catalogue d'evenements + grenouille empoisonnee, sauvegarde JSON |
+| 4 | En cours | Equilibrage, 66 tests JUnit, documentation technique + UML, rapport et presentation |
 
-Voir `doc/sprint1-review.md` pour le bilan du Sprint 1, `doc/roadmap.md`
-pour la vision long terme.
+Voir les bilans dans `doc/sprint1-review.md`, `sprint2-review.md`,
+`sprint3-review.md`.
 
-## Demo rapide (Sprint 2)
-
-1. `./build.sh run` ouvre la fenetre sur le menu principal.
-2. "Nouvelle partie", choisir un nom, le nombre d'adversaires, la difficulte.
-3. "Demarrer" : l'ecran de jeu s'ouvre avec le HUD (5 ressources, moral, tour)
-   et deux onglets (Economie, Infrastructures).
-4. Dans Economie : ajuster la repartition des habitants par role avec les
-   boutons +/-, choisir un niveau de taxes.
-5. Dans Infrastructures : cliquer "Ameliorer" sur un batiment pour empiler
-   l'action dans la file.
-6. "Fin de tour" : la chaine des 9 phases s'execute (production, consommation,
-   actions planifiees...). Au tour 2, un evenement Epidemie ouvre un popup
-   modal avec 3 choix.
-
-## Tests automatises
+## Tests
 
 ```bash
 ./build.sh test
 ```
 
-Lance la suite `ResolveurCombatTest` (5 scenarios deterministes : victoire
-ecrasante, defaite face aux remparts, combat equilibre, avantage Pierre-
-Feuille-Ciseaux, determinisme via graine). Tous les tests doivent passer.
+**66 tests JUnit 4** repartis en 9 suites : economie, population, moral,
+infrastructure, evenement, action, deroulement de partie, persistance et combat.
+Tous doivent passer (`OK (66 tests)`).
+
+## Demo rapide
+
+1. `./build.sh run` ouvre la fenetre sur le menu principal.
+2. "Nouvelle partie" : choisir un nom, le nombre d'adversaires, la difficulte.
+3. "Demarrer" : l'ecran de jeu s'ouvre avec le HUD (5 ressources, tour,
+   population, moral) et 4 onglets : Economie, Infrastructures, Militaire, Marche.
+4. **Economie** : repartir les habitants par role (+/-), regler les taxes,
+   recruter un villageois.
+5. **Infrastructures** : ameliorer un batiment (chantier de 2 tours).
+6. **Militaire** : recruter des unites, choisir une posture. Les combats ne
+   s'ouvrent qu'a partir du tour 6.
+7. "Fin de tour" : la chaine des 9 phases s'execute. Au tour 6, l'evenement
+   "grenouille empoisonnee" annonce le debut des combats. La partie est
+   sauvegardee automatiquement.
+8. Quitter puis "Charger une sauvegarde" pour reprendre la partie.
