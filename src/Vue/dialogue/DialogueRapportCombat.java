@@ -37,6 +37,13 @@ public class DialogueRapportCombat extends JDialog {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Cree la popup qui recapitule les combats du tour.
+     *
+     * @param parent la fenetre parente
+     * @param partie la partie en cours
+     * @param numeroTour le numero du tour concerne
+     */
     public DialogueRapportCombat(Frame parent, Partie partie, int numeroTour) {
         super(parent, "Rapport de combat", true);
         setUndecorated(true);
@@ -45,9 +52,9 @@ public class DialogueRapportCombat extends JDialog {
         JPanel panneau = new JPanel(new BorderLayout(0, 12)) {
             private static final long serialVersionUID = 1L;
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
+            protected void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
+                Graphics2D g2 = (Graphics2D) graphics.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setPaint(new GradientPaint(0, 0, new Color(24, 8, 8),
@@ -89,15 +96,15 @@ public class DialogueRapportCombat extends JDialog {
         Royaume joueur = partie.joueur();
         List<BatailleResolue> resolues = partie.batraillesDuTour();
         boolean premier = true;
-        for (BatailleResolue b : resolues) {
-            if (b.attaquant() != joueur && b.defenseur() != joueur) {
+        for (BatailleResolue bataille : resolues) {
+            if (bataille.attaquant() != joueur && bataille.defenseur() != joueur) {
                 continue;
             }
             if (!premier) {
                 liste.add(Box.createVerticalStrut(10));
             }
             premier = false;
-            liste.add(creerCarteBataille(b, joueur));
+            liste.add(creerCarteBataille(bataille, joueur));
         }
 
         JScrollPane scroll = new JScrollPane(liste);
@@ -119,32 +126,32 @@ public class DialogueRapportCombat extends JDialog {
                 "Continuer",
                 BoutonMedieval.Style.PRIMAIRE);
         continuer.setPreferredSize(new Dimension(220, 40));
-        continuer.addActionListener(e -> dispose());
+        continuer.addActionListener(evenement -> dispose());
         pied.add(continuer);
         panneau.add(pied, BorderLayout.SOUTH);
 
         setContentPane(panneau);
         pack();
         // on borne la taille
-        int w = Math.max(720, getWidth());
-        int h = Math.min(620, Math.max(380, getHeight()));
-        setSize(w, h);
+        int largeur = Math.max(720, getWidth());
+        int hauteur = Math.min(620, Math.max(380, getHeight()));
+        setSize(largeur, hauteur);
         setLocationRelativeTo(parent);
     }
 
     // une carte pour une bataille
-    private JPanel creerCarteBataille(BatailleResolue b, Royaume joueur) {
-        boolean joueurAttaque = (b.attaquant() == joueur);
-        Royaume adv = joueurAttaque ? b.defenseur() : b.attaquant();
+    private JPanel creerCarteBataille(BatailleResolue bataille, Royaume joueur) {
+        boolean joueurAttaque = (bataille.attaquant() == joueur);
+        Royaume adv = joueurAttaque ? bataille.defenseur() : bataille.attaquant();
 
         boolean joueurGagne;
-        boolean egalite = b.rapport().vainqueur() == RapportCombat.Vainqueur.EGALITE;
+        boolean egalite = bataille.rapport().vainqueur() == RapportCombat.Vainqueur.EGALITE;
         if (egalite) {
             joueurGagne = false;
         } else {
-            joueurGagne = (b.rapport().vainqueur() == RapportCombat.Vainqueur.ATTAQUANT
+            joueurGagne = (bataille.rapport().vainqueur() == RapportCombat.Vainqueur.ATTAQUANT
                     && joueurAttaque)
-                    || (b.rapport().vainqueur() == RapportCombat.Vainqueur.DEFENSEUR
+                    || (bataille.rapport().vainqueur() == RapportCombat.Vainqueur.DEFENSEUR
                     && !joueurAttaque);
         }
 
@@ -195,22 +202,22 @@ public class DialogueRapportCombat extends JDialog {
         JPanel corps = new JPanel(new GridLayout(1, 2, 12, 0));
         corps.setOpaque(false);
 
-        int pertesJoueur = joueurAttaque ? b.rapport().pertesAttaquant()
-                : b.rapport().pertesDefenseur();
-        int pertesAdv = joueurAttaque ? b.rapport().pertesDefenseur()
-                : b.rapport().pertesAttaquant();
-        int effAvantJoueur = joueurAttaque ? b.effectifAvantAttaquant()
-                : b.effectifAvantDefenseur();
-        int effAvantAdv = joueurAttaque ? b.effectifAvantDefenseur()
-                : b.effectifAvantAttaquant();
-        int civilsJoueur = !joueurAttaque ? b.pertesCivilesDefenseur() : 0;
-        int civilsAdv = joueurAttaque ? b.pertesCivilesDefenseur() : 0;
+        int pertesJoueur = joueurAttaque ? bataille.rapport().pertesAttaquant()
+                : bataille.rapport().pertesDefenseur();
+        int pertesAdv = joueurAttaque ? bataille.rapport().pertesDefenseur()
+                : bataille.rapport().pertesAttaquant();
+        int effAvantJoueur = joueurAttaque ? bataille.effectifAvantAttaquant()
+                : bataille.effectifAvantDefenseur();
+        int effAvantAdv = joueurAttaque ? bataille.effectifAvantDefenseur()
+                : bataille.effectifAvantAttaquant();
+        int civilsJoueur = !joueurAttaque ? bataille.pertesCivilesDefenseur() : 0;
+        int civilsAdv = joueurAttaque ? bataille.pertesCivilesDefenseur() : 0;
 
         // colonne joueur
         corps.add(creerColonneCamp(
                 "Votre royaume",
                 effAvantJoueur, pertesJoueur, civilsJoueur,
-                joueurAttaque ? null : b.butin(),
+                joueurAttaque ? null : bataille.butin(),
                 !egalite && !joueurGagne,
                 joueurAttaque));
 
@@ -218,7 +225,7 @@ public class DialogueRapportCombat extends JDialog {
         corps.add(creerColonneCamp(
                 adv.nom(),
                 effAvantAdv, pertesAdv, civilsAdv,
-                joueurAttaque ? b.butin() : null,
+                joueurAttaque ? bataille.butin() : null,
                 !egalite && joueurGagne,
                 !joueurAttaque));
 
@@ -288,10 +295,10 @@ public class DialogueRapportCombat extends JDialog {
             infos.add(Box.createVerticalStrut(2));
             StringBuilder bsb = new StringBuilder();
             boolean first = true;
-            for (Map.Entry<Ressource, Integer> e : butin.entrySet()) {
+            for (Map.Entry<Ressource, Integer> entree : butin.entrySet()) {
                 if (!first) bsb.append(", ");
-                bsb.append("+").append(e.getValue()).append(" ")
-                        .append(e.getKey().libelle());
+                bsb.append("+").append(entree.getValue()).append(" ")
+                        .append(entree.getKey().libelle());
                 first = false;
             }
             String labelButin = estAttaquant ? "Butin pris" : "Butin perdu";
@@ -306,16 +313,16 @@ public class DialogueRapportCombat extends JDialog {
     }
 
     private JPanel ligneInfo(String label, String valeur, Color couleurValeur) {
-        JPanel l = new JPanel(new BorderLayout(8, 0));
-        l.setOpaque(false);
+        JPanel ligne = new JPanel(new BorderLayout(8, 0));
+        ligne.setOpaque(false);
         JLabel lLabel = new JLabel(label);
         lLabel.setFont(Polices.PETIT_LABEL);
         lLabel.setForeground(Palette.TEXTE_SECONDAIRE);
-        l.add(lLabel, BorderLayout.WEST);
+        ligne.add(lLabel, BorderLayout.WEST);
         JLabel lValeur = new JLabel(valeur, SwingConstants.RIGHT);
         lValeur.setFont(Polices.LABEL.deriveFont(12f));
         lValeur.setForeground(couleurValeur);
-        l.add(lValeur, BorderLayout.EAST);
-        return l;
+        ligne.add(lValeur, BorderLayout.EAST);
+        return ligne;
     }
 }

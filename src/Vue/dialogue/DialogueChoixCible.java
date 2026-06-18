@@ -31,9 +31,22 @@ public class DialogueChoixCible extends JDialog {
 
     // appele quand le joueur a choisi une cible
     public interface CibleChoisie {
+        /**
+         * Appelee quand le joueur a choisi une cible.
+         *
+         * @param cible le royaume choisi comme cible
+         */
         void choisir(Royaume cible);
     }
 
+    /**
+     * Cree la popup de choix de cible parmi les bots.
+     *
+     * @param parent la fenetre parente
+     * @param joueur le royaume du joueur
+     * @param bots la liste des bots attaquables
+     * @param callback appele quand une cible est choisie
+     */
     public DialogueChoixCible(Frame parent,
                               Royaume joueur,
                               List<Royaume> bots,
@@ -45,9 +58,9 @@ public class DialogueChoixCible extends JDialog {
         JPanel panneau = new JPanel(new BorderLayout(0, 10)) {
             private static final long serialVersionUID = 1L;
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
+            protected void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
+                Graphics2D g2 = (Graphics2D) graphics.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setPaint(new GradientPaint(0, 0, new Color(20, 14, 6),
@@ -96,7 +109,7 @@ public class DialogueChoixCible extends JDialog {
                 "Annuler",
                 BoutonMedieval.Style.SECONDAIRE);
         annuler.setPreferredSize(new Dimension(140, 36));
-        annuler.addActionListener(e -> dispose());
+        annuler.addActionListener(evenement -> dispose());
         pied.add(annuler);
         panneau.add(pied, BorderLayout.SOUTH);
 
@@ -159,7 +172,7 @@ public class DialogueChoixCible extends JDialog {
         choisir.setPreferredSize(new Dimension(120, 30));
         boolean cibleValide = pop > 0 && !dejaAttaque && !joueur.armee().estVide();
         choisir.setEnabled(cibleValide);
-        choisir.addActionListener(e -> {
+        choisir.addActionListener(evenement -> {
             cb.choisir(bot);
             dispose();
         });

@@ -20,19 +20,38 @@ public enum PostureCombat {
         this.utiliseRemparts = utiliseRemparts;
     }
 
+    /**
+     * Renvoie le libelle affichable de la posture.
+     *
+     * @return le libelle de la posture
+     */
     public String libelle() {
         return this.libelle;
     }
 
+    /**
+     * Renvoie le multiplicateur d'attaque de la posture.
+     *
+     * @return le multiplicateur d'attaque
+     */
     public double multAttaque() {
         return this.multAttaque;
     }
 
+    /**
+     * Renvoie le multiplicateur de defense de la posture.
+     *
+     * @return le multiplicateur de defense
+     */
     public double multDefense() {
         return this.multDefense;
     }
 
-    // True si les remparts comptent avec cette posture.
+    /**
+     * Indique si les remparts comptent avec cette posture.
+     *
+     * @return true si les remparts sont pris en compte
+     */
     public boolean utiliseRemparts() {
         return this.utiliseRemparts;
     }

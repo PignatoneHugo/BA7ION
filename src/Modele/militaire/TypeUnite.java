@@ -20,19 +20,38 @@ public enum TypeUnite {
         this.niveauCaserneRequis = niveauCaserneRequis;
     }
 
+    /**
+     * Renvoie le libelle affichable du type d'unite.
+     *
+     * @return le libelle du type
+     */
     public String libelle() {
         return this.libelle;
     }
 
+    /**
+     * Renvoie l'attaque de base du type d'unite.
+     *
+     * @return l'attaque de base
+     */
     public int attaqueBase() {
         return this.attaqueBase;
     }
 
+    /**
+     * Renvoie la defense de base du type d'unite.
+     *
+     * @return la defense de base
+     */
     public int defenseBase() {
         return this.defenseBase;
     }
 
-    // Niveau de caserne necessaire pour recruter ce type.
+    /**
+     * Renvoie le niveau de caserne necessaire pour recruter ce type.
+     *
+     * @return le niveau de caserne requis
+     */
     public int niveauCaserneRequis() {
         return this.niveauCaserneRequis;
     }

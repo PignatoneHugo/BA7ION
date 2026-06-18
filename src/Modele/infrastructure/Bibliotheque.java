@@ -9,6 +9,11 @@ import config.Equilibrage;
 // Bibliotheque : produit du savoir selon le nombre d'erudits.
 public class Bibliotheque extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type bibliotheque
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.BIBLIOTHEQUE;

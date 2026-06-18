@@ -33,7 +33,11 @@ public class Sauvegarde {
     public final EtatRoyaume joueur;
     public final List<EtatRoyaume> bots;
 
-    /** Capture l'etat courant d'une partie. */
+    /**
+     * Capture l'etat courant d'une partie.
+     *
+     * @param partie la partie a sauvegarder
+     */
     public Sauvegarde(Partie partie) {
         this.numeroTour = partie.numeroTour();
         this.graineAleatoire = partie.aleatoire().nextLong();
@@ -47,7 +51,11 @@ public class Sauvegarde {
 
     // ----- Ecriture JSON -----
 
-    /** Serialise en JSON avec l'enveloppe et le checksum. */
+    /**
+     * Serialise la sauvegarde en JSON avec l'enveloppe et le checksum.
+     *
+     * @return le JSON de la sauvegarde
+     */
     public String versJson() {
         String corps = GSON_COMPACT.toJson(this);
         Enveloppe enveloppe = new Enveloppe(VERSION, Integrite.checksum(corps), this);
@@ -56,7 +64,13 @@ public class Sauvegarde {
 
     // ----- Relecture JSON -----
 
-    /** Reconstruit une sauvegarde depuis son JSON et verifie le checksum. */
+    /**
+     * Reconstruit une sauvegarde depuis son JSON et verifie le checksum.
+     *
+     * @param json le texte JSON a relire
+     * @return la sauvegarde reconstruite
+     * @throws IllegalArgumentException si le JSON est invalide ou le checksum faux
+     */
     public static Sauvegarde depuisJson(String json) {
         JsonElement racineEl = JsonParser.parseString(json);
         if (racineEl == null || !racineEl.isJsonObject()) {

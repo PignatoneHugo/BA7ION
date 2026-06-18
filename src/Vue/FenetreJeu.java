@@ -33,6 +33,9 @@ public class FenetreJeu extends JFrame {
     private VueStatusBar statusBar;
     private VueFinPartie vueFinPartie;
 
+    /**
+     * Cree la fenetre principale avec le menu et l'ecran de nouvelle partie.
+     */
     public FenetreJeu() {
         super("BAS7ION - Simulation de royaume medieval");
 
@@ -51,14 +54,25 @@ public class FenetreJeu extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Affiche l'ecran du menu principal.
+     */
     public void afficherMenu() {
         this.cards.show(this.conteneur, CARTE_MENU);
     }
 
+    /**
+     * Affiche l'ecran de configuration d'une nouvelle partie.
+     */
     public void afficherNouvellePartie() {
         this.cards.show(this.conteneur, CARTE_NOUVELLE_PARTIE);
     }
 
+    /**
+     * Construit et affiche l'ecran de jeu pour la partie donnee.
+     *
+     * @param partie la partie en cours
+     */
     public void afficherJeu(Partie partie) {
         this.hud = new VueHUD(partie);
         this.dashboard = new VueDashboard(partie);
@@ -73,32 +87,68 @@ public class FenetreJeu extends JFrame {
         this.cards.show(this.conteneur, CARTE_JEU);
     }
 
+    /**
+     * Construit et affiche l'ecran de fin de partie.
+     *
+     * @param partie la partie terminee
+     * @param etat l'etat final (victoire ou defaite)
+     */
     public void afficherFinPartie(Partie partie, ConditionsFin.Etat etat) {
         this.vueFinPartie = new VueFinPartie(partie, etat);
         this.conteneur.add(this.vueFinPartie, CARTE_FIN_PARTIE);
         this.cards.show(this.conteneur, CARTE_FIN_PARTIE);
     }
 
+    /**
+     * Renvoie la vue du menu principal.
+     *
+     * @return la vue du menu principal
+     */
     public VueMenuPrincipal vueMenu() {
         return this.vueMenu;
     }
 
+    /**
+     * Renvoie la vue de nouvelle partie.
+     *
+     * @return la vue de nouvelle partie
+     */
     public VueNouvellePartie vueNouvellePartie() {
         return this.vueNouvellePartie;
     }
 
+    /**
+     * Renvoie le bandeau du haut (HUD).
+     *
+     * @return le HUD, ou null si le jeu n'est pas lance
+     */
     public VueHUD hud() {
         return this.hud;
     }
 
+    /**
+     * Renvoie le panneau central (dashboard).
+     *
+     * @return le dashboard, ou null si le jeu n'est pas lance
+     */
     public VueDashboard dashboard() {
         return this.dashboard;
     }
 
+    /**
+     * Renvoie la barre de statut du bas.
+     *
+     * @return la barre de statut, ou null si le jeu n'est pas lance
+     */
     public VueStatusBar statusBar() {
         return this.statusBar;
     }
 
+    /**
+     * Renvoie la vue de fin de partie.
+     *
+     * @return la vue de fin de partie, ou null si la partie n'est pas finie
+     */
     public VueFinPartie vueFinPartie() {
         return this.vueFinPartie;
     }

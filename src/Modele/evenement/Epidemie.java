@@ -3,6 +3,9 @@ package Modele.evenement;
 /** Une maladie frappe le royaume : trois choix, chacun avec son compromis. */
 public class Epidemie extends Evenement {
 
+    /**
+     * Cree l'evenement Epidemie avec ses trois choix.
+     */
     public Epidemie() {
         super("Epidemie !",
                 "Une maladie virulente se propage dans le royaume. Plusieurs"

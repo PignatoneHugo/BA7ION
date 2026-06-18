@@ -23,6 +23,12 @@ public class ControleurPartie {
     // Etat pris au debut du tour, pour le bilan de fin de tour.
     private BilanTour bilanDebutTour;
 
+    /**
+     * Construit le controleur principal et branche le bouton Fin de tour.
+     *
+     * @param partie la partie en cours
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurPartie(Partie partie, FenetreJeu fenetre) {
         this.partie = partie;
         this.fenetre = fenetre;
@@ -32,7 +38,7 @@ public class ControleurPartie {
 
     private void miseEnPlaceEvenements() {
         VueHUD hud = this.fenetre.hud();
-        hud.boutonFinTour().addActionListener(e -> terminerTour());
+        hud.boutonFinTour().addActionListener(evenement -> terminerTour());
 
         // Les controleurs des onglets.
         new ControleurEconomie(this.partie, this.fenetre);
@@ -55,6 +61,9 @@ public class ControleurPartie {
         }
     }
 
+    /**
+     * Termine le tour du joueur, resout les phases du tour et affiche les recaps.
+     */
     public void terminerTour() {
         SwingUtilities.invokeLater(() -> {
             int numeroAvant = this.partie.numeroTour();

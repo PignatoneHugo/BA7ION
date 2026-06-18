@@ -8,6 +8,9 @@ import Modele.royaume.Royaume;
 /** Secheresse : payer de l'aide, serrer les ceintures ou tout abandonner. */
 public class Secheresse extends Evenement {
 
+    /**
+     * Cree l'evenement Secheresse avec ses trois choix.
+     */
     public Secheresse() {
         super("Secheresse",
                 "Une vague de chaleur frappe les terres. Les recoltes sont"
@@ -27,27 +30,27 @@ public class Secheresse extends Evenement {
 
     private static class EffetAide implements EffetEvenement {
         @Override
-        public void appliquer(Royaume r, Random a) {
-            r.tresor().retirer(Ressource.OR, 150);
-            r.tresor().retirer(Ressource.NOURRITURE, 20);
-            r.moral().ajuster(-2);
+        public void appliquer(Royaume royaume, Random aleatoire) {
+            royaume.tresor().retirer(Ressource.OR, 150);
+            royaume.tresor().retirer(Ressource.NOURRITURE, 20);
+            royaume.moral().ajuster(-2);
         }
         @Override
-        public boolean peutEtreApplique(Royaume r) {
-            return r.tresor().contient(Ressource.OR, 150)
-                    && r.tresor().contient(Ressource.NOURRITURE, 20);
+        public boolean peutEtreApplique(Royaume royaume) {
+            return royaume.tresor().contient(Ressource.OR, 150)
+                    && royaume.tresor().contient(Ressource.NOURRITURE, 20);
         }
     }
 
     private static class EffetSubir implements EffetEvenement {
         @Override
-        public void appliquer(Royaume r, Random a) {
-            r.tresor().retirer(Ressource.NOURRITURE, 80);
-            r.moral().ajuster(-5);
+        public void appliquer(Royaume royaume, Random aleatoire) {
+            royaume.tresor().retirer(Ressource.NOURRITURE, 80);
+            royaume.moral().ajuster(-5);
         }
         @Override
-        public boolean peutEtreApplique(Royaume r) {
-            return r.tresor().contient(Ressource.NOURRITURE, 80);
+        public boolean peutEtreApplique(Royaume royaume) {
+            return royaume.tresor().contient(Ressource.NOURRITURE, 80);
         }
     }
 }

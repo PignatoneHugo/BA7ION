@@ -45,6 +45,11 @@ public class OngletMilitaire extends JPanel implements Observer {
     private BoutonMedieval boutonAttaquer;
     private JLabel labelAttaquesPlanifiees;
 
+    /**
+     * Cree l'onglet Militaire et s'abonne au joueur et aux bots.
+     *
+     * @param partie la partie en cours
+     */
     public OngletMilitaire(Partie partie) {
         this.partie = partie;
         this.royaume = partie.joueur();
@@ -100,9 +105,9 @@ public class OngletMilitaire extends JPanel implements Observer {
         // une carte par type d'unite
         JPanel grille = new JPanel(new GridLayout(2, 2, 10, 10));
         grille.setOpaque(false);
-        for (TypeUnite t : TypeUnite.values()) {
-            CarteUnite carte = new CarteUnite(t);
-            this.cartes.put(t, carte);
+        for (TypeUnite type : TypeUnite.values()) {
+            CarteUnite carte = new CarteUnite(type);
+            this.cartes.put(type, carte);
             grille.add(carte);
         }
         return grille;
@@ -131,12 +136,12 @@ public class OngletMilitaire extends JPanel implements Observer {
         JPanel groupePosture = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         groupePosture.setOpaque(false);
         ButtonGroup grp = new ButtonGroup();
-        for (PostureCombat p : PostureCombat.values()) {
-            ToggleMedieval t = new ToggleMedieval(p.libelle());
-            t.setPreferredSize(new java.awt.Dimension(120, 32));
-            grp.add(t);
-            this.togglesPosture.put(p, t);
-            groupePosture.add(t);
+        for (PostureCombat posture : PostureCombat.values()) {
+            ToggleMedieval toggle = new ToggleMedieval(posture.libelle());
+            toggle.setPreferredSize(new java.awt.Dimension(120, 32));
+            grp.add(toggle);
+            this.togglesPosture.put(posture, toggle);
+            groupePosture.add(toggle);
         }
         ligne.add(groupePosture, BorderLayout.WEST);
 
@@ -161,8 +166,14 @@ public class OngletMilitaire extends JPanel implements Observer {
         return bloc;
     }
 
+    /**
+     * Met a jour l'affichage quand un royaume change.
+     *
+     * @param observable l'objet observe
+     * @param arg la notification recue
+     */
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (!(arg instanceof Notification)) {
             return;
         }
@@ -179,14 +190,14 @@ public class OngletMilitaire extends JPanel implements Observer {
                         + "Recrues dispo." + " : " + recrues);
 
         // les cartes
-        for (TypeUnite t : TypeUnite.values()) {
-            this.cartes.get(t).rafraichir();
+        for (TypeUnite type : TypeUnite.values()) {
+            this.cartes.get(type).rafraichir();
         }
 
         // posture courante
         PostureCombat courant = this.royaume.armee().posture();
-        for (PostureCombat p : PostureCombat.values()) {
-            this.togglesPosture.get(p).setSelected(p == courant);
+        for (PostureCombat posture : PostureCombat.values()) {
+            this.togglesPosture.get(posture).setSelected(posture == courant);
         }
 
         // bouton Attaquer : actif si on a une armee et une cible dispo
@@ -220,18 +231,41 @@ public class OngletMilitaire extends JPanel implements Observer {
         }
     }
 
+    /**
+     * Renvoie le bouton Attaquer.
+     *
+     * @return le bouton Attaquer, ou null s'il n'y a pas de bots
+     */
     public BoutonMedieval boutonAttaquer() {
         return this.boutonAttaquer;
     }
 
+    /**
+     * Renvoie le bouton de recrutement d'un type d'unite.
+     *
+     * @param type le type d'unite concerne
+     * @return le bouton de recrutement de ce type
+     */
     public BoutonMedieval boutonRecruter(TypeUnite type) {
         return this.cartes.get(type).boutonRecruter;
     }
 
+    /**
+     * Renvoie le bouton de demobilisation d'un type d'unite.
+     *
+     * @param type le type d'unite concerne
+     * @return le bouton de demobilisation de ce type
+     */
     public BoutonMedieval boutonDemobiliser(TypeUnite type) {
         return this.cartes.get(type).boutonDemobiliser;
     }
 
+    /**
+     * Renvoie le bouton bascule d'une posture de combat.
+     *
+     * @param posture la posture concernee
+     * @return le bouton bascule de cette posture
+     */
     public ToggleMedieval togglePosture(PostureCombat posture) {
         return this.togglesPosture.get(posture);
     }

@@ -7,6 +7,11 @@ import config.Equilibrage;
 // Habitations : ne produit rien, fixe la capacite de logement selon le niveau.
 public class Habitations extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type habitations
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.HABITATIONS;

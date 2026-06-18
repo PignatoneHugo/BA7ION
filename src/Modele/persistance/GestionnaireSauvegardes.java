@@ -26,12 +26,24 @@ public final class GestionnaireSauvegardes {
 
     // ----- Fichier libre (boutons + JFileChooser) -----
 
-    /** Sauvegarde la partie dans le fichier indique. */
+    /**
+     * Sauvegarde la partie dans le fichier indique.
+     *
+     * @param partie la partie a sauvegarder
+     * @param fichier le fichier de destination
+     * @throws IOException en cas d'erreur d'ecriture
+     */
     public static void sauvegarderDans(Partie partie, File fichier) throws IOException {
         ecrire(new Sauvegarde(partie), fichier);
     }
 
-    /** Charge une partie depuis le fichier indique. */
+    /**
+     * Charge une partie depuis le fichier indique.
+     *
+     * @param fichier le fichier a lire
+     * @return la sauvegarde lue
+     * @throws IOException si le fichier est introuvable ou illisible
+     */
     public static Sauvegarde chargerDepuis(File fichier) throws IOException {
         if (fichier == null || !fichier.exists()) {
             throw new IOException("Fichier de sauvegarde introuvable.");
@@ -41,12 +53,22 @@ public final class GestionnaireSauvegardes {
 
     // ----- Autosave (fin de tour), nommee d'apres le royaume -----
 
-    /** Fichier d'autosave : "saves/&lt;nom du royaume&gt;.json". */
+    /**
+     * Donne le fichier d'autosave nomme d'apres le royaume du joueur.
+     *
+     * @param partie la partie concernee
+     * @return le fichier d'autosave
+     */
     public static File fichierAuto(Partie partie) {
         return new File(DOSSIER, nomFichierSur(partie.joueur().nom()) + EXTENSION);
     }
 
-    /** Autosave de la partie. */
+    /**
+     * Sauvegarde automatiquement la partie dans son fichier d'autosave.
+     *
+     * @param partie la partie a sauvegarder
+     * @throws IOException en cas d'erreur d'ecriture
+     */
     public static void sauvegarderAuto(Partie partie) throws IOException {
         ecrire(new Sauvegarde(partie), fichierAuto(partie));
     }
@@ -59,28 +81,52 @@ public final class GestionnaireSauvegardes {
 
     // ----- Slots numerotes -----
 
-    /** Sauvegarde la partie dans le slot indique (1..5). */
+    /**
+     * Sauvegarde la partie dans le slot indique (1..5).
+     *
+     * @param partie la partie a sauvegarder
+     * @param slot le numero de slot (1 a 5)
+     * @throws IOException en cas d'erreur d'ecriture
+     * @throws IllegalArgumentException si le slot n'est pas entre 1 et 5
+     */
     public static void sauvegarder(Partie partie, int slot) throws IOException {
         verifierSlot(slot);
         ecrire(new Sauvegarde(partie), new File(cheminSlot(slot)));
     }
 
-    /** Charge le slot, ou null s'il est vide. */
+    /**
+     * Charge le slot indique, ou null s'il est vide.
+     *
+     * @param slot le numero de slot (1 a 5)
+     * @return la sauvegarde du slot, ou null si le slot est vide
+     * @throws IOException en cas d'erreur de lecture
+     * @throws IllegalArgumentException si le slot n'est pas entre 1 et 5
+     */
     public static Sauvegarde charger(int slot) throws IOException {
         verifierSlot(slot);
-        File f = new File(cheminSlot(slot));
-        return f.exists() ? lire(f) : null;
+        File fichier = new File(cheminSlot(slot));
+        return fichier.exists() ? lire(fichier) : null;
     }
 
-    // vrai si le slot contient une sauvegarde
+    /**
+     * Indique si le slot contient une sauvegarde.
+     *
+     * @param slot le numero de slot
+     * @return vrai si le slot contient une sauvegarde
+     */
     public static boolean slotExiste(int slot) {
         return new File(cheminSlot(slot)).exists();
     }
 
+    /**
+     * Supprime la sauvegarde du slot indique si elle existe.
+     *
+     * @param slot le numero de slot
+     */
     public static void supprimer(int slot) {
-        File f = new File(cheminSlot(slot));
-        if (f.exists()) {
-            f.delete();
+        File fichier = new File(cheminSlot(slot));
+        if (fichier.exists()) {
+            fichier.delete();
         }
     }
 
@@ -96,21 +142,21 @@ public final class GestionnaireSauvegardes {
         return DOSSIER + "/slot_" + slot + EXTENSION;
     }
 
-    private static void ecrire(Sauvegarde s, File fichier) throws IOException {
+    private static void ecrire(Sauvegarde sauvegarde, File fichier) throws IOException {
         File parent = fichier.getParentFile();
         if (parent != null) {
             parent.mkdirs();
         }
-        Files.write(fichier.toPath(), s.versJson().getBytes(StandardCharsets.UTF_8));
+        Files.write(fichier.toPath(), sauvegarde.versJson().getBytes(StandardCharsets.UTF_8));
     }
 
     private static Sauvegarde lire(File fichier) throws IOException {
         String json = new String(Files.readAllBytes(fichier.toPath()), StandardCharsets.UTF_8);
         try {
             return Sauvegarde.depuisJson(json);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException exception) {
             // checksum invalide ou erreur de parsing
-            throw new IOException(e.getMessage(), e);
+            throw new IOException(exception.getMessage(), exception);
         }
     }
 }

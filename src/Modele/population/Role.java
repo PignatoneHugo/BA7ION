@@ -16,6 +16,11 @@ public enum Role {
         this.libelle = libelle;
     }
 
+    /**
+     * Donne le nom affichable du role.
+     *
+     * @return le libelle du role
+     */
     public String libelle() {
         return this.libelle;
     }

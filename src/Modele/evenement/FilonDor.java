@@ -3,6 +3,9 @@ package Modele.evenement;
 /** Filon d'or : evenement positif, les deux choix sont bons. */
 public class FilonDor extends Evenement {
 
+    /**
+     * Cree l'evenement Filon d'or avec ses deux choix.
+     */
     public FilonDor() {
         super("Filon d'or !",
                 "Un mineur a decouvert un filon exceptionnel. Comment l'exploiter ?");

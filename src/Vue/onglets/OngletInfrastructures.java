@@ -35,6 +35,11 @@ public class OngletInfrastructures extends JPanel implements Observer {
     private final Royaume royaume;
     private final Map<TypeBatiment, CarteBatiment> cartes;
 
+    /**
+     * Cree l'onglet Infrastructures et s'abonne aux changements du royaume.
+     *
+     * @param royaume le royaume du joueur
+     */
     public OngletInfrastructures(Royaume royaume) {
         this.royaume = royaume;
         this.cartes = new EnumMap<>(TypeBatiment.class);
@@ -57,9 +62,9 @@ public class OngletInfrastructures extends JPanel implements Observer {
         // grille 3 x 3
         JPanel grille = new JPanel(new GridLayout(3, 3, 8, 8));
         grille.setOpaque(false);
-        for (TypeBatiment t : TypeBatiment.values()) {
-            CarteBatiment carte = new CarteBatiment(t);
-            this.cartes.put(t, carte);
+        for (TypeBatiment type : TypeBatiment.values()) {
+            CarteBatiment carte = new CarteBatiment(type);
+            this.cartes.put(type, carte);
             grille.add(carte);
         }
         add(grille, BorderLayout.CENTER);
@@ -68,17 +73,29 @@ public class OngletInfrastructures extends JPanel implements Observer {
         this.royaume.addObserver(this);
     }
 
+    /**
+     * Renvoie le bouton Ameliorer d'un type de batiment.
+     *
+     * @param type le type de batiment concerne
+     * @return le bouton de ce batiment
+     */
     public BoutonMedieval boutonAmeliorer(TypeBatiment type) {
         return this.cartes.get(type).bouton;
     }
 
+    /**
+     * Dit si une amelioration est deja planifiee pour ce batiment.
+     *
+     * @param type le type de batiment concerne
+     * @return vrai si une amelioration est en file
+     */
     public boolean estPlanifie(TypeBatiment type) {
         return ameliorationEnFile(type);
     }
 
     private boolean ameliorationEnFile(TypeBatiment type) {
-        for (Action a : this.royaume.fileActions().contenu()) {
-            if (a instanceof ActionAmeliorer && ((ActionAmeliorer) a).type() == type) {
+        for (Action action : this.royaume.fileActions().contenu()) {
+            if (action instanceof ActionAmeliorer && ((ActionAmeliorer) action).type() == type) {
                 return true;
             }
         }
@@ -87,16 +104,22 @@ public class OngletInfrastructures extends JPanel implements Observer {
 
     private boolean coutPayable(TypeBatiment type, int niveauCible) {
         Map<Ressource, Integer> cout = Equilibrage.coutAmelioration(type, niveauCible);
-        for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {
-            if (!this.royaume.tresor().contient(e.getKey(), e.getValue())) {
+        for (Map.Entry<Ressource, Integer> entree : cout.entrySet()) {
+            if (!this.royaume.tresor().contient(entree.getKey(), entree.getValue())) {
                 return false;
             }
         }
         return true;
     }
 
+    /**
+     * Met a jour les cartes quand le royaume change.
+     *
+     * @param observable l'objet observe
+     * @param arg la notification recue
+     */
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (!(arg instanceof Notification)) {
             return;
         }
@@ -104,10 +127,10 @@ public class OngletInfrastructures extends JPanel implements Observer {
     }
 
     private void rafraichir() {
-        for (TypeBatiment t : TypeBatiment.values()) {
-            Batiment b = this.royaume.batiment(t);
-            this.cartes.get(t).rafraichir(b, ameliorationEnFile(t),
-                    coutPayable(t, b.niveau() + 1));
+        for (TypeBatiment type : TypeBatiment.values()) {
+            Batiment batiment = this.royaume.batiment(type);
+            this.cartes.get(type).rafraichir(batiment, ameliorationEnFile(type),
+                    coutPayable(type, batiment.niveau() + 1));
         }
     }
 
@@ -197,20 +220,20 @@ public class OngletInfrastructures extends JPanel implements Observer {
             return col;
         }
 
-        void rafraichir(Batiment b, boolean planifie, boolean payable) {
+        void rafraichir(Batiment batiment, boolean planifie, boolean payable) {
             // niveau
-            this.valeurNiveau.setText(b.niveau() + " / "
+            this.valeurNiveau.setText(batiment.niveau() + " / "
                     + Equilibrage.NIVEAU_MAX_BATIMENT);
 
             // statut
             if (planifie) {
                 this.valeurStatut.setText("Planifie");
                 this.valeurStatut.setForeground(Palette.OR_CLAIR);
-            } else if (b.enChantier()) {
+            } else if (batiment.enChantier()) {
                 this.valeurStatut.setText("Chantier"
-                        + " (" + b.toursRestants() + ")");
+                        + " (" + batiment.toursRestants() + ")");
                 this.valeurStatut.setForeground(Palette.OR);
-            } else if (b.estEndommage()) {
+            } else if (batiment.estEndommage()) {
                 this.valeurStatut.setText("Endommage");
                 this.valeurStatut.setForeground(Palette.ROUGE_CLAIR);
             } else {
@@ -222,13 +245,13 @@ public class OngletInfrastructures extends JPanel implements Observer {
             this.valeurCout.removeAll();
             if (planifie) {
                 ajouterLigneCout("--", Palette.TEXTE_TERTIAIRE);
-            } else if (b.peutEtreAmeliore()) {
+            } else if (batiment.peutEtreAmeliore()) {
                 Map<Ressource, Integer> cout = Equilibrage.coutAmelioration(
-                        this.type, b.niveau() + 1);
-                for (Map.Entry<Ressource, Integer> e : cout.entrySet()) {
+                        this.type, batiment.niveau() + 1);
+                for (Map.Entry<Ressource, Integer> entree : cout.entrySet()) {
                     ajouterLigneCout(
-                            e.getValue() + " " + e.getKey().libelle(),
-                            couleurRessource(e.getKey()));
+                            entree.getValue() + " " + entree.getKey().libelle(),
+                            couleurRessource(entree.getKey()));
                 }
             } else {
                 ajouterLigneCout("Niveau max atteint",
@@ -241,7 +264,7 @@ public class OngletInfrastructures extends JPanel implements Observer {
             if (planifie) {
                 this.bouton.setText("Annuler");
                 this.bouton.setEnabled(true);
-            } else if (b.peutEtreAmeliore()) {
+            } else if (batiment.peutEtreAmeliore()) {
                 this.bouton.setText("Ameliorer");
                 this.bouton.setEnabled(payable);
             } else {
@@ -251,15 +274,15 @@ public class OngletInfrastructures extends JPanel implements Observer {
         }
 
         private void ajouterLigneCout(String texte, Color couleur) {
-            JLabel l = new JLabel(texte, SwingConstants.CENTER);
-            l.setFont(Polices.PETITE_VALEUR.deriveFont(11f));
-            l.setForeground(couleur);
-            l.setAlignmentX(CENTER_ALIGNMENT);
-            this.valeurCout.add(l);
+            JLabel label = new JLabel(texte, SwingConstants.CENTER);
+            label.setFont(Polices.PETITE_VALEUR.deriveFont(11f));
+            label.setForeground(couleur);
+            label.setAlignmentX(CENTER_ALIGNMENT);
+            this.valeurCout.add(label);
         }
 
-        private Color couleurRessource(Ressource r) {
-            switch (r) {
+        private Color couleurRessource(Ressource ressource) {
+            switch (ressource) {
                 case OR: return Palette.OR_RESSOURCE;
                 case NOURRITURE: return Palette.NOURRITURE_RESSOURCE;
                 case BOIS: return Palette.BOIS_RESSOURCE;

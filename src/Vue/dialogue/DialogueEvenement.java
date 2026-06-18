@@ -33,7 +33,14 @@ public final class DialogueEvenement {
         // classe utilitaire
     }
 
-    // affiche la popup et renvoie le choix du joueur
+    /**
+     * Affiche la popup de l'evenement et renvoie le choix du joueur.
+     *
+     * @param parent le composant parent pour centrer la popup
+     * @param evenement l'evenement a afficher
+     * @param royaume le royaume du joueur
+     * @return le choix selectionne par le joueur
+     */
     public static Choix afficher(java.awt.Component parent,
                                  Evenement evenement,
                                  Royaume royaume) {
@@ -43,9 +50,9 @@ public final class DialogueEvenement {
         Choix selection = dialog.choixSelectionne();
         if (selection == null) {
             // si on ferme sans choisir : premier choix possible
-            for (Choix c : evenement.choix()) {
-                if (c.peutEtreChoisi(royaume)) {
-                    return c;
+            for (Choix choix : evenement.choix()) {
+                if (choix.peutEtreChoisi(royaume)) {
+                    return choix;
                 }
             }
             return evenement.choix().get(0);
@@ -53,10 +60,10 @@ public final class DialogueEvenement {
         return selection;
     }
 
-    private static Frame trouverFrame(java.awt.Component c) {
-        Window w = SwingUtilities.getWindowAncestor(c);
-        if (w instanceof Frame) {
-            return (Frame) w;
+    private static Frame trouverFrame(java.awt.Component composant) {
+        Window fenetre = SwingUtilities.getWindowAncestor(composant);
+        if (fenetre instanceof Frame) {
+            return (Frame) fenetre;
         }
         return null;
     }
@@ -75,9 +82,9 @@ public final class DialogueEvenement {
             JPanel panneau = new JPanel(new BorderLayout(0, 12)) {
                 private static final long serialVersionUID = 1L;
                 @Override
-                protected void paintComponent(Graphics g) {
-                    super.paintComponent(g);
-                    Graphics2D g2 = (Graphics2D) g.create();
+                protected void paintComponent(Graphics graphics) {
+                    super.paintComponent(graphics);
+                    Graphics2D g2 = (Graphics2D) graphics.create();
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
                     g2.setPaint(new GradientPaint(0, 0, new Color(20, 14, 6),
@@ -128,14 +135,14 @@ public final class DialogueEvenement {
             JPanel piedChoix = new JPanel(new GridLayout(0, 1, 0, 6));
             piedChoix.setOpaque(false);
             piedChoix.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-            for (Choix c : choix) {
+            for (Choix choixCourant : choix) {
                 BoutonMedieval bouton = new BoutonMedieval(
-                        c.libelle(),
+                        choixCourant.libelle(),
                         BoutonMedieval.Style.PRIMAIRE);
                 bouton.setPreferredSize(new Dimension(520, 40));
-                if (c.peutEtreChoisi(royaume)) {
-                    bouton.addActionListener(e -> {
-                        this.selection = c;
+                if (choixCourant.peutEtreChoisi(royaume)) {
+                    bouton.addActionListener(actionEvenement -> {
+                        this.selection = choixCourant;
                         dispose();
                     });
                 } else {

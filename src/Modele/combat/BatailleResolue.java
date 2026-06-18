@@ -18,6 +18,17 @@ public class BatailleResolue {
     private final int pertesCivilesDefenseur;
     private final Map<Ressource, Integer> butin;
 
+    /**
+     * Cree le bilan d'une bataille terminee avec ce qui a vraiment ete applique.
+     *
+     * @param attaquant le royaume attaquant
+     * @param defenseur le royaume defenseur
+     * @param rapport le rapport du combat
+     * @param effectifAvantAttaquant l'effectif de l'attaquant avant la bataille
+     * @param effectifAvantDefenseur l'effectif du defenseur avant la bataille
+     * @param pertesCivilesDefenseur le nombre de civils tues chez le defenseur
+     * @param butin les ressources prises au defenseur
+     */
     public BatailleResolue(Royaume attaquant,
                            Royaume defenseur,
                            RapportCombat rapport,
@@ -33,40 +44,73 @@ public class BatailleResolue {
         this.pertesCivilesDefenseur = Math.max(0, pertesCivilesDefenseur);
         this.butin = new EnumMap<>(Ressource.class);
         if (butin != null) {
-            for (Map.Entry<Ressource, Integer> e : butin.entrySet()) {
-                if (e.getValue() != null && e.getValue() > 0) {
-                    this.butin.put(e.getKey(), e.getValue());
+            for (Map.Entry<Ressource, Integer> entree : butin.entrySet()) {
+                if (entree.getValue() != null && entree.getValue() > 0) {
+                    this.butin.put(entree.getKey(), entree.getValue());
                 }
             }
         }
     }
 
+    /**
+     * Renvoie le royaume attaquant.
+     *
+     * @return le royaume attaquant
+     */
     public Royaume attaquant() {
         return this.attaquant;
     }
 
+    /**
+     * Renvoie le royaume defenseur.
+     *
+     * @return le royaume defenseur
+     */
     public Royaume defenseur() {
         return this.defenseur;
     }
 
+    /**
+     * Renvoie le rapport du combat.
+     *
+     * @return le rapport de combat
+     */
     public RapportCombat rapport() {
         return this.rapport;
     }
 
-    // Effectif de l'attaquant avant la bataille.
+    /**
+     * Renvoie l'effectif de l'attaquant avant la bataille.
+     *
+     * @return l'effectif avant bataille de l'attaquant
+     */
     public int effectifAvantAttaquant() {
         return this.effectifAvantAttaquant;
     }
 
-    // Effectif du defenseur avant la bataille.
+    /**
+     * Renvoie l'effectif du defenseur avant la bataille.
+     *
+     * @return l'effectif avant bataille du defenseur
+     */
     public int effectifAvantDefenseur() {
         return this.effectifAvantDefenseur;
     }
 
+    /**
+     * Renvoie le nombre de civils tues chez le defenseur.
+     *
+     * @return le nombre de pertes civiles du defenseur
+     */
     public int pertesCivilesDefenseur() {
         return this.pertesCivilesDefenseur;
     }
 
+    /**
+     * Renvoie les ressources prises au defenseur.
+     *
+     * @return le butin par ressource
+     */
     public Map<Ressource, Integer> butin() {
         return this.butin;
     }

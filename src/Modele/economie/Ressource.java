@@ -15,6 +15,11 @@ public enum Ressource {
         this.libelle = libelle;
     }
 
+    /**
+     * Donne le nom affichable de la ressource.
+     *
+     * @return le libelle de la ressource
+     */
     public String libelle() {
         return this.libelle;
     }

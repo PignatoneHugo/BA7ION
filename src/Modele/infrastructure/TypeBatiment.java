@@ -19,6 +19,11 @@ public enum TypeBatiment {
         this.libelle = libelle;
     }
 
+    /**
+     * Donne le nom affichable du type de batiment.
+     *
+     * @return le libelle du type de batiment
+     */
     public String libelle() {
         return this.libelle;
     }

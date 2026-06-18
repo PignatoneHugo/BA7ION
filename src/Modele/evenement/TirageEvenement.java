@@ -9,13 +9,19 @@ public final class TirageEvenement {
         // Classe utilitaire.
     }
 
+    /**
+     * Tire un evenement au hasard selon les poids du catalogue.
+     *
+     * @param aleatoire source de hasard
+     * @return l'evenement tire
+     */
     public static Evenement tirer(Random aleatoire) {
         int tirage = aleatoire.nextInt(CatalogueEvenements.POIDS_TOTAL);
         int cumul = 0;
-        for (CatalogueEvenements.Entree e : CatalogueEvenements.ENTREES) {
-            cumul += e.poids;
+        for (CatalogueEvenements.Entree entree : CatalogueEvenements.ENTREES) {
+            cumul += entree.poids;
             if (tirage < cumul) {
-                return e.fabrique.get();
+                return entree.fabrique.get();
             }
         }
         // ne devrait pas arriver

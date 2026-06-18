@@ -20,7 +20,17 @@ public final class ResolveurCombat {
     private ResolveurCombat() {
     }
 
-    // Resout un combat entre l'armee attaquante et l'armee defenseuse.
+    /**
+     * Resout un combat entre l'armee attaquante et l'armee defenseuse.
+     *
+     * @param attaquant l'armee qui attaque
+     * @param defenseur l'armee qui defend
+     * @param postureAttaquant la posture de l'attaquant
+     * @param bonusRempartsPct le bonus de defense des remparts en pourcentage
+     * @param seed la graine de l'alea pour avoir un resultat reproductible
+     * @return le rapport du combat
+     * @throws IllegalArgumentException si une des deux armees est null
+     */
     public static RapportCombat resoudre(Armee attaquant,
                                          Armee defenseur,
                                          PostureCombat postureAttaquant,
@@ -46,18 +56,18 @@ public final class ResolveurCombat {
         }
 
         // un peu d'alea
-        Random r = new Random(seed);
-        puissanceA *= 1.0 + (r.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
-        puissanceD *= 1.0 + (r.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
+        Random aleatoire = new Random(seed);
+        puissanceA *= 1.0 + (aleatoire.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
+        puissanceD *= 1.0 + (aleatoire.nextDouble() * 2 - 1) * AMPLITUDE_ALEA;
 
         // qui gagne ?
-        RapportCombat.Vainqueur v;
+        RapportCombat.Vainqueur vainqueur;
         if (puissanceA > puissanceD * MARGE_VICTOIRE) {
-            v = RapportCombat.Vainqueur.ATTAQUANT;
+            vainqueur = RapportCombat.Vainqueur.ATTAQUANT;
         } else if (puissanceD > puissanceA * MARGE_VICTOIRE) {
-            v = RapportCombat.Vainqueur.DEFENSEUR;
+            vainqueur = RapportCombat.Vainqueur.DEFENSEUR;
         } else {
-            v = RapportCombat.Vainqueur.EGALITE;
+            vainqueur = RapportCombat.Vainqueur.EGALITE;
         }
 
         // pertes selon le vainqueur
@@ -65,7 +75,7 @@ public final class ResolveurCombat {
         int effectifD = defenseur.effectifTotal();
         int pertesA;
         int pertesD;
-        switch (v) {
+        switch (vainqueur) {
             case ATTAQUANT:
                 pertesA = (int) Math.round(effectifA * 0.2);
                 pertesD = (int) Math.round(effectifD * 0.5);
@@ -80,16 +90,16 @@ public final class ResolveurCombat {
                 break;
         }
 
-        return new RapportCombat(v, pertesA, pertesD, puissanceA, puissanceD);
+        return new RapportCombat(vainqueur, pertesA, pertesD, puissanceA, puissanceD);
     }
 
     // Puissance offensive de l'attaquant en tenant compte des avantages de type.
     private static double calculerPuissanceOffensive(Armee attaquant, Armee defenseur) {
         double puissance = 0;
         int totalDef = defenseur.effectifTotal();
-        for (Unite uA : attaquant.unites()) {
-            double bonus = bonusMoyenContre(uA, defenseur, totalDef);
-            puissance += uA.effectif() * uA.type().attaqueBase() * bonus;
+        for (Unite uniteAttaquant : attaquant.unites()) {
+            double bonus = bonusMoyenContre(uniteAttaquant, defenseur, totalDef);
+            puissance += uniteAttaquant.effectif() * uniteAttaquant.type().attaqueBase() * bonus;
         }
         return puissance;
     }
@@ -98,22 +108,22 @@ public final class ResolveurCombat {
     private static double calculerPuissanceDefensive(Armee defenseur, Armee attaquant) {
         double puissance = 0;
         int totalAtt = attaquant.effectifTotal();
-        for (Unite uD : defenseur.unites()) {
-            double bonus = bonusMoyenContre(uD, attaquant, totalAtt);
-            puissance += uD.effectif() * uD.type().defenseBase() * bonus;
+        for (Unite uniteDefenseur : defenseur.unites()) {
+            double bonus = bonusMoyenContre(uniteDefenseur, attaquant, totalAtt);
+            puissance += uniteDefenseur.effectif() * uniteDefenseur.type().defenseBase() * bonus;
         }
         return puissance;
     }
 
     // Bonus moyen d'une unite contre une armee, pondere par les types adverses.
-    private static double bonusMoyenContre(Unite uA, Armee adversaire, int totalAdv) {
+    private static double bonusMoyenContre(Unite unite, Armee adversaire, int totalAdv) {
         if (totalAdv == 0) {
             return 1.0;
         }
         double bonusMoyen = 0;
-        for (Unite uD : adversaire.unites()) {
-            double part = (double) uD.effectif() / totalAdv;
-            bonusMoyen += TableAvantages.bonusContre(uA.type(), uD.type()) * part;
+        for (Unite uniteAdverse : adversaire.unites()) {
+            double part = (double) uniteAdverse.effectif() / totalAdv;
+            bonusMoyen += TableAvantages.bonusContre(unite.type(), uniteAdverse.type()) * part;
         }
         return bonusMoyen;
     }

@@ -24,6 +24,12 @@ public class BoutonMedieval extends JButton {
     private final Color couleurTexteSurvol;
     private final Color couleurBordure;
 
+    /**
+     * Cree un bouton avec un texte et un style donnes.
+     *
+     * @param texte le texte du bouton
+     * @param style le style voulu (primaire, secondaire ou danger)
+     */
     public BoutonMedieval(String texte, Style style) {
         super(texte);
         this.style = style;
@@ -69,7 +75,7 @@ public class BoutonMedieval extends JButton {
 
         addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseEntered(MouseEvent e) {
+            public void mouseEntered(MouseEvent evenement) {
                 if (isEnabled()) {
                     setBackground(couleurFondSurvol);
                     setForeground(couleurTexteSurvol);
@@ -77,22 +83,36 @@ public class BoutonMedieval extends JButton {
             }
 
             @Override
-            public void mouseExited(MouseEvent e) {
+            public void mouseExited(MouseEvent evenement) {
                 setBackground(couleurFondNormal);
                 setForeground(couleurTexteNormal);
             }
         });
     }
 
+    /**
+     * Cree un bouton de style primaire avec le texte donne.
+     *
+     * @param texte le texte du bouton
+     */
     public BoutonMedieval(String texte) {
         this(texte, Style.PRIMAIRE);
     }
 
+    /**
+     * Renvoie le style du bouton.
+     *
+     * @return le style du bouton
+     */
     public Style style() {
         return this.style;
     }
 
-    // remet les bonnes couleurs quand on active/desactive
+    /**
+     * Active ou desactive le bouton et remet les bonnes couleurs.
+     *
+     * @param enabled vrai pour activer le bouton
+     */
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -105,17 +125,27 @@ public class BoutonMedieval extends JButton {
         }
     }
 
-    // bouton primaire de taille standard
+    /**
+     * Cree un bouton primaire de taille standard.
+     *
+     * @param texte le texte du bouton
+     * @return le bouton cree
+     */
     public static BoutonMedieval primaire(String texte) {
-        BoutonMedieval b = new BoutonMedieval(texte, Style.PRIMAIRE);
-        b.setPreferredSize(new Dimension(280, 50));
-        return b;
+        BoutonMedieval bouton = new BoutonMedieval(texte, Style.PRIMAIRE);
+        bouton.setPreferredSize(new Dimension(280, 50));
+        return bouton;
     }
 
-    // bouton secondaire compact
+    /**
+     * Cree un bouton secondaire compact.
+     *
+     * @param texte le texte du bouton
+     * @return le bouton cree
+     */
     public static BoutonMedieval secondaire(String texte) {
-        BoutonMedieval b = new BoutonMedieval(texte, Style.SECONDAIRE);
-        b.setPreferredSize(new Dimension(180, 36));
-        return b;
+        BoutonMedieval bouton = new BoutonMedieval(texte, Style.SECONDAIRE);
+        bouton.setPreferredSize(new Dimension(180, 36));
+        return bouton;
     }
 }

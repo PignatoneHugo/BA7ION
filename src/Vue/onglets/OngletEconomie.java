@@ -42,6 +42,11 @@ public class OngletEconomie extends JPanel implements Observer {
     private final Map<NiveauTaxes, JToggleButton> togglesTaxes;
     private final BoutonMedieval boutonRecruter;
 
+    /**
+     * Cree l'onglet Economie et s'abonne aux changements du royaume.
+     *
+     * @param royaume le royaume du joueur
+     */
     public OngletEconomie(Royaume royaume) {
         this.royaume = royaume;
         this.labelsEffectif = new EnumMap<>(Role.class);
@@ -77,20 +82,20 @@ public class OngletEconomie extends JPanel implements Observer {
     }
 
     private JLabel creerTitreSection(String texte) {
-        JLabel l = new JLabel(texte.toUpperCase(), SwingConstants.LEFT);
-        l.setFont(Polices.SECTION.deriveFont(16f));
-        l.setForeground(Palette.OR);
-        l.setBorder(BorderFactory.createCompoundBorder(
+        JLabel label = new JLabel(texte.toUpperCase(), SwingConstants.LEFT);
+        label.setFont(Polices.SECTION.deriveFont(16f));
+        label.setForeground(Palette.OR);
+        label.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createMatteBorder(0, 0, 1, 0, Palette.OR_FONCE),
                 BorderFactory.createEmptyBorder(0, 0, 6, 0)));
-        return l;
+        return label;
     }
 
     private JLabel creerSousTitre(String texte) {
-        JLabel l = new JLabel(texte.toUpperCase());
-        l.setFont(Polices.SECTION.deriveFont(13f));
-        l.setForeground(Palette.OR);
-        return l;
+        JLabel label = new JLabel(texte.toUpperCase());
+        label.setFont(Polices.SECTION.deriveFont(13f));
+        label.setForeground(Palette.OR);
+        return label;
     }
 
     private JPanel creerBlocRoles() {
@@ -107,8 +112,8 @@ public class OngletEconomie extends JPanel implements Observer {
         bloc.add(sousTitre);
         bloc.add(Box.createVerticalStrut(10));
 
-        for (Role r : Role.values()) {
-            bloc.add(creerLigneRole(r));
+        for (Role role : Role.values()) {
+            bloc.add(creerLigneRole(role));
             bloc.add(Box.createVerticalStrut(6));
         }
 
@@ -116,7 +121,7 @@ public class OngletEconomie extends JPanel implements Observer {
     }
 
     // une ligne de role : pastille + nom + effectif + boutons +/-
-    private JPanel creerLigneRole(Role r) {
+    private JPanel creerLigneRole(Role role) {
         JPanel ligne = new JPanel(new BorderLayout(12, 0));
         ligne.setOpaque(false);
         ligne.setAlignmentX(LEFT_ALIGNMENT);
@@ -126,12 +131,12 @@ public class OngletEconomie extends JPanel implements Observer {
         // gauche : pastille + nom
         JPanel gauche = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
         gauche.setOpaque(false);
-        gauche.add(creerPastilleRole(r));
-        JLabel nom = new JLabel(r.libelle());
+        gauche.add(creerPastilleRole(role));
+        JLabel nom = new JLabel(role.libelle());
         nom.setFont(Polices.LABEL.deriveFont(15f));
-        nom.setForeground(couleurDe(r));
+        nom.setForeground(couleurDe(role));
         gauche.add(nom);
-        if (r == Role.INACTIF) {
+        if (role == Role.INACTIF) {
             JLabel cout = new JLabel("(-100 nourriture pour recruter)");
             cout.setFont(Polices.LABEL.deriveFont(java.awt.Font.ITALIC, 12f));
             cout.setForeground(Palette.NOURRITURE_RESSOURCE);
@@ -148,27 +153,27 @@ public class OngletEconomie extends JPanel implements Observer {
 
         JLabel valeur = new JLabel("0", SwingConstants.RIGHT);
         valeur.setFont(Polices.VALEUR.deriveFont(18f));
-        valeur.setForeground(couleurDe(r));
+        valeur.setForeground(couleurDe(role));
         valeur.setPreferredSize(new Dimension(54, 28));
-        this.labelsEffectif.put(r, valeur);
+        this.labelsEffectif.put(role, valeur);
         droite.add(valeur);
 
-        if (r == Role.INACTIF) {
+        if (role == Role.INACTIF) {
             // pour INACTIF : le - est desactive, le + recrute
             BoutonMedieval bMoins = new BoutonMedieval("−", BoutonMedieval.Style.SECONDAIRE);
             bMoins.setPreferredSize(new Dimension(44, 30));
             bMoins.setEnabled(false);
-            this.boutonsMoins.put(r, bMoins);
+            this.boutonsMoins.put(role, bMoins);
             droite.add(bMoins);
             droite.add(this.boutonRecruter);
-            this.boutonsPlus.put(r, this.boutonRecruter);
+            this.boutonsPlus.put(role, this.boutonRecruter);
         } else {
             BoutonMedieval bMoins = new BoutonMedieval("−", BoutonMedieval.Style.SECONDAIRE);
             bMoins.setPreferredSize(new Dimension(44, 30));
             BoutonMedieval bPlus = new BoutonMedieval("+", BoutonMedieval.Style.SECONDAIRE);
             bPlus.setPreferredSize(new Dimension(44, 30));
-            this.boutonsMoins.put(r, bMoins);
-            this.boutonsPlus.put(r, bPlus);
+            this.boutonsMoins.put(role, bMoins);
+            this.boutonsPlus.put(role, bPlus);
             droite.add(bMoins);
             droite.add(bPlus);
         }
@@ -196,33 +201,33 @@ public class OngletEconomie extends JPanel implements Observer {
         boutons.setAlignmentX(LEFT_ALIGNMENT);
 
         ButtonGroup grp = new ButtonGroup();
-        for (NiveauTaxes n : NiveauTaxes.values()) {
-            ToggleMedieval t = new ToggleMedieval(n.libelle());
-            t.setPreferredSize(new Dimension(140, 36));
-            grp.add(t);
-            this.togglesTaxes.put(n, t);
-            boutons.add(t);
+        for (NiveauTaxes niveau : NiveauTaxes.values()) {
+            ToggleMedieval toggle = new ToggleMedieval(niveau.libelle());
+            toggle.setPreferredSize(new Dimension(140, 36));
+            grp.add(toggle);
+            this.togglesTaxes.put(niveau, toggle);
+            boutons.add(toggle);
         }
         bloc.add(boutons);
         return bloc;
     }
 
-    private JPanel creerPastilleRole(Role r) {
+    private JPanel creerPastilleRole(Role role) {
         JPanel pastille = new JPanel() {
             private static final long serialVersionUID = 1L;
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
+            protected void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
+                Graphics2D g2 = (Graphics2D) graphics.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
-                int d = Math.min(getWidth(), getHeight()) - 2;
-                int cx = (getWidth() - d) / 2;
-                int cy = (getHeight() - d) / 2;
-                g2.setColor(couleurDe(r).darker().darker());
-                g2.fillOval(cx, cy, d, d);
-                g2.setColor(couleurDe(r));
-                g2.fillOval(cx + 3, cy + 3, d - 6, d - 6);
+                int diametre = Math.min(getWidth(), getHeight()) - 2;
+                int centreX = (getWidth() - diametre) / 2;
+                int centreY = (getHeight() - diametre) / 2;
+                g2.setColor(couleurDe(role).darker().darker());
+                g2.fillOval(centreX, centreY, diametre, diametre);
+                g2.setColor(couleurDe(role));
+                g2.fillOval(centreX + 3, centreY + 3, diametre - 6, diametre - 6);
                 g2.dispose();
             }
         };
@@ -231,8 +236,8 @@ public class OngletEconomie extends JPanel implements Observer {
         return pastille;
     }
 
-    private Color couleurDe(Role r) {
-        switch (r) {
+    private Color couleurDe(Role role) {
+        switch (role) {
             case INACTIF: return Palette.OR;
             case FERMIER: return Palette.NOURRITURE_RESSOURCE;
             case MINEUR: return Palette.PIERRE_RESSOURCE;
@@ -243,24 +248,53 @@ public class OngletEconomie extends JPanel implements Observer {
         }
     }
 
+    /**
+     * Renvoie le bouton + d'un role donne.
+     *
+     * @param role le role concerne
+     * @return le bouton + de ce role
+     */
     public BoutonMedieval boutonPlus(Role role) {
         return this.boutonsPlus.get(role);
     }
 
+    /**
+     * Renvoie le bouton - d'un role donne.
+     *
+     * @param role le role concerne
+     * @return le bouton - de ce role
+     */
     public BoutonMedieval boutonMoins(Role role) {
         return this.boutonsMoins.get(role);
     }
 
+    /**
+     * Renvoie le bouton bascule d'un niveau de taxes.
+     *
+     * @param niveau le niveau de taxes concerne
+     * @return le bouton bascule de ce niveau
+     */
     public JToggleButton toggleTaxes(NiveauTaxes niveau) {
         return this.togglesTaxes.get(niveau);
     }
 
+    /**
+     * Renvoie le bouton pour recruter un villageois.
+     *
+     * @return le bouton de recrutement
+     */
     public BoutonMedieval boutonRecruterVillageois() {
         return this.boutonRecruter;
     }
 
+    /**
+     * Met a jour l'affichage quand le royaume change.
+     *
+     * @param observable l'objet observe
+     * @param arg la notification recue
+     */
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (!(arg instanceof Notification)) {
             return;
         }
@@ -269,17 +303,17 @@ public class OngletEconomie extends JPanel implements Observer {
 
     private void rafraichir() {
         int inactifs = this.royaume.population().effectif(Role.INACTIF);
-        for (Role r : Role.values()) {
-            int effectif = this.royaume.population().effectif(r);
-            this.labelsEffectif.get(r).setText(String.valueOf(effectif));
-            if (r != Role.INACTIF) {
-                this.boutonsPlus.get(r).setEnabled(inactifs > 0);
-                this.boutonsMoins.get(r).setEnabled(effectif > 0);
+        for (Role role : Role.values()) {
+            int effectif = this.royaume.population().effectif(role);
+            this.labelsEffectif.get(role).setText(String.valueOf(effectif));
+            if (role != Role.INACTIF) {
+                this.boutonsPlus.get(role).setEnabled(inactifs > 0);
+                this.boutonsMoins.get(role).setEnabled(effectif > 0);
             }
         }
         NiveauTaxes courant = this.royaume.niveauTaxes();
-        for (NiveauTaxes n : NiveauTaxes.values()) {
-            this.togglesTaxes.get(n).setSelected(n == courant);
+        for (NiveauTaxes niveau : NiveauTaxes.values()) {
+            this.togglesTaxes.get(niveau).setSelected(niveau == courant);
         }
         // peut-on recruter un villageois ?
         boolean peutRecruter = this.royaume.tresor().contient(

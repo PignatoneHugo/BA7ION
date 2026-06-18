@@ -6,6 +6,9 @@ package Modele.evenement;
  */
 public class GrenouilleEmpoisonnee extends Evenement {
 
+    /**
+     * Cree l'evenement scripte Grenouille empoisonnee avec ses trois choix.
+     */
     public GrenouilleEmpoisonnee() {
         super("Grenouille empoisonnee : la guerre approche !",
                 "Une etrange grenouille aux couleurs venimeuses a ete trouvee"

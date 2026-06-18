@@ -22,6 +22,9 @@ public class VueStatusBar extends JPanel {
 
     private final JLabel labelMessage;
 
+    /**
+     * Cree la barre de statut avec un message par defaut.
+     */
     public VueStatusBar() {
         setOpaque(true);
         setLayout(new BorderLayout());
@@ -35,30 +38,35 @@ public class VueStatusBar extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        Graphics2D g2 = (Graphics2D) graphics.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        int largeur = getWidth();
+        int hauteur = getHeight();
 
         // fond degrade
         GradientPaint grad = new GradientPaint(0, 0, new Color(30, 22, 12),
-                0, h, new Color(10, 8, 4));
+                0, hauteur, new Color(10, 8, 4));
         g2.setPaint(grad);
-        g2.fillRect(0, 0, w, h);
+        g2.fillRect(0, 0, largeur, hauteur);
 
         // liseré doré en haut
         g2.setColor(Palette.OR);
-        g2.fillRect(0, 0, w, 2);
+        g2.fillRect(0, 0, largeur, 2);
         g2.setColor(new Color(0, 0, 0, 120));
-        g2.fillRect(0, 2, w, 1);
+        g2.fillRect(0, 2, largeur, 1);
 
         g2.dispose();
     }
 
+    /**
+     * Change le message affiche dans la barre.
+     *
+     * @param texte le message a afficher
+     */
     public void setMessage(String texte) {
         this.labelMessage.setText(texte != null ? texte : "");
     }

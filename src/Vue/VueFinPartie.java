@@ -38,6 +38,12 @@ public class VueFinPartie extends JPanel {
     private final BoutonMedieval boutonRejouer;
     private final BoutonMedieval boutonMenuPrincipal;
 
+    /**
+     * Cree l'ecran de fin avec les stats et le classement.
+     *
+     * @param partie la partie terminee
+     * @param etat l'etat final (victoire ou defaite)
+     */
     public VueFinPartie(Partie partie, ConditionsFin.Etat etat) {
         this.partie = partie;
         this.etat = etat;
@@ -74,25 +80,25 @@ public class VueFinPartie extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        Graphics2D g2 = (Graphics2D) graphics.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        int largeur = getWidth();
+        int hauteur = getHeight();
 
         // fond doré si victoire, rouge sombre si defaite
         Color top = this.etat == ConditionsFin.Etat.VICTOIRE
                 ? new Color(40, 32, 8) : new Color(40, 8, 8);
         Color bot = Palette.FOND_BAS;
-        g2.setPaint(new GradientPaint(0, 0, top, 0, h, bot));
-        g2.fillRect(0, 0, w, h);
+        g2.setPaint(new GradientPaint(0, 0, top, 0, hauteur, bot));
+        g2.fillRect(0, 0, largeur, hauteur);
 
         // cadre or
         g2.setColor(Palette.OR);
         g2.setStroke(new java.awt.BasicStroke(2));
-        g2.drawRect(8, 8, w - 16, h - 16);
+        g2.drawRect(8, 8, largeur - 16, hauteur - 16);
 
         g2.dispose();
     }
@@ -155,32 +161,32 @@ public class VueFinPartie extends JPanel {
         JPanel lignes = new JPanel(new GridLayout(0, 1, 0, 8));
         lignes.setOpaque(false);
 
-        Royaume j = this.partie.joueur();
+        Royaume joueur = this.partie.joueur();
         lignes.add(ligneStat("Tours regnes", String.valueOf(this.partie.numeroTour())));
         lignes.add(ligneStat("Population finale",
-                j.population().total() + " habitants"));
+                joueur.population().total() + " habitants"));
         lignes.add(ligneStat("Or amasse",
-                j.tresor().quantite(Ressource.OR) + ""));
+                joueur.tresor().quantite(Ressource.OR) + ""));
         lignes.add(ligneStat("Force militaire",
-                j.armee().effectifTotal() + " soldats"));
+                joueur.armee().effectifTotal() + " soldats"));
         lignes.add(ligneStat("Moral final",
-                j.moral().valeur() + " / 100"));
+                joueur.moral().valeur() + " / 100"));
         int batAmeliores = 0;
-        for (var b : j.batiments()) {
-            if (b.niveau() > 1) batAmeliores++;
+        for (var batiment : joueur.batiments()) {
+            if (batiment.niveau() > 1) batAmeliores++;
         }
         lignes.add(ligneStat("Batiments ameliores",
-                batAmeliores + " / " + j.batiments().size()));
+                batAmeliores + " / " + joueur.batiments().size()));
 
         panel.add(lignes, BorderLayout.CENTER);
         return panel;
     }
 
     private JPanel ligneStat(String libelle, String valeur) {
-        JPanel l = new JPanel(new BorderLayout());
-        l.setOpaque(true);
-        l.setBackground(Palette.FOND_PANNEAU_CLAIR);
-        l.setBorder(BorderFactory.createCompoundBorder(
+        JPanel ligne = new JPanel(new BorderLayout());
+        ligne.setOpaque(true);
+        ligne.setBackground(Palette.FOND_PANNEAU_CLAIR);
+        ligne.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Palette.BORDURE_FONCEE, 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
@@ -192,9 +198,9 @@ public class VueFinPartie extends JPanel {
         val.setFont(Polices.VALEUR);
         val.setForeground(Palette.OR_CLAIR);
 
-        l.add(nom, BorderLayout.WEST);
-        l.add(val, BorderLayout.EAST);
-        return l;
+        ligne.add(nom, BorderLayout.WEST);
+        ligne.add(val, BorderLayout.EAST);
+        return ligne;
     }
 
     // panneau classement (joueur + bots tries par or)
@@ -216,14 +222,14 @@ public class VueFinPartie extends JPanel {
         lignes.setOpaque(false);
 
         List<Royaume> tous = new java.util.ArrayList<>(this.partie.tousLesRoyaumes());
-        tous.sort((a, b) -> Integer.compare(
-                b.tresor().quantite(Ressource.OR),
-                a.tresor().quantite(Ressource.OR)));
+        tous.sort((royaume1, royaume2) -> Integer.compare(
+                royaume2.tresor().quantite(Ressource.OR),
+                royaume1.tresor().quantite(Ressource.OR)));
 
         int rang = 1;
-        for (Royaume r : tous) {
-            boolean estJoueur = r == this.partie.joueur();
-            lignes.add(ligneClassement(rang, r, estJoueur));
+        for (Royaume royaume : tous) {
+            boolean estJoueur = royaume == this.partie.joueur();
+            lignes.add(ligneClassement(rang, royaume, estJoueur));
             rang++;
         }
 
@@ -231,11 +237,11 @@ public class VueFinPartie extends JPanel {
         return panel;
     }
 
-    private JPanel ligneClassement(int rang, Royaume r, boolean estJoueur) {
-        JPanel l = new JPanel(new BorderLayout(8, 0));
-        l.setOpaque(true);
-        l.setBackground(estJoueur ? new Color(42, 30, 8) : Palette.FOND_PANNEAU_CLAIR);
-        l.setBorder(BorderFactory.createCompoundBorder(
+    private JPanel ligneClassement(int rang, Royaume royaume, boolean estJoueur) {
+        JPanel ligne = new JPanel(new BorderLayout(8, 0));
+        ligne.setOpaque(true);
+        ligne.setBackground(estJoueur ? new Color(42, 30, 8) : Palette.FOND_PANNEAU_CLAIR);
+        ligne.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(
                         estJoueur ? Palette.OR : Palette.BORDURE_FONCEE,
                         estJoueur ? 2 : 1),
@@ -249,26 +255,36 @@ public class VueFinPartie extends JPanel {
                 : Palette.TEXTE_TERTIAIRE);
         rangLabel.setPreferredSize(new Dimension(36, 22));
 
-        JLabel nom = new JLabel(r.nom());
+        JLabel nom = new JLabel(royaume.nom());
         nom.setFont(Polices.LABEL.deriveFont(14f));
         nom.setForeground(estJoueur ? Palette.OR_CLAIR : Palette.TEXTE_PRIMAIRE);
 
-        JLabel or = new JLabel(r.tresor().quantite(Ressource.OR) + " "
+        JLabel or = new JLabel(royaume.tresor().quantite(Ressource.OR) + " "
                 + Ressource.OR.libelle().toLowerCase(),
                 SwingConstants.RIGHT);
         or.setFont(Polices.VALEUR);
         or.setForeground(Palette.OR_RESSOURCE);
 
-        l.add(rangLabel, BorderLayout.WEST);
-        l.add(nom, BorderLayout.CENTER);
-        l.add(or, BorderLayout.EAST);
-        return l;
+        ligne.add(rangLabel, BorderLayout.WEST);
+        ligne.add(nom, BorderLayout.CENTER);
+        ligne.add(or, BorderLayout.EAST);
+        return ligne;
     }
 
+    /**
+     * Renvoie le bouton pour lancer une nouvelle partie.
+     *
+     * @return le bouton Nouvelle partie
+     */
     public BoutonMedieval boutonRejouer() {
         return this.boutonRejouer;
     }
 
+    /**
+     * Renvoie le bouton de retour au menu principal.
+     *
+     * @return le bouton Menu principal
+     */
     public BoutonMedieval boutonMenuPrincipal() {
         return this.boutonMenuPrincipal;
     }

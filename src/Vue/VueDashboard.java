@@ -43,6 +43,11 @@ public class VueDashboard extends JPanel {
     private final BarreOnglet barreMilitaire;
     private final BarreOnglet barreMarche;
 
+    /**
+     * Cree le panneau central avec ses quatre onglets.
+     *
+     * @param partie la partie en cours
+     */
     public VueDashboard(Partie partie) {
         setOpaque(true);
         setBackground(Palette.FOND_BAS);
@@ -67,25 +72,25 @@ public class VueDashboard extends JPanel {
 
         this.barreEconomie.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent evenement) {
                 afficherOnglet("eco");
             }
         });
         this.barreInfrastructures.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent evenement) {
                 afficherOnglet("infra");
             }
         });
         this.barreMilitaire.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent evenement) {
                 afficherOnglet("mili");
             }
         });
         this.barreMarche.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mouseClicked(MouseEvent evenement) {
                 afficherOnglet("marche");
             }
         });
@@ -116,18 +121,38 @@ public class VueDashboard extends JPanel {
         this.barreMarche.setActif(cle.equals("marche"));
     }
 
+    /**
+     * Renvoie l'onglet Economie.
+     *
+     * @return l'onglet Economie
+     */
     public OngletEconomie ongletEconomie() {
         return this.ongletEconomie;
     }
 
+    /**
+     * Renvoie l'onglet Infrastructures.
+     *
+     * @return l'onglet Infrastructures
+     */
     public OngletInfrastructures ongletInfrastructures() {
         return this.ongletInfrastructures;
     }
 
+    /**
+     * Renvoie l'onglet Militaire.
+     *
+     * @return l'onglet Militaire
+     */
     public OngletMilitaire ongletMilitaire() {
         return this.ongletMilitaire;
     }
 
+    /**
+     * Renvoie l'onglet Marche.
+     *
+     * @return l'onglet Marche
+     */
     public OngletMarche ongletMarche() {
         return this.ongletMarche;
     }
@@ -165,36 +190,36 @@ public class VueDashboard extends JPanel {
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(Graphics graphics) {
             // le fond d'abord
-            Graphics2D g2 = (Graphics2D) g.create();
+            Graphics2D g2 = (Graphics2D) graphics.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int w = getWidth();
-            int h = getHeight();
+            int largeur = getWidth();
+            int hauteur = getHeight();
 
             if (this.actif) {
                 GradientPaint grad = new GradientPaint(0, 0, new Color(60, 42, 16),
-                        0, h, new Color(30, 20, 6));
+                        0, hauteur, new Color(30, 20, 6));
                 g2.setPaint(grad);
-                g2.fillRect(0, 0, w, h);
+                g2.fillRect(0, 0, largeur, hauteur);
                 g2.setColor(Palette.OR);
-                g2.fillRect(0, 0, w, 3);
-                g2.fillRect(0, 0, 1, h);
-                g2.fillRect(w - 1, 0, 1, h);
+                g2.fillRect(0, 0, largeur, 3);
+                g2.fillRect(0, 0, 1, hauteur);
+                g2.fillRect(largeur - 1, 0, 1, hauteur);
             } else {
                 g2.setColor(new Color(12, 8, 4));
-                g2.fillRect(0, 0, w, h);
+                g2.fillRect(0, 0, largeur, hauteur);
                 g2.setColor(Palette.BORDURE_FONCEE);
-                g2.fillRect(0, 0, w, 2);
+                g2.fillRect(0, 0, largeur, 2);
                 g2.setColor(new Color(20, 14, 6));
-                g2.fillRect(w - 1, 0, 1, h);
+                g2.fillRect(largeur - 1, 0, 1, hauteur);
             }
             g2.dispose();
 
             // puis le texte par-dessus
-            super.paintComponent(g);
+            super.paintComponent(graphics);
         }
     }
 }

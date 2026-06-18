@@ -31,84 +31,92 @@ public class EtatRoyaume {
     public final Map<TypeBatiment, Integer> chantiersBatiments;
     public final Map<TypeUnite, Integer> armee;
 
-    /** Capture l'etat courant d'un royaume. */
-    public EtatRoyaume(Royaume r) {
-        this.nom = r.nom();
-        this.estBot = r.estBot();
-        this.moral = r.moral().valeur();
-        this.capaciteLogement = r.population().capaciteLogement();
-        this.niveauTaxes = r.niveauTaxes().name();
-        this.posture = r.armee().posture().name();
+    /**
+     * Capture l'etat courant d'un royaume.
+     *
+     * @param royaume le royaume a sauvegarder
+     */
+    public EtatRoyaume(Royaume royaume) {
+        this.nom = royaume.nom();
+        this.estBot = royaume.estBot();
+        this.moral = royaume.moral().valeur();
+        this.capaciteLogement = royaume.population().capaciteLogement();
+        this.niveauTaxes = royaume.niveauTaxes().name();
+        this.posture = royaume.armee().posture().name();
 
         this.ressources = new LinkedHashMap<>();
-        for (Ressource res : Ressource.values()) {
-            this.ressources.put(res, r.tresor().quantite(res));
+        for (Ressource ressource : Ressource.values()) {
+            this.ressources.put(ressource, royaume.tresor().quantite(ressource));
         }
         this.populationParRole = new LinkedHashMap<>();
         for (Role role : Role.values()) {
-            this.populationParRole.put(role, r.population().effectif(role));
+            this.populationParRole.put(role, royaume.population().effectif(role));
         }
         this.niveauxBatiments = new LinkedHashMap<>();
         this.chantiersBatiments = new LinkedHashMap<>();
-        for (Batiment b : r.batiments()) {
-            this.niveauxBatiments.put(b.type(), b.niveau());
-            this.chantiersBatiments.put(b.type(), b.toursRestants());
+        for (Batiment batiment : royaume.batiments()) {
+            this.niveauxBatiments.put(batiment.type(), batiment.niveau());
+            this.chantiersBatiments.put(batiment.type(), batiment.toursRestants());
         }
         this.armee = new LinkedHashMap<>();
-        for (TypeUnite tu : TypeUnite.values()) {
-            int n = r.armee().effectifParType(tu);
-            if (n > 0) {
-                this.armee.put(tu, n);
+        for (TypeUnite typeUnite : TypeUnite.values()) {
+            int effectif = royaume.armee().effectifParType(typeUnite);
+            if (effectif > 0) {
+                this.armee.put(typeUnite, effectif);
             }
         }
     }
 
-    /** Recharge un royaume neuf avec les valeurs sauvegardees. */
-    public void appliquerA(Royaume r) {
+    /**
+     * Recharge un royaume neuf avec les valeurs sauvegardees.
+     *
+     * @param royaume le royaume a restaurer
+     */
+    public void appliquerA(Royaume royaume) {
         Map<Ressource, Integer> res = orVide(ressources);
-        for (Ressource x : Ressource.values()) {
-            r.tresor().definirQuantite(x, res.getOrDefault(x, 0));
+        for (Ressource ressource : Ressource.values()) {
+            royaume.tresor().definirQuantite(ressource, res.getOrDefault(ressource, 0));
         }
         Map<Role, Integer> pop = orVide(populationParRole);
         for (Role role : Role.values()) {
-            r.population().definirEffectif(role, pop.getOrDefault(role, 0));
+            royaume.population().definirEffectif(role, pop.getOrDefault(role, 0));
         }
         if (capaciteLogement > 0) {
-            r.population().definirCapaciteLogement(capaciteLogement);
+            royaume.population().definirCapaciteLogement(capaciteLogement);
         }
         if (moral > 0) {
-            r.moral().definir(moral);
+            royaume.moral().definir(moral);
         }
         if (niveauTaxes != null) {
             try {
-                r.definirNiveauTaxes(NiveauTaxes.valueOf(niveauTaxes));
+                royaume.definirNiveauTaxes(NiveauTaxes.valueOf(niveauTaxes));
             } catch (IllegalArgumentException ignore) {
                 // Niveau inconnu : on garde la valeur par defaut.
             }
         }
         Map<TypeBatiment, Integer> niv = orVide(niveauxBatiments);
         Map<TypeBatiment, Integer> chan = orVide(chantiersBatiments);
-        for (Batiment b : r.batiments()) {
-            b.restaurer(niv.getOrDefault(b.type(), b.niveau()),
-                    chan.getOrDefault(b.type(), 0));
+        for (Batiment batiment : royaume.batiments()) {
+            batiment.restaurer(niv.getOrDefault(batiment.type(), batiment.niveau()),
+                    chan.getOrDefault(batiment.type(), 0));
         }
         if (posture != null) {
             try {
-                r.armee().definirPosture(PostureCombat.valueOf(posture));
+                royaume.armee().definirPosture(PostureCombat.valueOf(posture));
             } catch (IllegalArgumentException ignore) {
                 // Posture inconnue : on garde la valeur par defaut.
             }
         }
         Map<TypeUnite, Integer> arm = orVide(armee);
-        for (TypeUnite tu : TypeUnite.values()) {
-            int n = arm.getOrDefault(tu, 0);
-            if (n > 0) {
-                r.armee().recruter(tu, n);
+        for (TypeUnite typeUnite : TypeUnite.values()) {
+            int effectif = arm.getOrDefault(typeUnite, 0);
+            if (effectif > 0) {
+                royaume.armee().recruter(typeUnite, effectif);
             }
         }
     }
 
-    private static <K> Map<K, Integer> orVide(Map<K, Integer> m) {
-        return m != null ? m : Collections.emptyMap();
+    private static <K> Map<K, Integer> orVide(Map<K, Integer> map) {
+        return map != null ? map : Collections.emptyMap();
     }
 }

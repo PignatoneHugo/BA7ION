@@ -21,6 +21,11 @@ public class ControleurMenu {
 
     private final FenetreJeu fenetre;
 
+    /**
+     * Construit le controleur des ecrans hors-jeu et branche leurs boutons.
+     *
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurMenu(FenetreJeu fenetre) {
         this.fenetre = fenetre;
         miseEnPlaceEvenements();
@@ -28,13 +33,13 @@ public class ControleurMenu {
 
     private void miseEnPlaceEvenements() {
         VueMenuPrincipal menu = this.fenetre.vueMenu();
-        menu.boutonNouvellePartie().addActionListener(e -> this.fenetre.afficherNouvellePartie());
-        menu.boutonCharger().addActionListener(e -> charger());
-        menu.boutonQuitter().addActionListener(e -> System.exit(0));
+        menu.boutonNouvellePartie().addActionListener(evenement -> this.fenetre.afficherNouvellePartie());
+        menu.boutonCharger().addActionListener(evenement -> charger());
+        menu.boutonQuitter().addActionListener(evenement -> System.exit(0));
 
         VueNouvellePartie config = this.fenetre.vueNouvellePartie();
-        config.boutonRetour().addActionListener(e -> this.fenetre.afficherMenu());
-        config.boutonDemarrer().addActionListener(e -> demarrer());
+        config.boutonRetour().addActionListener(evenement -> this.fenetre.afficherMenu());
+        config.boutonDemarrer().addActionListener(evenement -> demarrer());
     }
 
     // Choisit un fichier, charge la sauvegarde et lance la partie.
@@ -51,8 +56,8 @@ public class ControleurMenu {
             return;
         }
         try {
-            Sauvegarde s = GestionnaireSauvegardes.chargerDepuis(chooser.getSelectedFile());
-            Partie partie = PartieBuilder.depuisSauvegarde(s);
+            Sauvegarde sauvegarde = GestionnaireSauvegardes.chargerDepuis(chooser.getSelectedFile());
+            Partie partie = PartieBuilder.depuisSauvegarde(sauvegarde);
             this.fenetre.afficherJeu(partie);
             new ControleurPartie(partie, this.fenetre);
         } catch (IOException | RuntimeException ex) {

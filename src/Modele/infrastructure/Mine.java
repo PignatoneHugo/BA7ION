@@ -9,6 +9,11 @@ import config.Equilibrage;
 // Mine : produit de la pierre et de l'or selon le nombre de mineurs.
 public class Mine extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type mine
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.MINE;

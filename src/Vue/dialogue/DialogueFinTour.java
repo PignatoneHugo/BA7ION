@@ -37,6 +37,15 @@ public class DialogueFinTour extends JDialog {
 
     private final Partie partie;
 
+    /**
+     * Cree la popup de recap de fin de tour.
+     *
+     * @param parent la fenetre parente
+     * @param avant l'etat du royaume avant le tour
+     * @param apres l'etat du royaume apres le tour
+     * @param numeroTourTermine le numero du tour qui vient de finir
+     * @param partie la partie en cours
+     */
     public DialogueFinTour(Frame parent, BilanTour avant, Royaume apres,
                            int numeroTourTermine, Partie partie) {
         super(parent,
@@ -50,9 +59,9 @@ public class DialogueFinTour extends JDialog {
         JPanel panneau = new JPanel(new BorderLayout(0, 12)) {
             private static final long serialVersionUID = 1L;
             @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g.create();
+            protected void paintComponent(Graphics graphics) {
+                super.paintComponent(graphics);
+                Graphics2D g2 = (Graphics2D) graphics.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                         RenderingHints.VALUE_ANTIALIAS_ON);
                 g2.setPaint(new GradientPaint(0, 0, new Color(20, 14, 6),
@@ -124,14 +133,14 @@ public class DialogueFinTour extends JDialog {
     // liste les batiments qui ont change ce tour (null si rien)
     private JPanel creerBlocBatiments(BilanTour avant, Royaume apres) {
         java.util.List<String[]> lignes = new java.util.ArrayList<>();
-        for (Batiment b : apres.batiments()) {
-            TypeBatiment t = b.type();
-            int niveauAvant = avant.niveau(t);
-            int niveauApres = b.niveau();
-            boolean enChantierAvant = avant.enChantier(t);
-            boolean enChantierApres = b.enChantier();
+        for (Batiment batiment : apres.batiments()) {
+            TypeBatiment typeBatiment = batiment.type();
+            int niveauAvant = avant.niveau(typeBatiment);
+            int niveauApres = batiment.niveau();
+            boolean enChantierAvant = avant.enChantier(typeBatiment);
+            boolean enChantierApres = batiment.enChantier();
 
-            String nomBat = t.libelle();
+            String nomBat = typeBatiment.libelle();
             if (niveauApres > niveauAvant) {
                 // amelioration finie
                 lignes.add(new String[]{nomBat,
@@ -141,12 +150,12 @@ public class DialogueFinTour extends JDialog {
                 // chantier lance
                 lignes.add(new String[]{nomBat,
                         "Chantier demarre",
-                        "(" + b.toursRestants() + " tours)"});
+                        "(" + batiment.toursRestants() + " tours)"});
             } else if (enChantierAvant && enChantierApres) {
                 // chantier en cours
                 lignes.add(new String[]{nomBat,
                         "Chantier en cours",
-                        "(" + b.toursRestants() + " tours restants)"});
+                        "(" + batiment.toursRestants() + " tours restants)"});
             }
         }
         if (lignes.isEmpty()) {
@@ -194,16 +203,16 @@ public class DialogueFinTour extends JDialog {
         JPanel grille = new JPanel(new GridLayout(0, 1, 0, 4));
         grille.setOpaque(false);
 
-        for (Ressource r : Ressource.values()) {
-            int v0 = avant.ressource(r);
-            int v1 = apres.tresor().quantite(r);
-            grille.add(creerLigneRessource(r, v0, v1));
+        for (Ressource ressource : Ressource.values()) {
+            int v0 = avant.ressource(ressource);
+            int v1 = apres.tresor().quantite(ressource);
+            grille.add(creerLigneRessource(ressource, v0, v1));
         }
         bloc.add(grille, BorderLayout.CENTER);
         return bloc;
     }
 
-    private JPanel creerLigneRessource(Ressource r, int avant, int apres) {
+    private JPanel creerLigneRessource(Ressource ressource, int avant, int apres) {
         int delta = apres - avant;
 
         JPanel ligne = new JPanel(new BorderLayout(8, 0));
@@ -214,9 +223,9 @@ public class DialogueFinTour extends JDialog {
                 BorderFactory.createEmptyBorder(6, 10, 6, 10)));
 
         // nom a gauche
-        JLabel nom = new JLabel(r.libelle());
+        JLabel nom = new JLabel(ressource.libelle());
         nom.setFont(Polices.LABEL.deriveFont(13f));
-        nom.setForeground(couleurRessource(r));
+        nom.setForeground(couleurRessource(ressource));
         ligne.add(nom, BorderLayout.WEST);
 
         // a droite : avant -> apres (delta)
@@ -275,10 +284,10 @@ public class DialogueFinTour extends JDialog {
                 BorderFactory.createLineBorder(new Color(30, 22, 10), 1),
                 BorderFactory.createEmptyBorder(8, 12, 8, 12)));
 
-        JLabel l = new JLabel(titre.toUpperCase(), SwingConstants.CENTER);
-        l.setFont(Polices.PETIT_LABEL);
-        l.setForeground(new Color(106, 72, 32));
-        carte.add(l, BorderLayout.NORTH);
+        JLabel labelTitre = new JLabel(titre.toUpperCase(), SwingConstants.CENTER);
+        labelTitre.setFont(Polices.PETIT_LABEL);
+        labelTitre.setForeground(new Color(106, 72, 32));
+        carte.add(labelTitre, BorderLayout.NORTH);
 
         String suffixe = afficherPourcent ? "%" : "";
         JLabel valeurs = new JLabel(
@@ -321,7 +330,7 @@ public class DialogueFinTour extends JDialog {
                 "Continuer",
                 BoutonMedieval.Style.PRIMAIRE);
         continuer.setPreferredSize(new Dimension(260, 44));
-        continuer.addActionListener(e -> dispose());
+        continuer.addActionListener(evenement -> dispose());
         pied.add(continuer);
         return pied;
     }
@@ -338,8 +347,8 @@ public class DialogueFinTour extends JDialog {
         return new Color(120, 100, 70);
     }
 
-    private Color couleurRessource(Ressource r) {
-        switch (r) {
+    private Color couleurRessource(Ressource ressource) {
+        switch (ressource) {
             case OR: return Palette.OR_RESSOURCE;
             case NOURRITURE: return Palette.NOURRITURE_RESSOURCE;
             case BOIS: return Palette.BOIS_RESSOURCE;

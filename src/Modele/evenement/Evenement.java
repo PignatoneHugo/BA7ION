@@ -18,20 +18,35 @@ public abstract class Evenement {
     }
 
     // a appeler dans le constructeur des sous-classes
-    protected void ajouterChoix(Choix c) {
-        if (c != null) {
-            this.choix.add(c);
+    protected void ajouterChoix(Choix nouveauChoix) {
+        if (nouveauChoix != null) {
+            this.choix.add(nouveauChoix);
         }
     }
 
+    /**
+     * Donne le titre de l'evenement.
+     *
+     * @return le titre
+     */
     public String titre() {
         return this.titre;
     }
 
+    /**
+     * Donne la description de l'evenement.
+     *
+     * @return la description
+     */
     public String description() {
         return this.description;
     }
 
+    /**
+     * Donne la liste des choix proposes au joueur.
+     *
+     * @return la liste des choix (non modifiable)
+     */
     public List<Choix> choix() {
         return Collections.unmodifiableList(this.choix);
     }

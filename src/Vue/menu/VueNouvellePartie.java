@@ -43,6 +43,9 @@ public class VueNouvellePartie extends JPanel {
     private final BoutonMedieval boutonDemarrer;
     private final BoutonMedieval boutonRetour;
 
+    /**
+     * Cree l'ecran de configuration d'une nouvelle partie.
+     */
     public VueNouvellePartie() {
         setOpaque(true);
         setBackground(Palette.FOND_BAS);
@@ -56,38 +59,38 @@ public class VueNouvellePartie extends JPanel {
                 BorderFactory.createLineBorder(Palette.OR, 2),
                 BorderFactory.createEmptyBorder(36, 56, 36, 56)));
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(8, 8, 8, 8);
+        GridBagConstraints contraintes = new GridBagConstraints();
+        contraintes.insets = new Insets(8, 8, 8, 8);
 
         // titre
         JLabel titre = new JLabel("Nouvelle partie", SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(36f));
         titre.setForeground(Palette.OR);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(0, 0, 8, 0);
-        panneau.add(titre, c);
+        contraintes.gridx = 0;
+        contraintes.gridy = 0;
+        contraintes.gridwidth = 2;
+        contraintes.fill = GridBagConstraints.HORIZONTAL;
+        contraintes.insets = new Insets(0, 0, 8, 0);
+        panneau.add(titre, contraintes);
 
         // separateur
         JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
         sep.setForeground(Palette.OR);
         sep.setBackground(Palette.OR);
         sep.setPreferredSize(new Dimension(320, 2));
-        c.gridy = 1;
-        c.insets = new Insets(0, 80, 28, 80);
-        panneau.add(sep, c);
+        contraintes.gridy = 1;
+        contraintes.insets = new Insets(0, 80, 28, 80);
+        panneau.add(sep, contraintes);
 
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.insets = new Insets(12, 8, 12, 8);
+        contraintes.gridwidth = 1;
+        contraintes.fill = GridBagConstraints.NONE;
+        contraintes.insets = new Insets(12, 8, 12, 8);
 
         // nom du royaume
-        c.gridx = 0;
-        c.gridy = 2;
-        c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp("Nom du royaume" + " :"), c);
+        contraintes.gridx = 0;
+        contraintes.gridy = 2;
+        contraintes.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp("Nom du royaume" + " :"), contraintes);
 
         this.champNom = new JTextField("Royaume du Joueur", 20);
         this.champNom.setEditable(true);
@@ -95,29 +98,29 @@ public class VueNouvellePartie extends JPanel {
         this.champNom.setFocusable(true);
         stylerChamp(this.champNom);
         this.champNom.setPreferredSize(new Dimension(280, 36));
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        panneau.add(this.champNom, c);
+        contraintes.gridx = 1;
+        contraintes.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.champNom, contraintes);
 
         // nombre de bots
-        c.gridx = 0;
-        c.gridy = 3;
-        c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp("Nombre d'adversaires" + " :"), c);
+        contraintes.gridx = 0;
+        contraintes.gridy = 3;
+        contraintes.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp("Nombre d'adversaires" + " :"), contraintes);
 
         this.spinnerBots = new JSpinner(new SpinnerNumberModel(1, 1, 4, 1));
         this.spinnerBots.setPreferredSize(new Dimension(80, 36));
         this.spinnerBots.setFont(Polices.VALEUR);
         ChampsMedievaux.stylerSpinner(this.spinnerBots);
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        panneau.add(this.spinnerBots, c);
+        contraintes.gridx = 1;
+        contraintes.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.spinnerBots, contraintes);
 
         // difficulte
-        c.gridx = 0;
-        c.gridy = 4;
-        c.anchor = GridBagConstraints.LINE_END;
-        panneau.add(labelChamp("Difficulte" + " :"), c);
+        contraintes.gridx = 0;
+        contraintes.gridy = 4;
+        contraintes.anchor = GridBagConstraints.LINE_END;
+        panneau.add(labelChamp("Difficulte" + " :"), contraintes);
 
         this.comboDifficulte = new JComboBox<>(Difficulte.values());
         this.comboDifficulte.setSelectedItem(Difficulte.NORMAL);
@@ -125,9 +128,9 @@ public class VueNouvellePartie extends JPanel {
         this.comboDifficulte.setRenderer(new RendererDifficulte());
         this.comboDifficulte.setFont(Polices.LABEL);
         ChampsMedievaux.stylerCombo(this.comboDifficulte);
-        c.gridx = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        panneau.add(this.comboDifficulte, c);
+        contraintes.gridx = 1;
+        contraintes.anchor = GridBagConstraints.LINE_START;
+        panneau.add(this.comboDifficulte, contraintes);
 
         // boutons
         JPanel actions = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 0));
@@ -141,13 +144,13 @@ public class VueNouvellePartie extends JPanel {
         actions.add(this.boutonRetour);
         actions.add(this.boutonDemarrer);
 
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.CENTER;
-        c.insets = new Insets(28, 0, 0, 0);
-        panneau.add(actions, c);
+        contraintes.gridx = 0;
+        contraintes.gridy = 5;
+        contraintes.gridwidth = 2;
+        contraintes.fill = GridBagConstraints.HORIZONTAL;
+        contraintes.anchor = GridBagConstraints.CENTER;
+        contraintes.insets = new Insets(28, 0, 0, 0);
+        panneau.add(actions, contraintes);
 
         // on centre le panneau
         JPanel wrapper = new JPanel(new GridBagLayout());
@@ -157,32 +160,32 @@ public class VueNouvellePartie extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        Graphics2D g2 = (Graphics2D) graphics.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        int largeur = getWidth();
+        int hauteur = getHeight();
 
         // fond degrade
-        GradientPaint grad = new GradientPaint(0, 0, Palette.FOND_HAUT, 0, h, Palette.FOND_BAS);
+        GradientPaint grad = new GradientPaint(0, 0, Palette.FOND_HAUT, 0, hauteur, Palette.FOND_BAS);
         g2.setPaint(grad);
-        g2.fillRect(0, 0, w, h);
+        g2.fillRect(0, 0, largeur, hauteur);
 
         // cadre
         g2.setColor(Palette.OR_FONCE);
         g2.setStroke(new java.awt.BasicStroke(2));
-        g2.drawRect(8, 8, w - 16, h - 16);
+        g2.drawRect(8, 8, largeur - 16, hauteur - 16);
 
         g2.dispose();
     }
 
     private JLabel labelChamp(String texte) {
-        JLabel l = new JLabel(texte);
-        l.setFont(Polices.LABEL.deriveFont(15f));
-        l.setForeground(Palette.TEXTE_PRIMAIRE);
-        return l;
+        JLabel label = new JLabel(texte);
+        label.setFont(Polices.LABEL.deriveFont(15f));
+        label.setForeground(Palette.TEXTE_PRIMAIRE);
+        return label;
     }
 
     private void stylerChamp(JTextField champ) {
@@ -190,22 +193,47 @@ public class VueNouvellePartie extends JPanel {
         champ.setFont(Polices.LABEL.deriveFont(14f));
     }
 
+    /**
+     * Renvoie le nom du royaume saisi par le joueur.
+     *
+     * @return le nom du royaume
+     */
     public String nomJoueur() {
         return this.champNom.getText();
     }
 
+    /**
+     * Renvoie le nombre d'adversaires choisi.
+     *
+     * @return le nombre de bots
+     */
     public int nombreBots() {
         return (Integer) this.spinnerBots.getValue();
     }
 
+    /**
+     * Renvoie la difficulte choisie dans la liste.
+     *
+     * @return la difficulte selectionnee
+     */
     public Difficulte difficulteSelectionnee() {
         return (Difficulte) this.comboDifficulte.getSelectedItem();
     }
 
+    /**
+     * Renvoie le bouton Demarrer.
+     *
+     * @return le bouton Demarrer
+     */
     public BoutonMedieval boutonDemarrer() {
         return this.boutonDemarrer;
     }
 
+    /**
+     * Renvoie le bouton Retour.
+     *
+     * @return le bouton Retour
+     */
     public BoutonMedieval boutonRetour() {
         return this.boutonRetour;
     }

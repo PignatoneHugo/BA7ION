@@ -22,39 +22,83 @@ public abstract class Batiment {
         this.toursRestants = 0;
     }
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type du batiment
+     */
     public abstract TypeBatiment type();
 
+    /**
+     * Donne le niveau actuel du batiment.
+     *
+     * @return le niveau du batiment
+     */
     public int niveau() {
         return this.niveau;
     }
 
+    /**
+     * Indique si le batiment est endommage.
+     *
+     * @return true si le batiment est endommage
+     */
     public boolean estEndommage() {
         return this.endommage;
     }
 
+    /**
+     * Marque le batiment comme endommage ou non.
+     *
+     * @param endommage true pour marquer le batiment endommage
+     */
     public void marquerEndommage(boolean endommage) {
         this.endommage = endommage;
     }
 
+    /**
+     * Donne le nombre de tours restants avant la fin d'un chantier.
+     *
+     * @return le nombre de tours restants
+     */
     public int toursRestants() {
         return this.toursRestants;
     }
 
+    /**
+     * Indique si une amelioration est en cours.
+     *
+     * @return true si un chantier est en cours
+     */
     public boolean enChantier() {
         return this.toursRestants > 0;
     }
 
-    // True si on peut encore ameliorer (pas au max, pas deja en chantier).
+    /**
+     * Indique si le batiment peut encore etre ameliore, sans etre au max ni en chantier.
+     *
+     * @return true si le batiment peut etre ameliore
+     */
     public boolean peutEtreAmeliore() {
         return !enChantier() && this.niveau < Equilibrage.NIVEAU_MAX_BATIMENT;
     }
 
-    // Restaure niveau et chantier depuis une sauvegarde.
+    /**
+     * Restaure le niveau et le chantier depuis une sauvegarde.
+     *
+     * @param niveau le niveau a restaurer
+     * @param toursRestants les tours de chantier restants a restaurer
+     */
     public void restaurer(int niveau, int toursRestants) {
         this.niveau = Math.max(1, Math.min(niveau, Equilibrage.NIVEAU_MAX_BATIMENT));
         this.toursRestants = Math.max(0, toursRestants);
     }
 
+    /**
+     * Lance un chantier d'amelioration du batiment.
+     *
+     * @throws IllegalStateException si le batiment ne peut pas etre ameliore
+     */
     public void demarrerChantier() {
         if (!peutEtreAmeliore()) {
             throw new IllegalStateException("Batiment non ameliorable.");
@@ -62,7 +106,12 @@ public abstract class Batiment {
         this.toursRestants = Equilibrage.DUREE_CHANTIER_AMELIORATION;
     }
 
-    // Produit, ou fait avancer le chantier en cours.
+    /**
+     * Produit, ou fait avancer le chantier en cours s'il y en a un.
+     *
+     * @param royaume le royaume sur lequel s'applique la production
+     * @throws IllegalArgumentException si le royaume est null
+     */
     public final void produire(Royaume royaume) {
         if (royaume == null) {
             throw new IllegalArgumentException("Royaume requis pour la production.");

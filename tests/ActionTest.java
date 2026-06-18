@@ -21,46 +21,61 @@ import config.Equilibrage;
 // Tests des Actions (pattern Command) : estExecutable et executer.
 public class ActionTest {
 
+    /**
+     * Verifie qu'ameliorer une ferme de niveau 1 demarre un chantier.
+     */
     @Test
     public void ameliorer() {
-        Royaume r = new Royaume("Test");
-        ActionAmeliorer a = new ActionAmeliorer(TypeBatiment.FERME);
-        assertTrue("ferme niveau 1 ameliorable", a.estExecutable(r));
-        a.executer(r);
-        assertTrue("chantier demarre", r.batiment(TypeBatiment.FERME).enChantier());
+        Royaume royaume = new Royaume("Test");
+        ActionAmeliorer action = new ActionAmeliorer(TypeBatiment.FERME);
+        assertTrue("ferme niveau 1 ameliorable", action.estExecutable(royaume));
+        action.executer(royaume);
+        assertTrue("chantier demarre", royaume.batiment(TypeBatiment.FERME).enChantier());
     }
 
+    /**
+     * Verifie les conditions de mobilisation d'unites et le refus d'un effectif nul.
+     */
     @Test
     public void mobiliserConditions() {
-        Royaume r = new Royaume("Test");
-        ActionMobiliser a = new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, 2);
-        assertFalse("refuse sans recrues (Role.SOLDAT)", a.estExecutable(r));
-        r.reaffecter(Role.INACTIF, Role.SOLDAT, 2);
-        assertTrue("accepte avec or + recrues + caserne niveau 1", a.estExecutable(r));
+        Royaume royaume = new Royaume("Test");
+        ActionMobiliser action = new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, 2);
+        assertFalse("refuse sans recrues (Role.SOLDAT)", action.estExecutable(royaume));
+        royaume.reaffecter(Role.INACTIF, Role.SOLDAT, 2);
+        assertTrue("accepte avec or + recrues + caserne niveau 1", action.estExecutable(royaume));
         assertThrows("effectif 0 refuse", IllegalArgumentException.class,
                 () -> new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, 0));
     }
 
+    /**
+     * Verifie qu'une mobilisation paye l'or et equipe les unites.
+     */
     @Test
     public void mobiliserEffet() {
-        Royaume r = new Royaume("Test");
-        r.reaffecter(Role.INACTIF, Role.SOLDAT, 2);
-        int orAvant = r.tresor().quantite(Ressource.OR);
-        new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, 2).executer(r);
+        Royaume royaume = new Royaume("Test");
+        royaume.reaffecter(Role.INACTIF, Role.SOLDAT, 2);
+        int orAvant = royaume.tresor().quantite(Ressource.OR);
+        new ActionMobiliser(TypeUnite.INFANTERIE_LEGERE, 2).executer(royaume);
         assertEquals("or paye", orAvant - 2 * Equilibrage.COUT_OR_PAR_SOLDAT,
-                r.tresor().quantite(Ressource.OR));
+                royaume.tresor().quantite(Ressource.OR));
         assertEquals("2 unites equipees", 2,
-                r.armee().effectifParType(TypeUnite.INFANTERIE_LEGERE));
+                royaume.armee().effectifParType(TypeUnite.INFANTERIE_LEGERE));
     }
 
+    /**
+     * Verifie qu'un archer est refuse si la caserne est de niveau trop bas.
+     */
     @Test
     public void mobiliserCaserne() {
-        Royaume r = new Royaume("Test");
-        r.reaffecter(Role.INACTIF, Role.SOLDAT, 1);
-        ActionMobiliser a = new ActionMobiliser(TypeUnite.ARCHER, 1);
-        assertFalse("archer refuse si caserne trop basse", a.estExecutable(r));
+        Royaume royaume = new Royaume("Test");
+        royaume.reaffecter(Role.INACTIF, Role.SOLDAT, 1);
+        ActionMobiliser action = new ActionMobiliser(TypeUnite.ARCHER, 1);
+        assertFalse("archer refuse si caserne trop basse", action.estExecutable(royaume));
     }
 
+    /**
+     * Verifie les conditions d'attaque et qu'on ne peut pas s'attaquer soi-meme.
+     */
     @Test
     public void attaquerConditions() {
         Royaume attaquant = new Royaume("A");
@@ -73,6 +88,9 @@ public class ActionTest {
                 new ActionAttaquer(attaquant).estExecutable(attaquant));
     }
 
+    /**
+     * Verifie qu'executer une attaque planifie une bataille offensive.
+     */
     @Test
     public void attaquerEffet() {
         Royaume attaquant = new Royaume("A");
@@ -82,37 +100,46 @@ public class ActionTest {
         assertEquals("une bataille offensive planifiee", 1, attaquant.bataillesOffensives().size());
     }
 
+    /**
+     * Verifie qu'un echange au marche donne de l'or et recoit du bois.
+     */
     @Test
     public void echanger() {
-        Royaume r = new Royaume("Test");
-        int orAvant = r.tresor().quantite(Ressource.OR);
-        int boisAvant = r.tresor().quantite(Ressource.BOIS);
-        ActionEchanger a = new ActionEchanger(Ressource.OR, Ressource.BOIS, 9);
-        assertTrue("echange possible au marche niveau 1", a.estExecutable(r));
-        a.executer(r);
-        assertEquals("or donne", orAvant - 9, r.tresor().quantite(Ressource.OR));
-        assertTrue("bois recu", r.tresor().quantite(Ressource.BOIS) > boisAvant);
+        Royaume royaume = new Royaume("Test");
+        int orAvant = royaume.tresor().quantite(Ressource.OR);
+        int boisAvant = royaume.tresor().quantite(Ressource.BOIS);
+        ActionEchanger action = new ActionEchanger(Ressource.OR, Ressource.BOIS, 9);
+        assertTrue("echange possible au marche niveau 1", action.estExecutable(royaume));
+        action.executer(royaume);
+        assertEquals("or donne", orAvant - 9, royaume.tresor().quantite(Ressource.OR));
+        assertTrue("bois recu", royaume.tresor().quantite(Ressource.BOIS) > boisAvant);
     }
 
+    /**
+     * Verifie qu'un echange avec source et cible identiques est refuse.
+     */
     @Test
     public void echangerInvalide() {
         assertThrows("source et cible identiques refusees", IllegalArgumentException.class,
                 () -> new ActionEchanger(Ressource.OR, Ressource.OR, 10));
     }
 
+    /**
+     * Verifie le recrutement d'un villageois selon la nourriture et le logement.
+     */
     @Test
     public void recruter() {
-        Royaume r = new Royaume("Test");
-        ActionRecruterVillageois a = new ActionRecruterVillageois();
-        assertTrue("recrutement possible (nourriture + place)", a.estExecutable(r));
+        Royaume royaume = new Royaume("Test");
+        ActionRecruterVillageois action = new ActionRecruterVillageois();
+        assertTrue("recrutement possible (nourriture + place)", action.estExecutable(royaume));
 
         Royaume sansVivres = new Royaume("Famine");
         sansVivres.tresor().definirQuantite(Ressource.NOURRITURE,
                 Equilibrage.COUT_NOURRITURE_PAR_VILLAGEOIS - 1);
-        assertFalse("refuse sans assez de nourriture", a.estExecutable(sansVivres));
+        assertFalse("refuse sans assez de nourriture", action.estExecutable(sansVivres));
 
         Royaume plein = new Royaume("Plein");
         plein.population().definirEffectif(Role.INACTIF, plein.population().capaciteLogement());
-        assertFalse("refuse si logement plein", a.estExecutable(plein));
+        assertFalse("refuse si logement plein", action.estExecutable(plein));
     }
 }

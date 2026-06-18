@@ -36,12 +36,24 @@ public final class Equilibrage {
         CAPACITES_INITIALES.put(Ressource.SAVOIR, 1000);
     }
 
-    public static int stockInitial(Ressource r) {
-        return STOCKS_INITIAUX.get(r);
+    /**
+     * Renvoie le stock initial d'une ressource au debut de la partie.
+     *
+     * @param ressource la ressource concernee
+     * @return la quantite de depart de cette ressource
+     */
+    public static int stockInitial(Ressource ressource) {
+        return STOCKS_INITIAUX.get(ressource);
     }
 
-    public static int capaciteInitiale(Ressource r) {
-        return CAPACITES_INITIALES.get(r);
+    /**
+     * Renvoie la capacite de stockage initiale d'une ressource.
+     *
+     * @param ressource la ressource concernee
+     * @return la capacite maximale de depart pour cette ressource
+     */
+    public static int capaciteInitiale(Ressource ressource) {
+        return CAPACITES_INITIALES.get(ressource);
     }
 
     // PRODUCTION (par habitant et par tour)
@@ -83,7 +95,13 @@ public final class Equilibrage {
     // Nombre de tours d'un chantier.
     public static final int DUREE_CHANTIER_AMELIORATION = 2;
 
-    // Cout pour ameliorer un batiment vers le niveau cible.
+    /**
+     * Calcule le cout en ressources pour ameliorer un batiment vers un niveau donne.
+     *
+     * @param type le type de batiment a ameliorer
+     * @param niveauCible le niveau vise
+     * @return les ressources necessaires pour cette amelioration
+     */
     public static Map<Ressource, Integer> coutAmelioration(TypeBatiment type, int niveauCible) {
         Map<Ressource, Integer> cout = new EnumMap<>(Ressource.class);
         switch (type) {

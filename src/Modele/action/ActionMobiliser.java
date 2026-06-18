@@ -15,6 +15,13 @@ public class ActionMobiliser implements Action {
     private final TypeUnite type;
     private final int effectif;
 
+    /**
+     * Cree une action de mobilisation d'un type de soldats.
+     *
+     * @param type le type de soldats a mobiliser
+     * @param effectif le nombre de soldats a mobiliser
+     * @throws IllegalArgumentException si le type est null ou l'effectif n'est pas positif
+     */
     public ActionMobiliser(TypeUnite type, int effectif) {
         if (type == null || effectif <= 0) {
             throw new IllegalArgumentException("Type non null et effectif > 0 requis.");
@@ -23,14 +30,30 @@ public class ActionMobiliser implements Action {
         this.effectif = effectif;
     }
 
+    /**
+     * Renvoie le type de soldats a mobiliser.
+     *
+     * @return le type de soldats
+     */
     public TypeUnite type() {
         return this.type;
     }
 
+    /**
+     * Renvoie le nombre de soldats a mobiliser.
+     *
+     * @return l'effectif a mobiliser
+     */
     public int effectif() {
         return this.effectif;
     }
 
+    /**
+     * Verifie l'or, les recrues disponibles et le niveau de la caserne.
+     *
+     * @param royaume le royaume concerne
+     * @return true si la mobilisation est possible
+     */
     @Override
     public boolean estExecutable(Royaume royaume) {
         int coutOr = this.effectif * Equilibrage.COUT_OR_PAR_SOLDAT;
@@ -51,6 +74,11 @@ public class ActionMobiliser implements Action {
         return true;
     }
 
+    /**
+     * Paie le cout en or et transforme les recrues en soldats combattants.
+     *
+     * @param royaume le royaume concerne
+     */
     @Override
     public void executer(Royaume royaume) {
         int coutOr = this.effectif * Equilibrage.COUT_OR_PAR_SOLDAT;
@@ -63,6 +91,11 @@ public class ActionMobiliser implements Action {
         royaume.armee().recruter(this.type, this.effectif);
     }
 
+    /**
+     * Renvoie l'identifiant texte de l'action.
+     *
+     * @return la description de l'action
+     */
     @Override
     public String description() {
         return "action.mobiliser." + this.type.name().toLowerCase();

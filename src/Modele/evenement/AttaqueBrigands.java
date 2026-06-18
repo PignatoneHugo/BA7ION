@@ -8,6 +8,9 @@ import Modele.royaume.Royaume;
 /** Brigands : les combattre, payer une rancon ou subir. */
 public class AttaqueBrigands extends Evenement {
 
+    /**
+     * Cree l'evenement Attaque de brigands avec ses trois choix.
+     */
     public AttaqueBrigands() {
         super("Attaque de brigands !",
                 "Des pillards rodent autour du royaume. Comment reagir ?");
@@ -25,27 +28,27 @@ public class AttaqueBrigands extends Evenement {
 
     private static class EffetCombattre implements EffetEvenement {
         @Override
-        public void appliquer(Royaume r, Random a) {
+        public void appliquer(Royaume royaume, Random aleatoire) {
             // 0 a 3 morts au hasard
-            int pertes = a.nextInt(4);
+            int pertes = aleatoire.nextInt(4);
             if (pertes > 0) {
-                r.population().retirerHabitants(pertes, a);
+                royaume.population().retirerHabitants(pertes, aleatoire);
             }
-            r.moral().ajuster(2);
+            royaume.moral().ajuster(2);
         }
     }
 
     private static class EffetSubir implements EffetEvenement {
         @Override
-        public void appliquer(Royaume r, Random a) {
-            r.tresor().retirer(Ressource.OR, 50);
-            r.tresor().retirer(Ressource.NOURRITURE, 30);
-            r.moral().ajuster(-5);
+        public void appliquer(Royaume royaume, Random aleatoire) {
+            royaume.tresor().retirer(Ressource.OR, 50);
+            royaume.tresor().retirer(Ressource.NOURRITURE, 30);
+            royaume.moral().ajuster(-5);
         }
         @Override
-        public boolean peutEtreApplique(Royaume r) {
-            return r.tresor().contient(Ressource.OR, 50)
-                    && r.tresor().contient(Ressource.NOURRITURE, 30);
+        public boolean peutEtreApplique(Royaume royaume) {
+            return royaume.tresor().contient(Ressource.OR, 50)
+                    && royaume.tresor().contient(Ressource.NOURRITURE, 30);
         }
     }
 }

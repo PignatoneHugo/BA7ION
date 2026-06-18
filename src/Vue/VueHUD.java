@@ -41,6 +41,11 @@ public class VueHUD extends JPanel implements Observer {
     private final Map<Ressource, CompteurRessource> compteurs;
     private final BoutonMedieval boutonFinTour;
 
+    /**
+     * Cree le bandeau du haut et s'abonne aux changements de la partie.
+     *
+     * @param partie la partie en cours
+     */
     public VueHUD(Partie partie) {
         this.partie = partie;
         this.royaumeJoueur = partie.joueur();
@@ -56,10 +61,10 @@ public class VueHUD extends JPanel implements Observer {
         // les 5 ressources a gauche
         JPanel gauche = new JPanel(new GridLayout(1, Ressource.values().length, 12, 0));
         gauche.setOpaque(false);
-        for (Ressource r : Ressource.values()) {
-            CompteurRessource c = new CompteurRessource(r);
-            this.compteurs.put(r, c);
-            gauche.add(c);
+        for (Ressource ressource : Ressource.values()) {
+            CompteurRessource compteur = new CompteurRessource(ressource);
+            this.compteurs.put(ressource, compteur);
+            gauche.add(compteur);
         }
         add(gauche, BorderLayout.WEST);
 
@@ -95,9 +100,9 @@ public class VueHUD extends JPanel implements Observer {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g.create();
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        Graphics2D g2 = (Graphics2D) graphics.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         // fond degrade
         GradientPaint grad = new GradientPaint(0, 0, new Color(30, 20, 8),
@@ -109,33 +114,44 @@ public class VueHUD extends JPanel implements Observer {
 
     // petit encadre "titre / valeur"
     private JLabel creerEncadre(String titre, String valeur, Color couleur, int largeur) {
-        JLabel l = new JLabel("<html><div style='text-align:center;'>"
+        JLabel label = new JLabel("<html><div style='text-align:center;'>"
                 + "<span style='font-size:10px; color:#6a4820;'>"
                 + titre.toUpperCase()
                 + "</span><br><span style='font-size:18px;'>" + valeur
                 + "</span></div></html>", SwingConstants.CENTER);
-        l.setForeground(couleur);
-        l.setFont(Polices.LABEL);
-        l.setPreferredSize(new Dimension(largeur, 68));
-        l.setBorder(BorderFactory.createCompoundBorder(
+        label.setForeground(couleur);
+        label.setFont(Polices.LABEL);
+        label.setPreferredSize(new Dimension(largeur, 68));
+        label.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Palette.OR_FONCE, 1),
                 BorderFactory.createEmptyBorder(4, 8, 4, 8)));
-        l.setOpaque(true);
-        l.setBackground(new Color(8, 6, 10, 180));
-        return l;
+        label.setOpaque(true);
+        label.setBackground(new Color(8, 6, 10, 180));
+        return label;
     }
 
+    /**
+     * Renvoie le bouton de fin de tour.
+     *
+     * @return le bouton de fin de tour
+     */
     public BoutonMedieval boutonFinTour() {
         return this.boutonFinTour;
     }
 
+    /**
+     * Met a jour le bandeau quand le modele change.
+     *
+     * @param observable l'objet observe
+     * @param arg la notification recue
+     */
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (!(arg instanceof Notification)) {
             return;
         }
-        Notification n = (Notification) arg;
-        switch (n.type()) {
+        Notification notification = (Notification) arg;
+        switch (notification.type()) {
             case TRESOR_CHANGE:
             case POPULATION_CHANGEE:
             case MORAL_CHANGE:
@@ -150,10 +166,10 @@ public class VueHUD extends JPanel implements Observer {
     }
 
     private void rafraichir() {
-        for (Ressource r : Ressource.values()) {
-            this.compteurs.get(r).rafraichir(
-                    this.royaumeJoueur.tresor().quantite(r),
-                    this.royaumeJoueur.tresor().capaciteMax(r));
+        for (Ressource ressource : Ressource.values()) {
+            this.compteurs.get(ressource).rafraichir(
+                    this.royaumeJoueur.tresor().quantite(ressource),
+                    this.royaumeJoueur.tresor().capaciteMax(ressource));
         }
 
         this.labelTour.setText("<html><div style='text-align:center;'>"
@@ -208,19 +224,19 @@ public class VueHUD extends JPanel implements Observer {
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2 = (Graphics2D) g.create();
+        protected void paintComponent(Graphics graphics) {
+            super.paintComponent(graphics);
+            Graphics2D g2 = (Graphics2D) graphics.create();
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
 
-            int w = getWidth();
-            int h = getHeight();
+            int largeur = getWidth();
+            int hauteur = getHeight();
 
             // le rond a gauche
             int diam = 36;
             int cx = 4;
-            int cy = (h - diam) / 2;
+            int cy = (hauteur - diam) / 2;
             g2.setColor(this.couleur.darker().darker());
             g2.fillOval(cx, cy, diam, diam);
             g2.setColor(this.couleur);
@@ -249,7 +265,7 @@ public class VueHUD extends JPanel implements Observer {
             // barre de remplissage
             int barX = xText;
             int barY = 44;
-            int barW = w - xText - 8;
+            int barW = largeur - xText - 8;
             int barH = 6;
             g2.setColor(new Color(26, 16, 6));
             g2.fillRoundRect(barX, barY, barW, barH, 4, 4);
@@ -271,8 +287,8 @@ public class VueHUD extends JPanel implements Observer {
             g2.dispose();
         }
 
-        private static Color couleurDe(Ressource r) {
-            switch (r) {
+        private static Color couleurDe(Ressource ressource) {
+            switch (ressource) {
                 case OR: return Palette.OR_RESSOURCE;
                 case NOURRITURE: return Palette.NOURRITURE_RESSOURCE;
                 case BOIS: return Palette.BOIS_RESSOURCE;

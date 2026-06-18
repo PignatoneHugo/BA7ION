@@ -20,6 +20,12 @@ import config.Equilibrage;
 // et attaque le joueur quand son armee est assez grosse.
 public class StrategieEquilibree implements StrategieIA {
 
+    /**
+     * Joue le tour du bot : recrute, equilibre la population, ameliore et decide d'attaquer.
+     *
+     * @param bot le royaume controle par l'IA
+     * @param partie la partie en cours
+     */
     @Override
     public void jouerTour(Royaume bot, Partie partie) {
         // recruter avant d'equilibrer, sinon il n'y a plus d'inactifs dispo
@@ -90,17 +96,17 @@ public class StrategieEquilibree implements StrategieIA {
     private void ameliorerBatiment(Royaume bot, Random aleatoire) {
         TypeBatiment[] types = TypeBatiment.values();
         for (int essai = 0; essai < 3; essai++) {
-            TypeBatiment t = types[aleatoire.nextInt(types.length)];
-            Batiment b = bot.batiment(t);
-            if (b == null || !b.peutEtreAmeliore()) {
+            TypeBatiment type = types[aleatoire.nextInt(types.length)];
+            Batiment batiment = bot.batiment(type);
+            if (batiment == null || !batiment.peutEtreAmeliore()) {
                 continue;
             }
-            ActionAmeliorer action = new ActionAmeliorer(t);
+            ActionAmeliorer action = new ActionAmeliorer(type);
             if (action.estExecutable(bot)) {
                 // le bot doit pouvoir payer
-                if (peutPayer(bot, t, b.niveau() + 1)) {
+                if (peutPayer(bot, type, batiment.niveau() + 1)) {
                     bot.fileActions().ajouter(action);
-                    payer(bot, t, b.niveau() + 1);
+                    payer(bot, type, batiment.niveau() + 1);
                     return;
                 }
             }
@@ -108,8 +114,8 @@ public class StrategieEquilibree implements StrategieIA {
     }
 
     private boolean peutPayer(Royaume bot, TypeBatiment type, int niveauCible) {
-        for (var e : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
-            if (!bot.tresor().contient(e.getKey(), e.getValue())) {
+        for (var cout : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
+            if (!bot.tresor().contient(cout.getKey(), cout.getValue())) {
                 return false;
             }
         }
@@ -117,8 +123,8 @@ public class StrategieEquilibree implements StrategieIA {
     }
 
     private void payer(Royaume bot, TypeBatiment type, int niveauCible) {
-        for (var e : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
-            bot.tresor().retirer(e.getKey(), e.getValue());
+        for (var cout : Equilibrage.coutAmelioration(type, niveauCible).entrySet()) {
+            bot.tresor().retirer(cout.getKey(), cout.getValue());
         }
     }
 

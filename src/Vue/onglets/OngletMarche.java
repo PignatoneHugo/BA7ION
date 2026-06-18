@@ -46,6 +46,11 @@ public class OngletMarche extends JPanel implements Observer {
     private final JLabel labelResultat;
     private final BoutonMedieval boutonEchanger;
 
+    /**
+     * Cree l'onglet Marche et s'abonne aux changements du royaume.
+     *
+     * @param royaume le royaume du joueur
+     */
     public OngletMarche(Royaume royaume) {
         this.royaume = royaume;
         this.togglesSource = new EnumMap<>(Ressource.class);
@@ -134,13 +139,13 @@ public class OngletMarche extends JPanel implements Observer {
         add(centre, BorderLayout.CENTER);
 
         // on rafraichit le resultat a chaque changement
-        ChangeListener cl = e -> rafraichirResultat();
+        ChangeListener cl = evenement -> rafraichirResultat();
         this.spinnerMontant.addChangeListener(cl);
-        for (ToggleMedieval t : this.togglesSource.values()) {
-            t.addActionListener(e -> rafraichirResultat());
+        for (ToggleMedieval toggle : this.togglesSource.values()) {
+            toggle.addActionListener(evenement -> rafraichirResultat());
         }
-        for (ToggleMedieval t : this.togglesCible.values()) {
-            t.addActionListener(e -> rafraichirResultat());
+        for (ToggleMedieval toggle : this.togglesCible.values()) {
+            toggle.addActionListener(evenement -> rafraichirResultat());
         }
 
         // par defaut : donner OR, recevoir NOURRITURE
@@ -175,19 +180,25 @@ public class OngletMarche extends JPanel implements Observer {
         ligne.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
 
         ButtonGroup grp = new ButtonGroup();
-        for (Ressource r : Ressource.values()) {
-            ToggleMedieval t = new ToggleMedieval(r.libelle());
-            t.setPreferredSize(new Dimension(110, 32));
-            grp.add(t);
-            map.put(r, t);
-            ligne.add(t);
+        for (Ressource ressource : Ressource.values()) {
+            ToggleMedieval toggle = new ToggleMedieval(ressource.libelle());
+            toggle.setPreferredSize(new Dimension(110, 32));
+            grp.add(toggle);
+            map.put(ressource, toggle);
+            ligne.add(toggle);
         }
         bloc.add(ligne);
         return bloc;
     }
 
+    /**
+     * Met a jour l'affichage quand le royaume change.
+     *
+     * @param observable l'objet observe
+     * @param arg la notification recue
+     */
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable observable, Object arg) {
         if (!(arg instanceof Notification)) {
             return;
         }
@@ -233,16 +244,16 @@ public class OngletMarche extends JPanel implements Observer {
     }
 
     private Ressource ressourceSelectionnee(Map<Ressource, ToggleMedieval> map) {
-        for (Map.Entry<Ressource, ToggleMedieval> e : map.entrySet()) {
-            if (e.getValue().isSelected()) {
-                return e.getKey();
+        for (Map.Entry<Ressource, ToggleMedieval> entree : map.entrySet()) {
+            if (entree.getValue().isSelected()) {
+                return entree.getKey();
             }
         }
         return null;
     }
 
-    private Color couleurRessource(Ressource r) {
-        switch (r) {
+    private Color couleurRessource(Ressource ressource) {
+        switch (ressource) {
             case OR: return Palette.OR_RESSOURCE;
             case NOURRITURE: return Palette.NOURRITURE_RESSOURCE;
             case BOIS: return Palette.BOIS_RESSOURCE;
@@ -252,18 +263,38 @@ public class OngletMarche extends JPanel implements Observer {
         }
     }
 
+    /**
+     * Renvoie le bouton Echanger.
+     *
+     * @return le bouton Echanger
+     */
     public BoutonMedieval boutonEchanger() {
         return this.boutonEchanger;
     }
 
+    /**
+     * Renvoie la ressource que le joueur veut donner.
+     *
+     * @return la ressource source, ou null si aucune n'est choisie
+     */
     public Ressource ressourceSource() {
         return ressourceSelectionnee(this.togglesSource);
     }
 
+    /**
+     * Renvoie la ressource que le joueur veut recevoir.
+     *
+     * @return la ressource cible, ou null si aucune n'est choisie
+     */
     public Ressource ressourceCible() {
         return ressourceSelectionnee(this.togglesCible);
     }
 
+    /**
+     * Renvoie le montant a donner saisi par le joueur.
+     *
+     * @return le montant source
+     */
     public int montantSource() {
         return (Integer) this.spinnerMontant.getValue();
     }

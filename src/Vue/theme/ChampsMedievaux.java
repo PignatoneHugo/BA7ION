@@ -23,7 +23,11 @@ public final class ChampsMedievaux {
                 BorderFactory.createEmptyBorder(4, 8, 4, 8));
     }
 
-    // champ texte : fond sombre, texte clair, bordure doree
+    /**
+     * Applique le style sombre a un champ de texte.
+     *
+     * @param champ le champ a styler
+     */
     public static void stylerChamp(JTextField champ) {
         champ.setOpaque(true);
         champ.setBackground(Palette.CHAMP_FOND);
@@ -32,7 +36,11 @@ public final class ChampsMedievaux {
         champ.setBorder(bordureChamp());
     }
 
-    // spinner : on repeint aussi son champ interne et ses fleches
+    /**
+     * Applique le style sombre a un spinner, son champ et ses fleches.
+     *
+     * @param spinner le spinner a styler
+     */
     public static void stylerSpinner(JSpinner spinner) {
         spinner.setOpaque(true);
         spinner.setBackground(Palette.CHAMP_FOND);
@@ -61,7 +69,11 @@ public final class ChampsMedievaux {
         }
     }
 
-    // combo : fond sombre, texte clair, bordure doree
+    /**
+     * Applique le style sombre a une liste deroulante.
+     *
+     * @param combo la liste deroulante a styler
+     */
     public static void stylerCombo(JComboBox<?> combo) {
         combo.setOpaque(true);
         combo.setBackground(Palette.CHAMP_FOND);

@@ -13,6 +13,12 @@ public class ControleurMarche {
     private final Partie partie;
     private final FenetreJeu fenetre;
 
+    /**
+     * Construit le controleur de l'onglet Marche et branche le bouton Echanger.
+     *
+     * @param partie la partie en cours
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurMarche(Partie partie, FenetreJeu fenetre) {
         this.partie = partie;
         this.fenetre = fenetre;
@@ -23,7 +29,7 @@ public class ControleurMarche {
         OngletMarche onglet = this.fenetre.dashboard().ongletMarche();
         Royaume joueur = this.partie.joueur();
 
-        onglet.boutonEchanger().addActionListener(e -> {
+        onglet.boutonEchanger().addActionListener(evenement -> {
             Ressource src = onglet.ressourceSource();
             Ressource cible = onglet.ressourceCible();
             int montant = onglet.montantSource();

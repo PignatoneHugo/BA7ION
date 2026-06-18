@@ -7,6 +7,11 @@ public class ControleurFinPartie {
 
     private final FenetreJeu fenetre;
 
+    /**
+     * Construit le controleur de l'ecran de fin de partie et branche ses boutons.
+     *
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurFinPartie(FenetreJeu fenetre) {
         this.fenetre = fenetre;
         miseEnPlaceEvenements();
@@ -14,8 +19,8 @@ public class ControleurFinPartie {
 
     private void miseEnPlaceEvenements() {
         this.fenetre.vueFinPartie().boutonRejouer().addActionListener(
-                e -> this.fenetre.afficherNouvellePartie());
+                evenement -> this.fenetre.afficherNouvellePartie());
         this.fenetre.vueFinPartie().boutonMenuPrincipal().addActionListener(
-                e -> this.fenetre.afficherMenu());
+                evenement -> this.fenetre.afficherMenu());
     }
 }

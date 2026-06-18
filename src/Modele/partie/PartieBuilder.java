@@ -20,6 +20,12 @@ public class PartieBuilder {
     private long graineAleatoire = System.nanoTime();
     private Difficulte difficulte = Difficulte.NORMAL;
 
+    /**
+     * Definit le nom du joueur, sauf si le nom est null ou vide.
+     *
+     * @param nom le nom du joueur souhaite
+     * @return le builder pour chainer les appels
+     */
     public PartieBuilder nomJoueur(String nom) {
         if (nom != null && !nom.isBlank()) {
             this.nomJoueur = nom;
@@ -27,41 +33,75 @@ public class PartieBuilder {
         return this;
     }
 
-    public PartieBuilder nombreBots(int n) {
-        if (n < 1 || n > 4) {
+    /**
+     * Definit le nombre de bots de la partie.
+     *
+     * @param nombre le nombre de bots souhaite
+     * @return le builder pour chainer les appels
+     * @throws IllegalArgumentException si le nombre n'est pas entre 1 et 4
+     */
+    public PartieBuilder nombreBots(int nombre) {
+        if (nombre < 1 || nombre > 4) {
             throw new IllegalArgumentException("Le nombre de bots doit etre entre 1 et 4.");
         }
-        this.nombreBots = n;
+        this.nombreBots = nombre;
         return this;
     }
 
+    /**
+     * Definit la graine aleatoire de la partie.
+     *
+     * @param graine la graine a utiliser
+     * @return le builder pour chainer les appels
+     */
     public PartieBuilder graineAleatoire(long graine) {
         this.graineAleatoire = graine;
         return this;
     }
 
+    /**
+     * Renvoie la graine aleatoire configuree.
+     *
+     * @return la graine aleatoire
+     */
     public long graineAleatoire() {
         return this.graineAleatoire;
     }
 
-    public PartieBuilder difficulte(Difficulte d) {
-        if (d != null) {
-            this.difficulte = d;
+    /**
+     * Definit la difficulte de la partie, sauf si elle est null.
+     *
+     * @param difficulte la difficulte souhaitee
+     * @return le builder pour chainer les appels
+     */
+    public PartieBuilder difficulte(Difficulte difficulte) {
+        if (difficulte != null) {
+            this.difficulte = difficulte;
         }
         return this;
     }
 
+    /**
+     * Renvoie la difficulte configuree.
+     *
+     * @return la difficulte de la partie
+     */
     public Difficulte difficulte() {
         return this.difficulte;
     }
 
+    /**
+     * Construit la partie a partir des parametres configures.
+     *
+     * @return la nouvelle partie creee
+     */
     public Partie build() {
         Royaume joueur = new Royaume(this.nomJoueur);
         appliquerDifficulte(joueur);
 
         List<Royaume> bots = new ArrayList<>();
-        for (int i = 0; i < this.nombreBots; i++) {
-            Royaume bot = new Royaume("Bot " + (i + 1));
+        for (int indice = 0; indice < this.nombreBots; indice++) {
+            Royaume bot = new Royaume("Bot " + (indice + 1));
             bot.definirStrategieIA(FabriqueIA.creerEquilibree());
             bots.add(bot);
         }
@@ -70,17 +110,23 @@ public class PartieBuilder {
         return partie;
     }
 
-    // Recree une Partie a partir d'une sauvegarde.
-    public static Partie depuisSauvegarde(Sauvegarde s) {
-        if (s == null) {
+    /**
+     * Recree une partie complete a partir d'une sauvegarde.
+     *
+     * @param sauvegarde la sauvegarde a charger
+     * @return la partie reconstruite
+     * @throws IllegalArgumentException si la sauvegarde est null
+     */
+    public static Partie depuisSauvegarde(Sauvegarde sauvegarde) {
+        if (sauvegarde == null) {
             throw new IllegalArgumentException("Sauvegarde null.");
         }
 
-        Royaume joueur = new Royaume(s.joueur.nom);
-        s.joueur.appliquerA(joueur);
+        Royaume joueur = new Royaume(sauvegarde.joueur.nom);
+        sauvegarde.joueur.appliquerA(joueur);
 
         List<Royaume> bots = new ArrayList<>();
-        for (EtatRoyaume etatBot : s.bots) {
+        for (EtatRoyaume etatBot : sauvegarde.bots) {
             Royaume bot = new Royaume(etatBot.nom);
             if (etatBot.estBot) {
                 bot.definirStrategieIA(FabriqueIA.creerEquilibree());
@@ -90,9 +136,9 @@ public class PartieBuilder {
         }
 
         Partie partie = new Partie(joueur, bots);
-        partie.definirGraineAleatoire(s.graineAleatoire);
-        partie.tour().definirNumero(s.numeroTour);
-        if (s.grenouilleEmpoisonneeDeclenchee) {
+        partie.definirGraineAleatoire(sauvegarde.graineAleatoire);
+        partie.tour().definirNumero(sauvegarde.numeroTour);
+        if (sauvegarde.grenouilleEmpoisonneeDeclenchee) {
             partie.marquerGrenouilleEmpoisonneeDeclenchee();
         }
         return partie;

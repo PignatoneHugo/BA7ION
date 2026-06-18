@@ -17,6 +17,12 @@ public final class ConditionsFin {
         DEFAITE
     }
 
+    /**
+     * Evalue si la partie est gagnee, perdue ou toujours en cours.
+     *
+     * @param partie la partie a evaluer
+     * @return l'etat de fin de partie (en cours, victoire ou defaite)
+     */
     public static Etat evaluer(Partie partie) {
         Royaume joueur = partie.joueur();
 

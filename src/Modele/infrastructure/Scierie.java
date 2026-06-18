@@ -9,6 +9,11 @@ import config.Equilibrage;
 // Scierie : produit du bois selon le nombre de bucherons.
 public class Scierie extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type scierie
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.SCIERIE;

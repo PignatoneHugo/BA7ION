@@ -21,7 +21,13 @@ public final class EffetsCombat {
     private EffetsCombat() {
     }
 
-    // Resout la bataille et applique tous ses effets, puis l'enregistre dans la Partie.
+    /**
+     * Resout la bataille, applique tous ses effets et l'enregistre dans la partie.
+     *
+     * @param bataille la bataille a resoudre
+     * @param partie la partie en cours
+     * @return le bilan de la bataille resolue
+     */
     public static BatailleResolue appliquer(Bataille bataille, Partie partie) {
         int bonusRemparts = bonusRemparts(bataille.defenseur());
         long seed = partie.aleatoire().nextLong();
@@ -76,9 +82,9 @@ public final class EffetsCombat {
 
     // Bonus de defense (en %) donne par les remparts du defenseur.
     private static int bonusRemparts(Royaume defenseur) {
-        Batiment b = defenseur.batiment(TypeBatiment.REMPARTS);
-        if (b instanceof Remparts) {
-            return ((Remparts) b).bonusDefensif();
+        Batiment batiment = defenseur.batiment(TypeBatiment.REMPARTS);
+        if (batiment instanceof Remparts) {
+            return ((Remparts) batiment).bonusDefensif();
         }
         return 0;
     }
@@ -90,21 +96,21 @@ public final class EffetsCombat {
         }
         int effectifTotal = armee.effectifTotal();
         int restant = Math.min(pertesTotales, effectifTotal);
-        for (Unite u : armee.unites()) {
+        for (Unite unite : armee.unites()) {
             if (restant <= 0) {
                 break;
             }
             int part = (int) Math.round(
-                    (double) pertesTotales * u.effectif() / effectifTotal);
-            int retire = u.subirPertes(Math.min(part, restant));
+                    (double) pertesTotales * unite.effectif() / effectifTotal);
+            int retire = unite.subirPertes(Math.min(part, restant));
             restant -= retire;
         }
     }
 
     // Met toutes les unites a 0.
     private static void aneantirArmee(Armee armee) {
-        for (Unite u : armee.unites()) {
-            u.subirPertes(u.effectif());
+        for (Unite unite : armee.unites()) {
+            unite.subirPertes(unite.effectif());
         }
     }
 
@@ -123,17 +129,17 @@ public final class EffetsCombat {
     private static Map<Ressource, Integer> transfererButin(Royaume attaquant,
                                                             Royaume defenseur) {
         Map<Ressource, Integer> transfere = new EnumMap<>(Ressource.class);
-        for (Ressource r : Ressource.values()) {
-            int stockDef = defenseur.tresor().quantite(r);
+        for (Ressource ressource : Ressource.values()) {
+            int stockDef = defenseur.tresor().quantite(ressource);
             int aVoler = (int) Math.round(
                     stockDef * Equilibrage.BUTIN_VICTOIRE_PCT / 100.0);
             if (aVoler <= 0) {
                 continue;
             }
-            int reellementRetire = defenseur.tresor().retirer(r, aVoler);
-            attaquant.tresor().ajouter(r, reellementRetire);
+            int reellementRetire = defenseur.tresor().retirer(ressource, aVoler);
+            attaquant.tresor().ajouter(ressource, reellementRetire);
             if (reellementRetire > 0) {
-                transfere.put(r, reellementRetire);
+                transfere.put(ressource, reellementRetire);
             }
         }
         return transfere;

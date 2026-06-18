@@ -38,8 +38,8 @@ public final class CatalogueEvenements {
 
     private static int calculerPoidsTotal() {
         int total = 0;
-        for (Entree e : ENTREES) {
-            total += e.poids;
+        for (Entree entree : ENTREES) {
+            total += entree.poids;
         }
         return total;
     }

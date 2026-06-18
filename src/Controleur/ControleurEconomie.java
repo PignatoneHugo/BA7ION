@@ -16,6 +16,12 @@ public class ControleurEconomie extends ControleurOnglet {
     private final OngletEconomie onglet;
     private final FenetreJeu fenetre;
 
+    /**
+     * Construit le controleur de l'onglet Economie et branche ses boutons.
+     *
+     * @param partie la partie en cours
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurEconomie(Partie partie, FenetreJeu fenetre) {
         super(partie);
         this.fenetre = fenetre;
@@ -24,24 +30,24 @@ public class ControleurEconomie extends ControleurOnglet {
     }
 
     private void miseEnPlaceEvenements() {
-        for (Role r : Role.values()) {
-            if (r == Role.INACTIF) {
+        for (Role roleCourant : Role.values()) {
+            if (roleCourant == Role.INACTIF) {
                 continue;
             }
-            final Role role = r;
-            this.onglet.boutonPlus(role).addActionListener(e -> ajouter(role));
-            this.onglet.boutonMoins(role).addActionListener(e -> retirer(role));
+            final Role role = roleCourant;
+            this.onglet.boutonPlus(role).addActionListener(evenement -> ajouter(role));
+            this.onglet.boutonMoins(role).addActionListener(evenement -> retirer(role));
         }
-        for (NiveauTaxes n : NiveauTaxes.values()) {
-            final NiveauTaxes niveau = n;
-            this.onglet.toggleTaxes(niveau).addActionListener(e -> changerTaxes(niveau));
+        for (NiveauTaxes niveauCourant : NiveauTaxes.values()) {
+            final NiveauTaxes niveau = niveauCourant;
+            this.onglet.toggleTaxes(niveau).addActionListener(evenement -> changerTaxes(niveau));
         }
-        this.onglet.boutonRecruterVillageois().addActionListener(e -> recruterVillageois());
+        this.onglet.boutonRecruterVillageois().addActionListener(evenement -> recruterVillageois());
     }
 
     private void ajouter(Role role) {
-        boolean ok = this.royaumeJoueur.reaffecter(Role.INACTIF, role, 1);
-        if (ok) {
+        boolean reussite = this.royaumeJoueur.reaffecter(Role.INACTIF, role, 1);
+        if (reussite) {
             this.fenetre.statusBar().setMessage(
                     "+1 habitant affecte" + " : "
                             + role.libelle());
@@ -49,8 +55,8 @@ public class ControleurEconomie extends ControleurOnglet {
     }
 
     private void retirer(Role role) {
-        boolean ok = this.royaumeJoueur.reaffecter(role, Role.INACTIF, 1);
-        if (ok) {
+        boolean reussite = this.royaumeJoueur.reaffecter(role, Role.INACTIF, 1);
+        if (reussite) {
             this.fenetre.statusBar().setMessage(
                     "-1 habitant retire" + " : "
                             + role.libelle());

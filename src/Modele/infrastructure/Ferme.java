@@ -9,6 +9,11 @@ import config.Equilibrage;
 // Ferme : produit de la nourriture selon le nombre de fermiers.
 public class Ferme extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type ferme
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.FERME;

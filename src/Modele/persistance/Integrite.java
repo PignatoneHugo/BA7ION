@@ -20,16 +20,16 @@ final class Integrite {
 
     private static String sha256(String contenu) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(contenu.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder(hash.length * 2);
-            for (byte b : hash) {
-                sb.append(Character.forDigit((b >> 4) & 0xF, 16));
-                sb.append(Character.forDigit(b & 0xF, 16));
+            MessageDigest digesteur = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digesteur.digest(contenu.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexa = new StringBuilder(hash.length * 2);
+            for (byte octet : hash) {
+                hexa.append(Character.forDigit((octet >> 4) & 0xF, 16));
+                hexa.append(Character.forDigit(octet & 0xF, 16));
             }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Algorithme SHA-256 indisponible.", e);
+            return hexa.toString();
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("Algorithme SHA-256 indisponible.", exception);
         }
     }
 }

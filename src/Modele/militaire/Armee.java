@@ -10,87 +10,141 @@ public class Armee {
     private final List<Unite> unites;
     private PostureCombat posture;
 
+    /**
+     * Cree une armee vide en posture de defense.
+     */
     public Armee() {
         this(PostureCombat.DEFENSE);
     }
 
+    /**
+     * Cree une armee vide avec la posture donnee.
+     *
+     * @param posture la posture de depart de l'armee
+     */
     public Armee(PostureCombat posture) {
         this.unites = new ArrayList<>();
         this.posture = posture != null ? posture : PostureCombat.DEFENSE;
     }
 
-    public void ajouterUnite(Unite u) {
-        if (u == null) {
+    /**
+     * Ajoute une unite a l'armee.
+     *
+     * @param unite l'unite a ajouter
+     * @throws IllegalArgumentException si l'unite est null
+     */
+    public void ajouterUnite(Unite unite) {
+        if (unite == null) {
             throw new IllegalArgumentException("Une Unite ne peut pas etre null.");
         }
-        this.unites.add(u);
+        this.unites.add(unite);
     }
 
+    /**
+     * Renvoie la liste des unites de l'armee.
+     *
+     * @return la liste non modifiable des unites
+     */
     public List<Unite> unites() {
         return Collections.unmodifiableList(this.unites);
     }
 
+    /**
+     * Renvoie la posture actuelle de l'armee.
+     *
+     * @return la posture de combat
+     */
     public PostureCombat posture() {
         return this.posture;
     }
 
+    /**
+     * Change la posture de l'armee.
+     *
+     * @param posture la nouvelle posture
+     */
     public void definirPosture(PostureCombat posture) {
         if (posture != null) {
             this.posture = posture;
         }
     }
 
-    // Effectif total de l'armee.
+    /**
+     * Calcule l'effectif total de l'armee.
+     *
+     * @return le nombre total de soldats
+     */
     public int effectifTotal() {
         int total = 0;
-        for (Unite u : this.unites) {
-            total += u.effectif();
+        for (Unite unite : this.unites) {
+            total += unite.effectif();
         }
         return total;
     }
 
-    // Effectif d'un type donne.
+    /**
+     * Calcule l'effectif d'un type d'unite donne.
+     *
+     * @param type le type d'unite a compter
+     * @return le nombre de soldats de ce type
+     */
     public int effectifParType(TypeUnite type) {
         int total = 0;
-        for (Unite u : this.unites) {
-            if (u.type() == type) {
-                total += u.effectif();
+        for (Unite unite : this.unites) {
+            if (unite.type() == type) {
+                total += unite.effectif();
             }
         }
         return total;
     }
 
-    // Ajoute des soldats du type donne (fusionne avec l'unite existante si elle existe).
+    /**
+     * Ajoute des soldats du type donne, en fusionnant avec l'unite existante si elle existe.
+     *
+     * @param type le type de soldats a ajouter
+     * @param nombre le nombre de soldats a ajouter
+     */
     public void recruter(TypeUnite type, int nombre) {
         if (nombre <= 0) {
             return;
         }
-        for (Unite u : this.unites) {
-            if (u.type() == type) {
-                u.renforcer(nombre);
+        for (Unite unite : this.unites) {
+            if (unite.type() == type) {
+                unite.renforcer(nombre);
                 return;
             }
         }
         this.unites.add(new Unite(type, nombre));
     }
 
-    // Retire jusqu'a nombre soldats du type donne. Renvoie combien ont ete retires.
+    /**
+     * Retire jusqu'a un certain nombre de soldats du type donne.
+     *
+     * @param type le type de soldats a retirer
+     * @param nombre le nombre de soldats a retirer
+     * @return le nombre de soldats reellement retires
+     */
     public int retirer(TypeUnite type, int nombre) {
         if (nombre <= 0) {
             return 0;
         }
         int aRetirer = nombre;
-        for (Unite u : this.unites) {
+        for (Unite unite : this.unites) {
             if (aRetirer <= 0) break;
-            if (u.type() == type) {
-                aRetirer -= u.subirPertes(aRetirer);
+            if (unite.type() == type) {
+                aRetirer -= unite.subirPertes(aRetirer);
             }
         }
         // on enleve les unites vides
-        this.unites.removeIf(u -> u.effectif() == 0);
+        this.unites.removeIf(unite -> unite.effectif() == 0);
         return nombre - aRetirer;
     }
 
+    /**
+     * Indique si l'armee n'a plus aucun soldat.
+     *
+     * @return true si l'armee est vide
+     */
     public boolean estVide() {
         return effectifTotal() == 0;
     }

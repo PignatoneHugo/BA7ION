@@ -12,6 +12,11 @@ public class ToggleMedieval extends JToggleButton {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Cree un bouton bascule avec le texte donne.
+     *
+     * @param texte le texte du bouton
+     */
     public ToggleMedieval(String texte) {
         super(texte);
         setFont(Polices.LABEL.deriveFont(13f));
@@ -23,13 +28,13 @@ public class ToggleMedieval extends JToggleButton {
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
+    protected void paintComponent(Graphics graphics) {
+        Graphics2D g2 = (Graphics2D) graphics.create();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int w = getWidth();
-        int h = getHeight();
+        int largeur = getWidth();
+        int hauteur = getHeight();
 
         // couleurs selon l'etat
         Color hautFond;
@@ -57,22 +62,22 @@ public class ToggleMedieval extends JToggleButton {
             couleurTexte = Palette.TEXTE_PRIMAIRE;
         }
 
-        g2.setPaint(new GradientPaint(0, 0, hautFond, 0, h, basFond));
-        g2.fillRect(0, 0, w, h);
+        g2.setPaint(new GradientPaint(0, 0, hautFond, 0, hauteur, basFond));
+        g2.fillRect(0, 0, largeur, hauteur);
 
         // liseré or en haut
         if (isSelected()) {
             g2.setColor(Palette.OR_TRES_CLAIR);
-            g2.fillRect(0, 0, w, 2);
+            g2.fillRect(0, 0, largeur, 2);
         }
 
         // bordure
         g2.setColor(bordure);
-        g2.drawRect(0, 0, w - 1, h - 1);
+        g2.drawRect(0, 0, largeur - 1, hauteur - 1);
 
         setForeground(couleurTexte);
         g2.dispose();
 
-        super.paintComponent(g);
+        super.paintComponent(graphics);
     }
 }

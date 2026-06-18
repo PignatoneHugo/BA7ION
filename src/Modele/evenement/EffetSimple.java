@@ -15,12 +15,25 @@ public class EffetSimple implements EffetEvenement {
     private final int habitantsPerdus;
     private final int deltaMoral;
 
+    /**
+     * Cree un effet simple avec ses variations.
+     *
+     * @param deltaOr variation d'or (negatif = perte)
+     * @param habitantsPerdus nombre d'habitants perdus
+     * @param deltaMoral variation de moral (negatif = perte)
+     */
     public EffetSimple(int deltaOr, int habitantsPerdus, int deltaMoral) {
         this.deltaOr = deltaOr;
         this.habitantsPerdus = habitantsPerdus;
         this.deltaMoral = deltaMoral;
     }
 
+    /**
+     * Applique les variations d'or, de population et de moral au royaume.
+     *
+     * @param royaume le royaume modifie
+     * @param aleatoire source de hasard pour le retrait d'habitants
+     */
     @Override
     public void appliquer(Royaume royaume, Random aleatoire) {
         if (this.deltaOr > 0) {
@@ -36,6 +49,12 @@ public class EffetSimple implements EffetEvenement {
         }
     }
 
+    /**
+     * Indique si le royaume a assez d'or quand l'effet coute de l'or.
+     *
+     * @param royaume le royaume concerne
+     * @return vrai si l'effet peut etre applique
+     */
     @Override
     public boolean peutEtreApplique(Royaume royaume) {
         if (this.deltaOr < 0) {

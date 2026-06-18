@@ -17,6 +17,12 @@ public class ControleurMilitaire {
     private final Partie partie;
     private final FenetreJeu fenetre;
 
+    /**
+     * Construit le controleur de l'onglet Militaire et branche ses boutons.
+     *
+     * @param partie la partie en cours
+     * @param fenetre la fenetre de jeu
+     */
     public ControleurMilitaire(Partie partie, FenetreJeu fenetre) {
         this.partie = partie;
         this.fenetre = fenetre;
@@ -29,7 +35,7 @@ public class ControleurMilitaire {
 
         // Recruter / Demobiliser pour chaque type
         for (TypeUnite type : TypeUnite.values()) {
-            onglet.boutonRecruter(type).addActionListener(e -> {
+            onglet.boutonRecruter(type).addActionListener(evenement -> {
                 ActionMobiliser action = new ActionMobiliser(type, 1);
                 if (action.estExecutable(joueur)) {
                     action.executer(joueur);
@@ -41,7 +47,7 @@ public class ControleurMilitaire {
                                     + " " + type.libelle());
                 }
             });
-            onglet.boutonDemobiliser(type).addActionListener(e -> {
+            onglet.boutonDemobiliser(type).addActionListener(evenement -> {
                 ActionDemobiliser action = new ActionDemobiliser(type, 1);
                 if (action.estExecutable(joueur)) {
                     action.executer(joueur);
@@ -56,7 +62,7 @@ public class ControleurMilitaire {
 
         // Selecteur de posture
         for (PostureCombat posture : PostureCombat.values()) {
-            onglet.togglePosture(posture).addActionListener(e -> {
+            onglet.togglePosture(posture).addActionListener(evenement -> {
                 joueur.armee().definirPosture(posture);
                 joueur.notifierArmeeChangee();
                 this.fenetre.statusBar().setMessage(
@@ -67,7 +73,7 @@ public class ControleurMilitaire {
 
         // Bouton Attaquer : ouvre une popup pour choisir la cible.
         if (onglet.boutonAttaquer() != null) {
-            onglet.boutonAttaquer().addActionListener(e -> ouvrirPopupAttaque());
+            onglet.boutonAttaquer().addActionListener(evenement -> ouvrirPopupAttaque());
         }
     }
 

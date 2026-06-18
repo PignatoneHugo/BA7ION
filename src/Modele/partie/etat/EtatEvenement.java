@@ -12,6 +12,11 @@ import config.Equilibrage;
 // Phase qui peut declencher un evenement aleatoire (sauf au tour 1).
 public class EtatEvenement implements EtatTour {
 
+    /**
+     * Peut declencher un evenement aleatoire ou scripte (sauf au tour 1).
+     *
+     * @param partie la partie sur laquelle agir
+     */
     @Override
     public void executer(Partie partie) {
         if (!partie.enAttenteEvenement()) {
@@ -34,11 +39,21 @@ public class EtatEvenement implements EtatTour {
                 && !partie.grenouilleEmpoisonneeDeclenchee();
     }
 
+    /**
+     * Renvoie la phase suivante, la fin du tour.
+     *
+     * @return la phase de fin de tour
+     */
     @Override
     public EtatTour suivant() {
         return new EtatFinTour();
     }
 
+    /**
+     * Renvoie la cle de traduction du nom de cette phase.
+     *
+     * @return la cle du nom de la phase
+     */
     @Override
     public String nomCle() {
         return "phase.evenement";

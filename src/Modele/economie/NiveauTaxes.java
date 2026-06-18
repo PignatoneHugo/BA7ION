@@ -17,14 +17,29 @@ public enum NiveauTaxes {
         this.impactMoralParTour = impactMoralParTour;
     }
 
+    /**
+     * Donne le nom affichable du niveau de taxes.
+     *
+     * @return le libelle du niveau de taxes
+     */
     public String libelle() {
         return this.libelle;
     }
 
+    /**
+     * Donne l'or preleve par habitant a ce niveau.
+     *
+     * @return l'or par habitant
+     */
     public int orParHabitant() {
         return this.orParHabitant;
     }
 
+    /**
+     * Donne l'effet de ce niveau de taxes sur le moral a chaque tour.
+     *
+     * @return l'impact sur le moral par tour
+     */
     public int impactMoralParTour() {
         return this.impactMoralParTour;
     }

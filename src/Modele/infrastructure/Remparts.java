@@ -5,6 +5,11 @@ import Modele.royaume.Royaume;
 // Remparts : bonus de defense en combat, pas de production.
 public class Remparts extends Batiment {
 
+    /**
+     * Donne le type du batiment.
+     *
+     * @return le type remparts
+     */
     @Override
     public TypeBatiment type() {
         return TypeBatiment.REMPARTS;
@@ -15,7 +20,11 @@ public class Remparts extends Batiment {
         // Rien : agit seulement en defense pendant les combats.
     }
 
-    // Bonus defensif en pourcentage.
+    /**
+     * Donne le bonus de defense apporte par les remparts en combat.
+     *
+     * @return le bonus defensif en pourcentage
+     */
     public int bonusDefensif() {
         if (this.endommage) {
             return 5 * (this.niveau - 1);

@@ -14,7 +14,9 @@ import Modele.militaire.Unite;
 // Tests du ResolveurCombat (seed fixe) : nombre, remparts, equilibre, PFC.
 public class ResolveurCombatTest {
 
-    // Beaucoup d'attaquants contre peu de defenseurs : l'attaquant gagne.
+    /**
+     * Verifie qu'un attaquant tres superieur ecrase un petit defenseur.
+     */
     @Test
     public void victoireEcrasanteAttaquant() {
         int effectifA = 100;
@@ -25,18 +27,20 @@ public class ResolveurCombatTest {
         Armee defenseur = new Armee(PostureCombat.DEFENSE);
         defenseur.ajouterUnite(new Unite(TypeUnite.INFANTERIE_LEGERE, effectifD));
 
-        RapportCombat r = ResolveurCombat.resoudre(attaquant, defenseur,
+        RapportCombat rapport = ResolveurCombat.resoudre(attaquant, defenseur,
                 PostureCombat.ATTAQUE, 0, 42L);
 
-        assertEquals("Vainqueur attendu : ATTAQUANT", Vainqueur.ATTAQUANT, r.vainqueur());
+        assertEquals("Vainqueur attendu : ATTAQUANT", Vainqueur.ATTAQUANT, rapport.vainqueur());
 
-        double tauxPertesA = (double) r.pertesAttaquant() / effectifA;
-        double tauxPertesD = (double) r.pertesDefenseur() / effectifD;
+        double tauxPertesA = (double) rapport.pertesAttaquant() / effectifA;
+        double tauxPertesD = (double) rapport.pertesDefenseur() / effectifD;
         assertTrue("Taux de pertes du defenseur doit etre superieur (A=" + tauxPertesA
                 + ", D=" + tauxPertesD + ")", tauxPertesD > tauxPertesA);
     }
 
-    // A effectif egal, les remparts font gagner le defenseur.
+    /**
+     * Verifie qu'a effectif egal les remparts font gagner le defenseur.
+     */
     @Test
     public void defaiteAttaquantContreRemparts() {
         Armee attaquant = new Armee(PostureCombat.ATTAQUE);
@@ -45,13 +49,13 @@ public class ResolveurCombatTest {
         Armee defenseur = new Armee(PostureCombat.DEFENSE);
         defenseur.ajouterUnite(new Unite(TypeUnite.ARCHER, 30));
 
-        RapportCombat r = ResolveurCombat.resoudre(attaquant, defenseur,
+        RapportCombat rapport = ResolveurCombat.resoudre(attaquant, defenseur,
                 PostureCombat.ATTAQUE, 100, 42L);
 
         assertEquals("Vainqueur attendu : DEFENSEUR (grace aux remparts)",
-                Vainqueur.DEFENSEUR, r.vainqueur());
+                Vainqueur.DEFENSEUR, rapport.vainqueur());
         assertTrue("Attaquant doit perdre plus que le defenseur",
-                r.pertesAttaquant() > r.pertesDefenseur());
+                rapport.pertesAttaquant() > rapport.pertesDefenseur());
     }
 
     /** Deux armees similaires sans remparts : pas de victoire ecrasante. */
@@ -63,15 +67,17 @@ public class ResolveurCombatTest {
         Armee defenseur = new Armee(PostureCombat.DEFENSE);
         defenseur.ajouterUnite(new Unite(TypeUnite.INFANTERIE_LEGERE, 50));
 
-        RapportCombat r = ResolveurCombat.resoudre(attaquant, defenseur,
+        RapportCombat rapport = ResolveurCombat.resoudre(attaquant, defenseur,
                 PostureCombat.ATTAQUE, 0, 42L);
 
-        int diffPertes = Math.abs(r.pertesAttaquant() - r.pertesDefenseur());
+        int diffPertes = Math.abs(rapport.pertesAttaquant() - rapport.pertesDefenseur());
         assertTrue("Les pertes doivent etre du meme ordre (diff < 25), trouve " + diffPertes,
                 diffPertes < 25);
     }
 
-    // PFC : la cavalerie tape plus fort sur les archers que sur l'infanterie.
+    /**
+     * Verifie que la cavalerie est plus forte contre les archers que l'infanterie.
+     */
     @Test
     public void avantagePierreFeuilleCiseaux() {
         Armee cavalerie = new Armee(PostureCombat.ATTAQUE);
