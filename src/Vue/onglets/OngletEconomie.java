@@ -137,7 +137,8 @@ public class OngletEconomie extends JPanel implements Observer {
         nom.setForeground(couleurDe(role));
         gauche.add(nom);
         if (role == Role.INACTIF) {
-            JLabel cout = new JLabel("(-100 nourriture pour recruter)");
+            JLabel cout = new JLabel("(-" + config.Equilibrage.COUT_NOURRITURE_PAR_VILLAGEOIS
+                    + " nourriture pour recruter)");
             cout.setFont(Polices.LABEL.deriveFont(java.awt.Font.ITALIC, 12f));
             cout.setForeground(Palette.NOURRITURE_RESSOURCE);
             gauche.add(cout);

@@ -1,6 +1,6 @@
-# Roadmap — BAS7ION
+# Roadmap — BA7ION
 
-**Projet** : BAS7ION — Simulation de gestion et stratégie d'un royaume médiéval
+**Projet** : BA7ION — Simulation de gestion et stratégie d'un royaume médiéval
 **Équipe** : 6 (Léna Charrière, Mathéo Depuydt, Hugo Pignatone, Benjamin Sarrat, Fabien Serres, Antoine Tuffery)
 **Cours** : CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, 2025–2026
 **Cadence** : sprints d'une semaine, du vendredi au vendredi

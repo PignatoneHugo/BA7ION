@@ -36,6 +36,9 @@ public final class EffetsCombat {
         int effAvantAtt = bataille.attaquant().armee().effectifTotal();
         int effAvantDef = bataille.defenseur().armee().effectifTotal();
 
+        // un defenseur attaque alors qu'il n'a plus d'armee est aneanti
+        boolean defenseurSansArmee = effAvantDef == 0;
+
         RapportCombat rapport = ResolveurCombat.resoudre(
                 bataille.attaquant().armee(),
                 bataille.defenseur().armee(),
@@ -54,7 +57,7 @@ public final class EffetsCombat {
         if (rapport.vainqueur() == RapportCombat.Vainqueur.ATTAQUANT) {
             aneantirArmee(bataille.defenseur().armee());
             pertesCivilesDef = appliquerPertesCiviles(
-                    bataille.defenseur(), partie);
+                    bataille.defenseur(), partie, defenseurSansArmee);
             butinTransfere = transfererButin(
                     bataille.attaquant(), bataille.defenseur());
             bataille.defenseur().moral().ajuster(
@@ -114,11 +117,14 @@ public final class EffetsCombat {
         }
     }
 
-    // Tue un % des civils du defenseur. Renvoie combien sont morts.
-    private static int appliquerPertesCiviles(Royaume defenseur, Partie partie) {
+    // Tue les civils du defenseur : tous s'il n'avait plus d'armee (aneantissement
+    // total), sinon un pourcentage. Renvoie combien sont morts.
+    private static int appliquerPertesCiviles(Royaume defenseur, Partie partie,
+                                              boolean sansArmee) {
         int pop = defenseur.population().total();
-        int aRetirer = (int) Math.round(
-                pop * Equilibrage.PERTES_CIVILES_DEFAITE_PCT / 100.0);
+        int aRetirer = sansArmee
+                ? pop
+                : (int) Math.round(pop * Equilibrage.PERTES_CIVILES_DEFAITE_PCT / 100.0);
         if (aRetirer <= 0) {
             return 0;
         }

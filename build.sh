@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script de build simple pour BAS7ION (sans Maven/Gradle).
+# Script de build simple pour BA7ION (sans Maven/Gradle).
 # Compile les sources Java dans bin/ et copie les ressources (images).
 #
 # Robuste aux chemins contenant des espaces : on se place dans le dossier
@@ -61,7 +61,8 @@ test() {
         ActionTest \
         PartieTest \
         PersistanceTest \
-        ResolveurCombatTest
+        ResolveurCombatTest \
+        EffetsCombatTest
 }
 
 case "${1:-build}" in

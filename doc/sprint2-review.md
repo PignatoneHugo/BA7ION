@@ -1,6 +1,6 @@
 # Sprint Review — Sprint 2
 
-**Projet** : BAS7ION — Simulation de gestion et stratégie d'un royaume médiéval
+**Projet** : BA7ION — Simulation de gestion et stratégie d'un royaume médiéval
 **Cours** : CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, 2025–2026
 **Équipe** : 6 (Léna Charrière, Mathéo Depuydt, Hugo Pignatone, Benjamin Sarrat, Fabien Serres, Antoine Tuffery)
 **Sprint** : 2 / 4
@@ -175,7 +175,7 @@
 ```bash
 ./build.sh run
 ```
-La fenêtre BAS7ION s'ouvre sur le **menu principal**.
+La fenêtre BA7ION s'ouvre sur le **menu principal**.
 
 **Étape 2 — Nouvelle partie**
 - Clic "Nouvelle partie" → écran de configuration.

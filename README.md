@@ -1,4 +1,4 @@
-# BAS7ION
+# BA7ION
 
 Simulation de gestion et de strategie d'un royaume medieval. Projet long
 CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, equipe 6.

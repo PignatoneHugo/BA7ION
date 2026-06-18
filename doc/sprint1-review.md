@@ -1,6 +1,6 @@
 # Sprint Review — Sprint 1
 
-**Projet** : BAS7ION — Simulation de gestion et stratégie d'un royaume médiéval
+**Projet** : BA7ION — Simulation de gestion et stratégie d'un royaume médiéval
 **Cours** : CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, 2025–2026
 **Équipe** : 6 (Léna Charrière, Mathéo Depuydt, Hugo Pignatone, Benjamin Sarrat, Fabien Serres, Antoine Tuffery)
 **Sprint** : 1 / N
@@ -184,7 +184,7 @@
 ```bash
 ./build.sh run
 ```
-La fenêtre BAS7ION s'ouvre en 1280×720, centrée.
+La fenêtre BA7ION s'ouvre en 1280×720, centrée.
 
 **Étape 2 — État initial**
 - HUD : `Or: 500/5000  Nourriture: 100/1000  Bois: 200/1000  Pierre: 200/1000  Savoir: 0/999  |  Royaume du Joueur  |  Population: 10/20  Tour 1  |  [Fin de tour]`

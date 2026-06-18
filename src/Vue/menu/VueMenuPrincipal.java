@@ -64,7 +64,7 @@ public class VueMenuPrincipal extends JPanel {
         // titre
         contraintes.gridy = 0;
         contraintes.insets = new Insets(60, 0, 8, 0);
-        JLabel titre = new JLabel("BAS7ION", SwingConstants.CENTER);
+        JLabel titre = new JLabel("BA7ION", SwingConstants.CENTER);
         titre.setFont(Polices.TITRE.deriveFont(80f));
         titre.setForeground(Palette.OR);
         add(titre, contraintes);
@@ -98,7 +98,7 @@ public class VueMenuPrincipal extends JPanel {
         // credits en bas
         contraintes.gridy = 5;
         contraintes.insets = new Insets(40, 0, 0, 0);
-        JLabel credits = new JLabel("ENSEEIHT 1A - Equipe BAS7ION - 2025-2026", SwingConstants.CENTER);
+        JLabel credits = new JLabel("ENSEEIHT 1A - Equipe BA7ION - 2025-2026", SwingConstants.CENTER);
         credits.setFont(Polices.CREDITS);
         credits.setForeground(Palette.TEXTE_TERTIAIRE);
         add(credits, contraintes);

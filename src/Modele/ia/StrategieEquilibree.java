@@ -5,6 +5,7 @@ import java.util.Random;
 import Modele.action.ActionAmeliorer;
 import Modele.action.ActionAttaquer;
 import Modele.action.ActionMobiliser;
+import Modele.action.ActionRecruterVillageois;
 import Modele.economie.Ressource;
 import Modele.infrastructure.Batiment;
 import Modele.infrastructure.TypeBatiment;
@@ -20,6 +21,9 @@ import config.Equilibrage;
 // et attaque le joueur quand son armee est assez grosse.
 public class StrategieEquilibree implements StrategieIA {
 
+    // Tour a partir duquel ce bot peut re-attaquer (delai aleatoire apres une attaque).
+    private int prochaineAttaquePossible = 0;
+
     /**
      * Joue le tour du bot : recrute, equilibre la population, ameliore et decide d'attaquer.
      *
@@ -28,6 +32,9 @@ public class StrategieEquilibree implements StrategieIA {
      */
     @Override
     public void jouerTour(Royaume bot, Partie partie) {
+        // accueillir des villageois d'abord : sinon la population ne remonte
+        // jamais et le bot finit sans personne a transformer en soldats
+        recruterVillageois(bot);
         // recruter avant d'equilibrer, sinon il n'y a plus d'inactifs dispo
         recruterSoldats(bot, partie.aleatoire());
         equilibrerPopulation(bot);
@@ -37,6 +44,17 @@ public class StrategieEquilibree implements StrategieIA {
         // le bot joue sa file d'actions tout de suite
         bot.fileActions().executerToutes(bot);
         bot.notifierFileActionsChangee();
+    }
+
+    // Fait grandir la population du bot en accueillant des villageois,
+    // tant qu'il a de la nourriture et de la place (jusqu'a 3 par tour).
+    private void recruterVillageois(Royaume bot) {
+        ActionRecruterVillageois action = new ActionRecruterVillageois();
+        int recrutes = 0;
+        while (recrutes < 3 && action.estExecutable(bot)) {
+            action.executer(bot);
+            recrutes++;
+        }
     }
 
     // Repartit la population : moitie fermiers, 1/5 mineurs, 1/5 bucherons, 1/10 erudits.
@@ -134,6 +152,11 @@ public class StrategieEquilibree implements StrategieIA {
         if (!partie.combatsAutorises()) {
             return;
         }
+        // delai aleatoire depuis la derniere attaque : evite que tous les bots
+        // attaquent le meme tour
+        if (partie.numeroTour() < prochaineAttaquePossible) {
+            return;
+        }
         int effectif = bot.armee().effectifTotal();
         if (effectif < Equilibrage.EFFECTIF_MIN_POUR_ATTAQUE_IA) {
             return;
@@ -145,5 +168,11 @@ public class StrategieEquilibree implements StrategieIA {
             return;
         }
         bot.fileActions().ajouter(new ActionAttaquer(partie.joueur()));
+        // on tire un delai aleatoire avant la prochaine attaque possible
+        int ecart = Equilibrage.DELAI_MAX_ENTRE_ATTAQUES_IA
+                - Equilibrage.DELAI_MIN_ENTRE_ATTAQUES_IA + 1;
+        int delai = Equilibrage.DELAI_MIN_ENTRE_ATTAQUES_IA
+                + partie.aleatoire().nextInt(ecart);
+        prochaineAttaquePossible = partie.numeroTour() + delai;
     }
 }

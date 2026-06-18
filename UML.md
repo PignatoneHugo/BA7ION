@@ -1,4 +1,4 @@
-# BAS7ION — UML complet du projet
+# BA7ION — UML complet du projet
 
 Diagrammes UML de **tout** le code (classes, interfaces, énumérations,
 relations), regroupés par sous-système pour rester lisibles. Format **Mermaid**

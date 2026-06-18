@@ -1,4 +1,4 @@
-# Architecture MVC globale — BAS7ION
+# Architecture MVC globale — BA7ION
 
 Document de cadrage à destination des 6 étudiants de l'équipe. Objectif : poser un squelette qui permette de paralléliser le travail, respecter strictement la convention MVC + `Observable/Observer` du cours, et limiter les ré-architectures en cours de projet.
 
@@ -8,7 +8,7 @@ Document de cadrage à destination des 6 étudiants de l'équipe. Objectif : pos
 
 **Pourquoi ce document**
 
-L'équipe (6 étudiants ENSEEIHT) doit livrer pour le 19/06/2026 une simulation de gestion de royaume médiéval (`BAS7ION`) à partir d'un cahier des charges très ambitieux (**14 Epics, ~277 user stories**, volontairement non terminable). Le sujet impose Java + Swing + MVC strict. La méthodologie est SCRUM avec sprints.
+L'équipe (6 étudiants ENSEEIHT) doit livrer pour le 19/06/2026 une simulation de gestion de royaume médiéval (`BA7ION`) à partir d'un cahier des charges très ambitieux (**14 Epics, ~277 user stories**, volontairement non terminable). Le sujet impose Java + Swing + MVC strict. La méthodologie est SCRUM avec sprints.
 
 Le répertoire `/home/n7student/Documents/Programmation objet/cpo/projet/` est actuellement vide. Avant de répartir les US entre les 6 développeurs, il faut figer une architecture qui :
 - respecte la convention du cours (packages `Modele/Vue/Controleur` avec majuscule initiale, pattern `Observable/Observer` issu du TP Chat),

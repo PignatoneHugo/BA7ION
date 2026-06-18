@@ -51,7 +51,7 @@ public class ControleurMenu {
             chooser.setCurrentDirectory(dossier);
         }
         chooser.setFileFilter(new FileNameExtensionFilter(
-                "Sauvegardes BAS7ION (*.json)", "json"));
+                "Sauvegardes BA7ION (*.json)", "json"));
         if (chooser.showOpenDialog(this.fenetre) != JFileChooser.APPROVE_OPTION) {
             return;
         }

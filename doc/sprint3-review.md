@@ -1,6 +1,6 @@
 # Sprint Review — Sprint 3
 
-**Projet** : BAS7ION — Simulation de gestion et stratégie d'un royaume médiéval
+**Projet** : BA7ION — Simulation de gestion et stratégie d'un royaume médiéval
 **Cours** : CPO + Gestion de projet (SCRUM), 1A ENSEEIHT, 2025–2026
 **Équipe** : 6 (Léna Charrière, Mathéo Depuydt, Hugo Pignatone, Benjamin Sarrat, Fabien Serres, Antoine Tuffery)
 **Sprint** : 3 / 4
@@ -11,7 +11,7 @@
 
 ## 1. Sprint Goal
 
-> *Faire de BAS7ION un vrai jeu de stratégie multi-royaume jouable de bout en bout : combats actifs avec conséquences sévères, IA des bots vivante et imprévisible, système de recrutement à deux étages (recrue civile → unité combattante), marché d'échanges entre ressources, validation financière des événements, et un cycle de tour clarifié avec rapports successifs (combat → bilan → événement) avant la prochaine phase de planification.*
+> *Faire de BA7ION un vrai jeu de stratégie multi-royaume jouable de bout en bout : combats actifs avec conséquences sévères, IA des bots vivante et imprévisible, système de recrutement à deux étages (recrue civile → unité combattante), marché d'échanges entre ressources, validation financière des événements, et un cycle de tour clarifié avec rapports successifs (combat → bilan → événement) avant la prochaine phase de planification.*
 
 **Critère d'acceptation principal** : une partie démarre depuis le menu, le joueur joue une trentaine de tours avec au moins 1 bot actif, subit et lance des attaques avec rapports détaillés, échange des ressources via le marché, et la partie se termine par une condition de victoire ou défaite réelle (effondrement moral, élimination du bot, prospérité or, ou tour 50).
 

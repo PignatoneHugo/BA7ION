@@ -37,7 +37,7 @@ public class FenetreJeu extends JFrame {
      * Cree la fenetre principale avec le menu et l'ecran de nouvelle partie.
      */
     public FenetreJeu() {
-        super("BAS7ION - Simulation de royaume medieval");
+        super("BA7ION - Simulation de royaume medieval");
 
         this.cards = new CardLayout();
         this.conteneur = new JPanel(this.cards);

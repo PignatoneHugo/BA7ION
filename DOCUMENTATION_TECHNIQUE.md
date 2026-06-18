@@ -1,6 +1,6 @@
-# BAS7ION — Documentation technique
+# BA7ION — Documentation technique
 
-> Document de référence rédigé par l'équipe BAS7ION. Il explique l'intégralité
+> Document de référence rédigé par l'équipe BA7ION. Il explique l'intégralité
 > de notre architecture et du fonctionnement du jeu : package par package,
 > classe par classe, avec nos choix de conception, des extraits de notre code,
 > des exemples chiffrés détaillés et un scénario de tour commenté. Objectif :
@@ -37,7 +37,7 @@
 
 ## 1. Présentation et règles du jeu
 
-**BAS7ION** est une **simulation de royaume médiéval au tour par tour**, écrite
+**BA7ION** est une **simulation de royaume médiéval au tour par tour**, écrite
 en **Java 21** avec une interface graphique **Swing**. Le joueur dirige un
 royaume face à 1 à 4 royaumes adverses tenus par une intelligence artificielle.
 
@@ -1024,7 +1024,7 @@ Suivons ce qui se passe lorsque le joueur clique sur **« Fin de tour »** au to
 
 ## 21. Notes pour la soutenance
 
-**Pitch (30 s) :** « BAS7ION est une simulation de royaume médiéval au tour par
+**Pitch (30 s) :** « BA7ION est une simulation de royaume médiéval au tour par
 tour, en Java/Swing, en MVC strict. Un tour est une machine à 9 états ; les vues
 observent le modèle ; les actions du joueur sont des commandes différables ; les
 bots suivent une stratégie ; tout est sauvegardé en JSON avec contrôle

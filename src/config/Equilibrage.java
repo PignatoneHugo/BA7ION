@@ -168,10 +168,15 @@ public final class Equilibrage {
 
     // IA DES BOTS
 
-    // Or a partir duquel l'IA recrute.
-    public static final int SEUIL_OR_RECRUTEMENT_IA = 200;
+    // Or a partir duquel l'IA recrute (assez bas pour qu'elle reconstitue son armee).
+    public static final int SEUIL_OR_RECRUTEMENT_IA = 90;
 
-    public static final int TOURS_ENTRE_ATTAQUES_IA = 5;
+    // Apres une attaque, un bot attend un nombre aleatoire de tours entre ces
+    // deux bornes avant de pouvoir re-attaquer. Ca desynchronise les bots :
+    // contre plusieurs adversaires, on ne se prend plus toutes les attaques
+    // le meme tour.
+    public static final int DELAI_MIN_ENTRE_ATTAQUES_IA = 2;
+    public static final int DELAI_MAX_ENTRE_ATTAQUES_IA = 6;
 
     // Armee minimum pour qu'un bot attaque.
     public static final int EFFECTIF_MIN_POUR_ATTAQUE_IA = 5;
