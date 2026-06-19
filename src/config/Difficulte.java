@@ -3,9 +3,9 @@ package config;
 // Difficulte choisie au depart : change l'or initial du joueur.
 public enum Difficulte {
 
-    FACILE("Facile", 500),
-    NORMAL("Normale", 0),
-    DIFFICILE("Difficile", -200);
+    FACILE("Facile", 0),
+    NORMAL("Normale", -300),
+    DIFFICILE("Difficile", -450);
 
     private final String libelle;
     private final int bonusOrInitial;
